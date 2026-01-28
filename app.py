@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🐔 iPoultry AI – Broiler Growth Forecast (XGBR)")
+st.title("🐔 iPoultry AI Module – Chicken Growth Forecast")
 
 # ----------------------------------------------------------
 # LOAD MODELS
