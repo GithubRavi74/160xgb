@@ -87,16 +87,16 @@ if st.button("📈 Predict Next 7 Days"):
 
     for d in days:
 
-    if ideal_mode:
-        feed = feed_today * 1.4
-        mortality = 0
-        temp_i, rh_i, co_i, nh_i = 28, 60, 3, 2
-        rolling_gain = 0.065   # ideal growth momentum
-    else:
-        feed = feed_today
-        mortality = mortality_today
-        temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
-        rolling_gain = 0.05
+        if ideal_mode:
+            feed = feed_today * 1.4
+            mortality = 0
+            temp_i, rh_i, co_i, nh_i = 28, 60, 3, 2
+            rolling_gain = 0.065   # ideal growth momentum
+        else:
+            feed = feed_today
+            mortality = mortality_today
+            temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+            rolling_gain = 0.05
 
     feed_per_bird = feed / birds_alive
     mortality_rate = mortality / birds_alive
