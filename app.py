@@ -116,7 +116,7 @@ for d in days:
         "nh": nh_i
     })
 
-X = pd.DataFrame(rows)
+    X = pd.DataFrame(rows)
 
 
     
