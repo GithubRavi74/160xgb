@@ -81,51 +81,45 @@ if st.button("📈 Predict Next 7 Days"):
     # -----------------------------
     # We intentionally override inputs when ideal_mode = True
     # to validate whether the model responds to perfect conditions
+    rows = []
 
-    for d in days:
+rows = []
 
-        if ideal_mode:
-            # 🧪 IDEAL CONDITIONS (TEXTBOOK PERFECT)
-            birds_alive = 940
-            feed_used = 300
-            #feed_used = feed_today * (1.2 + 0.05 * (d - age_today))
-            
-            mortality_used = 0
-            temp_used = 28
-            rh_used = 60
-            co_used = 3
-            nh_used = 2
-        else:
-            # 🌱 REAL FARM CONDITIONS
-            feed_used = feed_today
-            mortality_used = mortality_today
-            temp_used = temp
-            rh_used = rh
-            co_used = co
-            nh_used = nh
+for d in days:
 
-        feed_per_bird = feed_used / birds_alive
-        mortality_rate = mortality_used / birds_alive
+    if ideal_mode:
+        feed = feed_today * 1.4
+        mortality = 0
+        temp_i, rh_i, co_i, nh_i = 28, 60, 3, 2
+        rolling_gain = 0.065   # ideal growth momentum
+    else:
+        feed = feed_today
+        mortality = mortality_today
+        temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+        rolling_gain = 0.05
 
-        rows.append({
-            # ⚠️ KEEP FEATURE NAMES EXACTLY AS TRAINED
-            "day_number": d,
-            "birds_alive": birds_alive,
-            "feed_today_kg": feed_used,
-            "feed_per_bird": feed_per_bird,
-            "mortality_today": mortality_used,
-            "mortality_rate": mortality_rate,
-            "rolling_7d_feed": feed_used,     # stable proxy
-            "rolling_7d_gain": 0.06 if ideal_mode else 0.04,
-            "temp": temp_used,
-            "rh": rh_used,
-            "co": co_used,
-            "nh": nh_used
-        })
+    feed_per_bird = feed / birds_alive
+    mortality_rate = mortality / birds_alive
 
-    X = pd.DataFrame(rows)
+    rows.append({
+        "day_number": d,
+        "birds_alive": birds_alive,
+        "feed_today_kg": feed,
+        "feed_per_bird": feed_per_bird,
+        "mortality_today": mortality,
+        "mortality_rate": mortality_rate,
+        "rolling_7d_feed": feed * 7,
+        "rolling_7d_gain": rolling_gain,
+        "temp": temp_i,
+        "rh": rh_i,
+        "co": co_i,
+        "nh": nh_i
+    })
+
+X = pd.DataFrame(rows)
 
 
+    
     # -----------------------------
     # MODEL PREDICTIONS
     # -----------------------------
