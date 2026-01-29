@@ -148,9 +148,9 @@ if st.button("📈 Predict Next 7 Days"):
     # -----------------------------
     # EXPLANATION (VERY IMPORTANT)
     # -----------------------------
-    st.info(
-        "🔍 **Why predicted ≠ ideal?**  \n"
-        "Ideal curves assume perfect feed, environment and zero stress.  \n"
-        "Your prediction reflects *actual farm inputs* — feed rate, mortality pressure "
-        "and environment. Deviations indicate *actionable gaps*, not model error."
-    )
+    #st.info(
+    #    "🔍 **Why predicted ≠ ideal?**  \n"
+    #    "Ideal curves assume perfect feed, environment and zero stress.  \n"
+    #    "Your prediction reflects *actual farm inputs* — feed rate, mortality pressure "
+    #    "and environment. Deviations indicate *actionable gaps*, not model error."
+    #)
