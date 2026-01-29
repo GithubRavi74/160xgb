@@ -39,6 +39,13 @@ IDEAL_WEIGHT = {
 }
 
 # ----------------------------------------------------------
+# TEMPORARY IDEAL CHECKBOX FOR TESTING
+# ----------------------------------------------------------
+ideal_mode = st.checkbox("🧪 Run Ideal Condition Test", value=False)
+
+
+
+# ----------------------------------------------------------
 # INPUTS
 # ----------------------------------------------------------
 st.subheader("📥 Enter Current Farm Conditions")
