@@ -83,9 +83,9 @@ if st.button("📈 Predict Next 7 Days"):
     # to validate whether the model responds to perfect conditions
     rows = []
 
-rows = []
+    rows = []
 
-for d in days:
+    for d in days:
 
     if ideal_mode:
         feed = feed_today * 1.4
