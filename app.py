@@ -86,6 +86,7 @@ if st.button("📈 Predict Next 7 Days"):
 
         if ideal_mode:
             # 🧪 IDEAL CONDITIONS (TEXTBOOK PERFECT)
+            birds_alive = 940
             feed_used = feed_today * (1.2 + 0.05 * (d - age_today))
             mortality_used = 0
             temp_used = 28
