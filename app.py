@@ -54,7 +54,7 @@ c1, c2, c3 = st.columns(3)
 
 with c1:
     age_today = st.number_input("Bird Age (days)", 1, 45, 14)
-    birds_alive = st.number_input("Birds Alive", 1, 200000, 900)
+    birds_alive = st.number_input("Birds Alive", 1, 200000, 940)
 
 with c2:
     feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 120.0)
