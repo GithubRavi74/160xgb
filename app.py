@@ -98,10 +98,10 @@ if st.button("📈 Predict Next 7 Days"):
             temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
             rolling_gain = 0.05
 
-    feed_per_bird = feed / birds_alive
-    mortality_rate = mortality / birds_alive
+        feed_per_bird = feed / birds_alive
+        mortality_rate = mortality / birds_alive
 
-    rows.append({
+        rows.append({
         "day_number": d,
         "birds_alive": birds_alive,
         "feed_today_kg": feed,
@@ -114,9 +114,9 @@ if st.button("📈 Predict Next 7 Days"):
         "rh": rh_i,
         "co": co_i,
         "nh": nh_i
-    })
+        })
 
-    X = pd.DataFrame(rows)
+        X = pd.DataFrame(rows)
 
 
     
