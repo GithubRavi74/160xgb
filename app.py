@@ -53,11 +53,11 @@ st.subheader("📥 Enter Current Farm Conditions")
 c1, c2, c3 = st.columns(3)
 
 with c1:
-    age_today = st.number_input("Bird Age (days)", 1, 45, 14)
-    birds_alive = st.number_input("Birds Alive", 1, 200000, 940)
+    age_today = st.number_input("Bird Age (days)", 1, 45, 28)
+    birds_alive = st.number_input("Birds Alive", 1, 200000, 950)
 
 with c2:
-    feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 120.0)
+    feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 160.0)
     mortality_today = st.number_input("Mortality Today (birds)", 0, 2000, 2)
 
 with c3:
@@ -90,7 +90,7 @@ if st.button("📈 Predict Next 7 Days"):
         if ideal_mode:
             feed = feed_today * 1.4
             mortality = 0
-            temp_i, rh_i, co_i, nh_i = 28, 60, 3, 2
+            temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
             rolling_gain = 0.065   # ideal growth momentum
         else:
             feed = feed_today
