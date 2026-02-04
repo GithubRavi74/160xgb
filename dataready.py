@@ -26,7 +26,7 @@ st.write("BATCH"+ batch_id)
 if st.button("🔍 Check Data Readiness"):
 
     batch_df = df[(df["farm_id"] == farm_id) & (df["batch_id"] == batch_id)]
-
+    st.dataframe(batch_df)
     if batch_df.empty:
         st.error("❌ No data found for this Farm & Batch")
         st.stop()
