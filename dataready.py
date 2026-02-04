@@ -37,8 +37,9 @@ batch_id = st.selectbox(
 #farm_id = farm_id.strip()
 #batch_id = batch_id.strip()
 
-st.write("FARM"+ farm_id)
-st.write("BATCH"+ batch_id)
+#st.write("FARM"+ farm_id)
+#st.write("BATCH"+ batch_id)
+
 if st.button("🔍 Check Data Readiness"):
 
     #batch_df = df[(df["farm_id"] == farm_id) & (df["batch_id"] == batch_id)]
