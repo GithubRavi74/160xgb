@@ -13,6 +13,11 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
+
+# CLEAN THE VALUES
+df["farm_id"] = df["farm_id"].astype(str).str.strip()
+df["batch_id"] = df["batch_id"].astype(str).str.strip()
+
 st.dataframe(df)
 
 # -------------------------------------------------
@@ -21,12 +26,24 @@ st.dataframe(df)
 farm_id = st.text_input("Farm ID")
 batch_id = st.text_input("Batch ID")
 
+# CLEAN THE USER INPUT
+farm_id = farm_id.strip()
+batch_id = batch_id.strip()
+
 st.write("FARM"+ farm_id)
 st.write("BATCH"+ batch_id)
 if st.button("🔍 Check Data Readiness"):
 
-    batch_df = df[(df["farm_id"] == farm_id) & (df["batch_id"] == batch_id)]
+    #batch_df = df[(df["farm_id"] == farm_id) & (df["batch_id"] == batch_id)]
+    
+    batch_df = df[
+    (df["farm_id"] == farm_id) &
+    (df["batch_id"] == batch_id)
+    ]
     st.dataframe(batch_df)
+
+    st.write("Matching rows count:", len(batch_df))
+    
     if batch_df.empty:
         st.error("❌ No data found for this Farm & Batch")
         st.stop()
