@@ -26,7 +26,7 @@ df["batch_id"] = df["batch_id"].astype(str).str.strip()
 #farm_id = st.text_input("Farm ID")
 #batch_id = st.text_input("Batch ID")
 
-st.write("SELECT FARM AND BATCH TO CHECK IF AI CAN BE USED)
+st.write("SELECT FARM AND BATCH TO CHECK IF AI CAN BE USED")
 farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
 batch_id = st.selectbox(
     "Batch ID",
