@@ -74,29 +74,30 @@ if st.button("📈 Predict Next 7 Days"):
     horizon = 7
     days = np.arange(age_today, age_today + horizon + 1)
 
+    # FEATURE BUILDING BLOC
     rows = []
 
-    # -----------------------------
-    # FEATURE BUILDING BLOCK
-    # -----------------------------
-    # We intentionally override inputs when ideal_mode = True
-    # to validate whether the model responds to perfect conditions
-    rows = []
-
-    rows = []
+    # baseline rolling values (safe defaults learned during training)
+    BASE_ROLLING_FEED = feed_today
+    BASE_ROLLING_GAIN = 0.045   # learned average, NOT ideal fantasy
 
     for d in days:
 
         if ideal_mode:
-            feed = feed_today * 1.4
+            feed = feed_today * 1.35          # realistic ideal uplift
             mortality = 0
             temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
-            rolling_gain = 0.065   # ideal growth momentum
+
+            rolling_feed = feed               # NOT feed * 7
+            rolling_gain = BASE_ROLLING_GAIN * 1.15
+
         else:
             feed = feed_today
             mortality = mortality_today
             temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
-            rolling_gain = 0.05
+
+        rolling_feed = BASE_ROLLING_FEED
+        rolling_gain = BASE_ROLLING_GAIN
 
         feed_per_bird = feed / birds_alive
         mortality_rate = mortality / birds_alive
@@ -108,7 +109,7 @@ if st.button("📈 Predict Next 7 Days"):
         "feed_per_bird": feed_per_bird,
         "mortality_today": mortality,
         "mortality_rate": mortality_rate,
-        "rolling_7d_feed": feed * 7,
+        "rolling_7d_feed": rolling_feed,
         "rolling_7d_gain": rolling_gain,
         "temp": temp_i,
         "rh": rh_i,
@@ -118,8 +119,7 @@ if st.button("📈 Predict Next 7 Days"):
 
         X = pd.DataFrame(rows)
 
-
-    
+       
     # -----------------------------
     # MODEL PREDICTIONS
     # -----------------------------
