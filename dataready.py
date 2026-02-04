@@ -23,12 +23,18 @@ st.dataframe(df)
 # -------------------------------------------------
 # INPUTS
 # -------------------------------------------------
-farm_id = st.text_input("Farm ID")
-batch_id = st.text_input("Batch ID")
+#farm_id = st.text_input("Farm ID")
+#batch_id = st.text_input("Batch ID")
+
+farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
+batch_id = st.selectbox(
+    "Batch ID",
+    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+)
 
 # CLEAN THE USER INPUT
-farm_id = farm_id.strip()
-batch_id = batch_id.strip()
+#farm_id = farm_id.strip()
+#batch_id = batch_id.strip()
 
 st.write("FARM"+ farm_id)
 st.write("BATCH"+ batch_id)
