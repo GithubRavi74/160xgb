@@ -21,6 +21,8 @@ st.dataframe(df)
 farm_id = st.text_input("Farm ID")
 batch_id = st.text_input("Batch ID")
 
+st.write("FARM"+ farm_id)
+st.write("BATCH"+ batch_id)
 if st.button("🔍 Check Data Readiness"):
 
     batch_df = df[(df["farm_id"] == farm_id) & (df["batch_id"] == batch_id)]
