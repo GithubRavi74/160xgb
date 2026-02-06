@@ -174,6 +174,109 @@ if st.button("📈 Forecast Next 7 Days"):
 
     X = pd.DataFrame(rows)
 
+    st.subheader("🗂️ Batch Data History & Completeness")
+
+    # -----------------------------------------
+    # 1️⃣ DATA AVAILABILITY TIMELINE
+    # -----------------------------------------
+    timeline = batch_df[["day_number"]].copy()
+    timeline["data_present"] = 1
+    
+    fig_timeline = go.Figure()
+    fig_timeline.add_bar(
+        x=timeline["day_number"],
+        y=timeline["data_present"],
+        marker_color="steelblue"
+    )
+    
+    fig_timeline.update_layout(
+        title="📅 Daily Data Availability (Captured Days)",
+        xaxis_title="Day Number",
+        yaxis_visible=False,
+        height=200
+    )
+    
+    st.plotly_chart(fig_timeline, use_container_width=True)
+    
+    # -----------------------------------------
+    # 2️⃣ COMPLETENESS HEATMAP (LAST 14 DAYS)
+    # -----------------------------------------
+    st.subheader("🧪 Data Completeness (Last 14 Days)")
+    
+    critical_cols = [
+        "feed_today_kg",
+        "birds_alive",
+        "mortality_today",
+        "temp",
+        "rh"
+    ]
+    
+    heat_df = (
+        batch_df
+        .sort_values("day_number")
+        .tail(14)[["day_number"] + critical_cols]
+        .set_index("day_number")
+    )
+    
+    heatmap_values = heat_df.notna().astype(int)
+    
+    fig_heat = go.Figure(data=go.Heatmap(
+        z=heatmap_values.values,
+        x=heatmap_values.index,
+        y=heatmap_values.columns,
+        colorscale=[[0, "red"], [1, "green"]],
+        showscale=False
+    ))
+    
+    fig_heat.update_layout(
+        title="🟢 Green = Available | 🔴 Red = Missing",
+        xaxis_title="Day Number",
+        height=300
+    )
+    
+    st.plotly_chart(fig_heat, use_container_width=True)
+    
+    # -----------------------------------------
+    # 3️⃣ KEY TREND CHECK
+    # -----------------------------------------
+    st.subheader("📈 Key Recorded Trends")
+    
+    fig_trend = go.Figure()
+    
+    fig_trend.add_trace(go.Scatter(
+        x=batch_df["day_number"],
+        y=batch_df["feed_today_kg"],
+        name="Feed (kg/day)"
+    ))
+    
+    fig_trend.add_trace(go.Scatter(
+        x=batch_df["day_number"],
+        y=batch_df["mortality_today"],
+        name="Mortality (birds/day)",
+        yaxis="y2"
+    ))
+    
+    fig_trend.add_trace(go.Scatter(
+        x=batch_df["day_number"],
+        y=batch_df["temp"],
+        name="Avg Temp (°C)",
+        yaxis="y3"
+    ))
+    
+    fig_trend.update_layout(
+        title="📊 Feed, Mortality & Temperature Trends",
+        xaxis_title="Day Number",
+        yaxis=dict(title="Feed (kg)"),
+        yaxis2=dict(title="Mortality", overlaying="y", side="right"),
+        yaxis3=dict(title="Temp (°C)", overlaying="y", side="right", anchor="free", position=0.95),
+        height=400
+    )
+    
+    st.plotly_chart(fig_trend, use_container_width=True)
+
+
+
+    
     # -------------------------------------------------
     # PREDICTIONS
     # -------------------------------------------------
