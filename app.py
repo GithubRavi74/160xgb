@@ -133,15 +133,19 @@ if st.button("📈 Forecast Next 7 Days"):
 
     for i, d in enumerate(days):
 
-        if ideal_mode:
-            feed = feed_today * 1.35
-            mortality = 0
-            temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
-        else:
-            feed = feed_today
-            mortality = mortality_today
-            temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+        #if ideal_mode:
+        #    feed = feed_today * 1.35
+        #   mortality = 0
+        #    temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
+        #else:
+        #    feed = feed_today
+        #    mortality = mortality_today
+        #    temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
 
+        feed = feed_today
+        mortality = mortality_today
+        temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+        
         confidence = max(base_confidence - i * 0.8, 60)
 
         if confidence >= 85:
