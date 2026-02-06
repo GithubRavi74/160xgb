@@ -53,7 +53,7 @@ batch_id = st.selectbox(
     sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
 )
 
-ideal_mode = st.checkbox("🧪 Ideal Condition Test (validation only)", value=False)
+#ideal_mode = st.checkbox("🧪 Ideal Condition Test (validation only)", value=False)
 
 # -------------------------------------------------
 # FORECAST
