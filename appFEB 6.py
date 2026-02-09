@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import plotly.graph_objects as go
-
+# FEB6 CODE
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
@@ -42,9 +42,9 @@ batch_id = st.selectbox(
     sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
 )
 
-st.write("IDEAL START")
-ideal_mode = st.checkbox("🧪 Ideal Condition Test (for validation)", value=False)
-st.write("IDEAL OVER")
+#st.write("IDEAL START")
+#ideal_mode = st.checkbox("🧪 Ideal Condition Test (for validation)", value=False)
+#st.write("IDEAL OVER")
 # -------------------------------------------------
 # FORECAST
 # -------------------------------------------------
@@ -102,15 +102,20 @@ if st.button("📈 Forecast Next 7 Days"):
 
     for d in days:
 
-        if ideal_mode:
-            feed = feed_today * 1.35
-            mortality = 0
-            temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
-        else:
-            feed = feed_today
-            mortality = mortality_today
-            temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+        # NOT USING IDEAL MODE
+        #if ideal_mode:
+        #    feed = feed_today * 1.35
+        #    mortality = 0
+        #    temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
+        #else:
+        #    feed = feed_today
+        #    mortality = mortality_today
+        #    temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
 
+        feed = feed_today
+        mortality = mortality_today
+        temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
+        
         rows.append({
             "day_number": d,
             "birds_alive": birds_alive,
