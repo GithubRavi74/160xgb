@@ -1,66 +1,44 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-import pickle
-import plotly.graph_objects as go
-# FEB6 CODE
-# -------------------------------------------------
-# CONFIG
-# -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
-st.title("📈 iPoultry AI – Batch Forecast")
-
-# -------------------------------------------------
-# LOAD DATA + MODELS
-# -------------------------------------------------
-@st.cache_data
-def load_data():
-    return pd.read_csv("ml_ready_daily.csv")
-
-@st.cache_resource
-def load_model(path):
-    return pickle.load(open(path, "rb"))
-
-df = load_data()
-
-weight_model = load_model("weight_xgb_model.pkl")
-mort_model   = load_model("mortality_xgb_model.pkl")
-fcr_model    = load_model("fcr_xgb_model.pkl")
-
-# CLEAN IDS
-df["farm_id"] = df["farm_id"].astype(str).str.strip()
-df["batch_id"] = df["batch_id"].astype(str).str.strip()
-
-# -------------------------------------------------
-# INPUTS
-# -------------------------------------------------
-st.subheader("🏭 Select Farm & Batch")
-
-farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
-batch_id = st.selectbox(
-    "Batch ID",
-    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
-)
-
-#st.write("IDEAL START")
-#ideal_mode = st.checkbox("🧪 Ideal Condition Test (for validation)", value=False)
-#st.write("IDEAL OVER")
 # -------------------------------------------------
 # FORECAST
 # -------------------------------------------------
 if st.button("📈 Forecast Next 7 Days"):
 
-    batch_df = df[
+    batch_df_full = df[
         (df["farm_id"] == farm_id) &
         (df["batch_id"] == batch_id)
     ].sort_values("day_number")
 
-    if batch_df.empty:
+    if batch_df_full.empty:
         st.error("❌ No data for selected batch")
         st.stop()
 
+    max_day = int(batch_df_full["day_number"].max())
+
+    # -----------------------------------
+    # CUTOFF DAY (Simulate missing future)
+    # -----------------------------------
+    cutoff_day = st.slider(
+        "Select Cutoff Day (simulate prediction from this day)",
+        min_value=5,
+        max_value=max_day - 1,
+        value=max_day - 7
+    )
+
+    batch_df = batch_df_full[
+        batch_df_full["day_number"] <= cutoff_day
+    ]
+
+    future_actual = batch_df_full[
+        (batch_df_full["day_number"] > cutoff_day) &
+        (batch_df_full["day_number"] <= cutoff_day + 7)
+    ]
+
+    if batch_df.empty:
+        st.error("❌ No data before cutoff")
+        st.stop()
+
     # -----------------------------
-    # LATEST STATE
+    # LATEST STATE (from cutoff)
     # -----------------------------
     last_row = batch_df.iloc[-1]
 
@@ -75,19 +53,17 @@ if st.button("📈 Forecast Next 7 Days"):
     nh   = float(last_row["nh"])
 
     # -----------------------------
-    # ROLLING FEATURE SAFETY
+    # ROLLING FEATURES
     # -----------------------------
     recent = batch_df.tail(7)
 
-    continuous_days = recent["day_number"].diff().dropna().eq(1).sum()
-
-    if len(recent) >= 3 and continuous_days >= 2:
+    if len(recent) >= 3:
         rolling_feed = recent["feed_today_kg"].mean()
         rolling_gain = recent["daily_weight_gain_kg"].mean()
         rolling_note = "✅ Rolling features computed from batch data"
     else:
         rolling_feed = feed_today
-        rolling_gain = 0.045  # learned baseline
+        rolling_gain = 0.045
         rolling_note = "⚠️ Insufficient continuity — using safe defaults"
 
     st.info(rolling_note)
@@ -102,33 +78,19 @@ if st.button("📈 Forecast Next 7 Days"):
 
     for d in days:
 
-        # NOT USING IDEAL MODE
-        #if ideal_mode:
-        #    feed = feed_today * 1.35
-        #    mortality = 0
-        #    temp_i, rh_i, co_i, nh_i = 28, 60, 3, 5
-        #else:
-        #    feed = feed_today
-        #    mortality = mortality_today
-        #    temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
-
-        feed = feed_today
-        mortality = mortality_today
-        temp_i, rh_i, co_i, nh_i = temp, rh, co, nh
-        
         rows.append({
             "day_number": d,
             "birds_alive": birds_alive,
-            "feed_today_kg": feed,
-            "feed_per_bird": feed / birds_alive,
-            "mortality_today": mortality,
-            "mortality_rate": mortality / birds_alive,
+            "feed_today_kg": feed_today,
+            "feed_per_bird": feed_today / birds_alive,
+            "mortality_today": mortality_today,
+            "mortality_rate": mortality_today / birds_alive,
             "rolling_7d_feed": rolling_feed,
             "rolling_7d_gain": rolling_gain,
-            "temp": temp_i,
-            "rh": rh_i,
-            "co": co_i,
-            "nh": nh_i
+            "temp": temp,
+            "rh": rh,
+            "co": co,
+            "nh": nh
         })
 
     X = pd.DataFrame(rows)
@@ -141,7 +103,7 @@ if st.button("📈 Forecast Next 7 Days"):
     pred_fcr    = fcr_model.predict(X)
 
     # -----------------------------
-    # OUTPUT
+    # OUTPUT TABLE
     # -----------------------------
     out = pd.DataFrame({
         "Day": days,
@@ -150,38 +112,37 @@ if st.button("📈 Forecast Next 7 Days"):
         "Predicted Feed / Bird": np.round(pred_fcr, 3)
     })
 
-    st.subheader("📊 Forecast Results")
-    st.dataframe(out, use_container_width=True, hide_index=True)
+    # -----------------------------------
+    # MERGE WITH ACTUAL (IF EXISTS)
+    # -----------------------------------
+    if not future_actual.empty:
+        compare = future_actual[[
+            "day_number",
+            "sample_weight_kg",
+            "mortality_today",
+            "feed_per_bird"
+        ]].copy()
 
-    # -----------------------------
-    # PLOT
-    # -----------------------------
-    fig = go.Figure()
+        compare.columns = [
+            "Day",
+            "Actual Weight (kg)",
+            "Actual Mortality",
+            "Actual Feed / Bird"
+        ]
 
-    fig.add_trace(go.Scatter(
-        x=out["Day"],
-        y=out["Predicted Weight (kg)"],
-        name="Predicted Weight",
-        mode="lines+markers",
-        line=dict(width=3)
-    ))
+        final_compare = out.merge(compare, on="Day", how="left")
 
-    fig.update_layout(
-        title="7-Day Growth Forecast",
-        xaxis_title="Bird Age (days)",
-        yaxis_title="Weight (kg)",
-        height=450
-    )
+        st.subheader("📊 Prediction vs Actual")
+        st.dataframe(final_compare, use_container_width=True)
 
-    st.plotly_chart(fig, use_container_width=True)
-
-    # -----------------------------
-    # CONFIDENCE NOTE
-    # -----------------------------
-    if "⚠️" in rolling_note:
-        st.warning(
-            "Prediction used estimated rolling features due to data gaps. "
-            "Accuracy may improve with continuous daily data."
+        # Calculate MAE
+        mae = np.mean(
+            np.abs(final_compare["Predicted Weight (kg)"] -
+                   final_compare["Actual Weight (kg)"])
         )
+
+        st.metric("📉 Weight MAE (7-day)", round(mae, 4))
+
     else:
-        st.success("Prediction based on strong continuous batch data.")
+        st.subheader("📊 Forecast Results")
+        st.dataframe(out, use_container_width=True)
