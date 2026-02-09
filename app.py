@@ -1,5 +1,50 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import pickle
+import plotly.graph_objects as go
+
 # -------------------------------------------------
-# FORECAST
+# CONFIG
+# -------------------------------------------------
+st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
+st.title("📈 iPoultry AI – Batch Forecast & Backtest")
+
+# -------------------------------------------------
+# LOAD DATA + MODELS
+# -------------------------------------------------
+@st.cache_data
+def load_data():
+    return pd.read_csv("ml_ready_daily.csv")
+
+@st.cache_resource
+def load_model(path):
+    return pickle.load(open(path, "rb"))
+
+df = load_data()
+
+weight_model = load_model("weight_xgb_model.pkl")
+mort_model   = load_model("mortality_xgb_model.pkl")
+fcr_model    = load_model("fcr_xgb_model.pkl")
+
+# CLEAN IDS
+df["farm_id"] = df["farm_id"].astype(str).str.strip()
+df["batch_id"] = df["batch_id"].astype(str).str.strip()
+
+# -------------------------------------------------
+# INPUTS
+# -------------------------------------------------
+st.subheader("🏭 Select Farm & Batch")
+
+farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
+
+batch_id = st.selectbox(
+    "Batch ID",
+    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+)
+
+# -------------------------------------------------
+# FORECAST SECTION
 # -------------------------------------------------
 if st.button("📈 Forecast Next 7 Days"):
 
@@ -14,8 +59,12 @@ if st.button("📈 Forecast Next 7 Days"):
 
     max_day = int(batch_df_full["day_number"].max())
 
+    if max_day < 10:
+        st.error("❌ Not enough historical data for backtesting")
+        st.stop()
+
     # -----------------------------------
-    # CUTOFF DAY (Simulate missing future)
+    # CUTOFF DAY SLIDER (Simulated deletion)
     # -----------------------------------
     cutoff_day = st.slider(
         "Select Cutoff Day (simulate prediction from this day)",
@@ -24,10 +73,12 @@ if st.button("📈 Forecast Next 7 Days"):
         value=max_day - 7
     )
 
+    # Data available to model
     batch_df = batch_df_full[
         batch_df_full["day_number"] <= cutoff_day
     ]
 
+    # Hidden future (actual values for comparison)
     future_actual = batch_df_full[
         (batch_df_full["day_number"] > cutoff_day) &
         (batch_df_full["day_number"] <= cutoff_day + 7)
@@ -37,9 +88,9 @@ if st.button("📈 Forecast Next 7 Days"):
         st.error("❌ No data before cutoff")
         st.stop()
 
-    # -----------------------------
-    # LATEST STATE (from cutoff)
-    # -----------------------------
+    # -------------------------------------------------
+    # LATEST STATE FROM CUTOFF
+    # -------------------------------------------------
     last_row = batch_df.iloc[-1]
 
     age_today = int(last_row["day_number"])
@@ -52,9 +103,9 @@ if st.button("📈 Forecast Next 7 Days"):
     co   = float(last_row["co"])
     nh   = float(last_row["nh"])
 
-    # -----------------------------
+    # -------------------------------------------------
     # ROLLING FEATURES
-    # -----------------------------
+    # -------------------------------------------------
     recent = batch_df.tail(7)
 
     if len(recent) >= 3:
@@ -68,9 +119,9 @@ if st.button("📈 Forecast Next 7 Days"):
 
     st.info(rolling_note)
 
-    # -----------------------------
-    # BUILD FUTURE FEATURES
-    # -----------------------------
+    # -------------------------------------------------
+    # BUILD FUTURE FEATURE MATRIX
+    # -------------------------------------------------
     horizon = 7
     days = np.arange(age_today + 1, age_today + horizon + 1)
 
@@ -95,16 +146,16 @@ if st.button("📈 Forecast Next 7 Days"):
 
     X = pd.DataFrame(rows)
 
-    # -----------------------------
+    # -------------------------------------------------
     # PREDICTIONS
-    # -----------------------------
+    # -------------------------------------------------
     pred_weight = weight_model.predict(X)
     pred_mort   = mort_model.predict(X)
     pred_fcr    = fcr_model.predict(X)
 
-    # -----------------------------
-    # OUTPUT TABLE
-    # -----------------------------
+    # -------------------------------------------------
+    # PREDICTION OUTPUT
+    # -------------------------------------------------
     out = pd.DataFrame({
         "Day": days,
         "Predicted Weight (kg)": np.round(pred_weight, 3),
@@ -112,10 +163,11 @@ if st.button("📈 Forecast Next 7 Days"):
         "Predicted Feed / Bird": np.round(pred_fcr, 3)
     })
 
-    # -----------------------------------
-    # MERGE WITH ACTUAL (IF EXISTS)
-    # -----------------------------------
+    # -------------------------------------------------
+    # COMPARE WITH ACTUAL (IF AVAILABLE)
+    # -------------------------------------------------
     if not future_actual.empty:
+
         compare = future_actual[[
             "day_number",
             "sample_weight_kg",
@@ -135,14 +187,75 @@ if st.button("📈 Forecast Next 7 Days"):
         st.subheader("📊 Prediction vs Actual")
         st.dataframe(final_compare, use_container_width=True)
 
-        # Calculate MAE
-        mae = np.mean(
-            np.abs(final_compare["Predicted Weight (kg)"] -
-                   final_compare["Actual Weight (kg)"])
+        # -----------------------------
+        # METRICS
+        # -----------------------------
+        if final_compare["Actual Weight (kg)"].notna().any():
+            mae = np.mean(
+                np.abs(
+                    final_compare["Predicted Weight (kg)"] -
+                    final_compare["Actual Weight (kg)"]
+                )
+            )
+
+            st.metric("📉 Weight MAE (7-day)", round(mae, 4))
+
+        # -----------------------------
+        # PLOT
+        # -----------------------------
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x=final_compare["Day"],
+            y=final_compare["Predicted Weight (kg)"],
+            name="Predicted",
+            mode="lines+markers"
+        ))
+
+        fig.add_trace(go.Scatter(
+            x=final_compare["Day"],
+            y=final_compare["Actual Weight (kg)"],
+            name="Actual",
+            mode="lines+markers"
+        ))
+
+        fig.update_layout(
+            title="Prediction vs Actual Weight",
+            xaxis_title="Bird Age (days)",
+            yaxis_title="Weight (kg)",
+            height=450
         )
 
-        st.metric("📉 Weight MAE (7-day)", round(mae, 4))
+        st.plotly_chart(fig, use_container_width=True)
 
     else:
         st.subheader("📊 Forecast Results")
         st.dataframe(out, use_container_width=True)
+
+        fig = go.Figure()
+
+        fig.add_trace(go.Scatter(
+            x=out["Day"],
+            y=out["Predicted Weight (kg)"],
+            name="Predicted",
+            mode="lines+markers"
+        ))
+
+        fig.update_layout(
+            title="7-Day Growth Forecast",
+            xaxis_title="Bird Age (days)",
+            yaxis_title="Weight (kg)",
+            height=450
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    # -------------------------------------------------
+    # CONFIDENCE NOTE
+    # -------------------------------------------------
+    if "⚠️" in rolling_note:
+        st.warning(
+            "Prediction used estimated rolling features due to limited history."
+        )
+    else:
+        st.success("Prediction based on strong continuous batch data.")
