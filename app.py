@@ -10,6 +10,6 @@ st.markdown("""
 Welcome to **iPoultry AI**.
 
 Use the menu on the left to:
-- 🧑‍🌾 Run **Daily Health Predictions**
-- 🧪 Validate **Forecast & Models**
+- 🧑‍🌾 Farmer's section for **Daily Health Predictions**
+- 🧪 Vendor's section for **Validating Forecast & Models**
 """)
