@@ -123,6 +123,7 @@ if st.button("📈 Run Recursive Forecast"):
             "birds_alive": current_birds,
             "feed_today_kg": feed_today,
             "feed_per_bird": feed_today / current_birds,
+            "mortality_today": mortality_today,          # ✅ ADD BACK
             "mortality_rate": mortality_today / current_birds,
             "rolling_7d_feed": rolling_feed,
             "rolling_7d_gain": rolling_gain,
