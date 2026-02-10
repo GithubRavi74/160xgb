@@ -14,7 +14,7 @@ st.set_page_config(
     page_title="iPoultry AI – Recursive Forecast",
     layout="wide"
 )
-st.title("📈 Forecast & Model Validation (Internal)")
+st.title("📈 Forecast & Model Validation (For Vendor)")
 
 # -------------------------------------------------
 # LOAD DATA + MODELS
