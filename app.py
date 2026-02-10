@@ -7,19 +7,18 @@ import plotly.graph_objects as go
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Recursive Forecast", layout="wide")
+st.set_page_config(
+    page_title="iPoultry AI – Recursive Forecast",
+    layout="wide"
+)
 st.title("📈 iPoultry AI – Recursive Growth Forecast & Validation")
 
 # -------------------------------------------------
-# LOAD DATA + MODELS
+# LOAD DATA + MODELS (NO MODEL CACHING)
 # -------------------------------------------------
 @st.cache_data
 def load_data():
     return pd.read_csv("ml_ready_daily.csv")
-
-#@st.cache_resource
-#def load_model(path):
-#    return pickle.load(open(path, "rb"))
 
 def load_model(path):
     with open(path, "rb") as f:
@@ -31,9 +30,9 @@ gain_model = load_model("weight_gain_xgb_model.pkl")
 mort_model = load_model("mortality_xgb_model.pkl")
 fcr_model  = load_model("fcr_xgb_model.pkl")
 
-
-
+# -------------------------------------------------
 # CLEAN IDS
+# -------------------------------------------------
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
 
@@ -48,9 +47,11 @@ batch_id = st.selectbox(
     sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
 )
 
+# -------------------------------------------------
+# RUN FORECAST
+# -------------------------------------------------
 if st.button("📈 Run Recursive Forecast"):
-    st.write("MODEL FEATURES")
-    gain_model.get_booster().feature_names
+
     # -------------------------------------------------
     # FULL BATCH DATA
     # -------------------------------------------------
@@ -60,7 +61,7 @@ if st.button("📈 Run Recursive Forecast"):
     ].sort_values("day_number")
 
     if batch_full.empty:
-        st.error("No data found")
+        st.error("No data found for selected Farm & Batch")
         st.stop()
 
     st.subheader("📋 Full Batch Data")
@@ -90,14 +91,17 @@ if st.button("📈 Run Recursive Forecast"):
     last = history.iloc[-1]
 
     # -------------------------------------------------
-    # INITIAL STATE
+    # INITIAL STATE (AT CUTOFF)
     # -------------------------------------------------
     current_day = int(last["day_number"])
     current_weight = float(last["sample_weight_kg"])
     current_birds = int(last["birds_alive"])
 
     feed_today = float(last["feed_today_kg"])
-    mortality_today = float(last["mortality_today"])
+
+    # IMPORTANT: mortality_today is NOT a feature
+    # It will be predicted recursively
+    mortality_today = 0
 
     temp, rh, co, nh = last["temp"], last["rh"], last["co"], last["nh"]
 
@@ -128,23 +132,19 @@ if st.button("📈 Run Recursive Forecast"):
             "nh": nh
         }])
 
-        st.write("Model expects:", gain_model.get_booster().feature_names)
-        st.write("Inference columns:", X.columns.tolist())
+        # Safety check (optional but useful)
+        assert X.columns.tolist() == gain_model.get_booster().feature_names
 
-
-
-
-        
-
+        # --- MODEL PREDICTIONS ---
         gain_pred = gain_model.predict(X)[0]
         mort_pred = max(0, int(mort_model.predict(X)[0]))
         fcr_pred  = fcr_model.predict(X)[0]
 
-        # UPDATE BIOLOGICAL STATE
+        # --- UPDATE BIOLOGICAL STATE ---
         current_weight += gain_pred
         current_birds = max(1, current_birds - mort_pred)
+        mortality_today = mort_pred
 
-        # Update rolling gain
         rolling_gain = (rolling_gain * 6 + gain_pred) / 7
 
         predictions.append({
@@ -162,7 +162,7 @@ if st.button("📈 Run Recursive Forecast"):
     st.dataframe(pred_df, use_container_width=True)
 
     # -------------------------------------------------
-    # COMPARISON
+    # COMPARISON WITH ACTUAL
     # -------------------------------------------------
     if not future_actual.empty:
         actual = future_actual[[
@@ -178,7 +178,10 @@ if st.button("📈 Run Recursive Forecast"):
         st.dataframe(compare, use_container_width=True)
 
         mae = np.mean(
-            np.abs(compare["Predicted Weight (kg)"] - compare["Actual Weight (kg)"])
+            np.abs(
+                compare["Predicted Weight (kg)"] -
+                compare["Actual Weight (kg)"]
+            )
         )
 
         st.metric("📉 Weight MAE (7-day)", round(mae, 4))
@@ -202,4 +205,5 @@ if st.button("📈 Run Recursive Forecast"):
             yaxis_title="Weight (kg)",
             height=450
         )
+
         st.plotly_chart(fig, use_container_width=True)
