@@ -112,7 +112,6 @@ if st.button("📈 Run Recursive Forecast"):
             "birds_alive": current_birds,
             "feed_today_kg": feed_today,
             "feed_per_bird": feed_today / current_birds,
-            "mortality_today": mortality_today,
             "mortality_rate": mortality_today / current_birds,
             "rolling_7d_feed": rolling_feed,
             "rolling_7d_gain": rolling_gain,
@@ -121,6 +120,14 @@ if st.button("📈 Run Recursive Forecast"):
             "co": co,
             "nh": nh
         }])
+
+        st.write("Model expects:", gain_model.get_booster().feature_names)
+        st.write("Inference columns:", X.columns.tolist())
+
+
+
+
+        
 
         gain_pred = gain_model.predict(X)[0]
         mort_pred = max(0, int(mort_model.predict(X)[0]))
