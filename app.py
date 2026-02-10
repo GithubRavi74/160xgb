@@ -17,9 +17,13 @@ st.title("📈 iPoultry AI – Recursive Growth Forecast & Validation")
 def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
-@st.cache_resource
+#@st.cache_resource
+#def load_model(path):
+#    return pickle.load(open(path, "rb"))
+
 def load_model(path):
-    return pickle.load(open(path, "rb"))
+    with open(path, "rb") as f:
+        return pickle.load(f)
 
 df = load_data()
 
