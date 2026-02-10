@@ -27,6 +27,8 @@ gain_model = load_model("weight_gain_xgb_model.pkl")
 mort_model = load_model("mortality_xgb_model.pkl")
 fcr_model  = load_model("fcr_xgb_model.pkl")
 
+
+
 # CLEAN IDS
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
@@ -43,7 +45,8 @@ batch_id = st.selectbox(
 )
 
 if st.button("📈 Run Recursive Forecast"):
-
+    st.print("MODEL FEATURES")
+    gain_model.get_booster().feature_names
     # -------------------------------------------------
     # FULL BATCH DATA
     # -------------------------------------------------
