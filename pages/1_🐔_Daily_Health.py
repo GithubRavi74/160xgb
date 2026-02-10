@@ -52,6 +52,11 @@ if batch_hist.empty:
 
 last = batch_hist.iloc[-1]
 
+# Yesterday reference
+y_mort_rate = last["mortality_today"] / max(last["birds_alive"], 1)
+y_gain = last["daily_weight_gain_kg"]
+
+
 # -------------------------------------------------
 # AUTO CONTEXT (SYSTEM ONLY)
 # -------------------------------------------------
@@ -125,6 +130,11 @@ if st.button("🔮 Predict Today"):
 
     gain_pred = max(0, gain_model.predict(X)[0])
     mort_pred = max(0, int(mort_model.predict(X)[0]))
+
+    # --- Trend arrows ---
+    mort_trend = "⬆️" if mortality_rate > y_mort_rate else "⬇️"
+    gain_trend = "⬆️" if gain_pred > y_gain else "⬇️"
+
 
     # Derived FCR
     if gain_pred > 0:
