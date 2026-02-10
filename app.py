@@ -5,7 +5,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🐔 iPoultry AI Platform")
+st.title("🐔 iPoultry AI Shield")
 st.markdown("""
 Welcome to **iPoultry AI**.
 
