@@ -45,7 +45,7 @@ batch_id = st.selectbox(
 )
 
 if st.button("📈 Run Recursive Forecast"):
-    st.print("MODEL FEATURES")
+    st.write("MODEL FEATURES")
     gain_model.get_booster().feature_names
     # -------------------------------------------------
     # FULL BATCH DATA
