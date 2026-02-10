@@ -26,10 +26,9 @@ def load_model(path):
 
 df = load_data()
 
+# ✅ ONLY LOAD MODELS THAT SHOULD EXIST
 gain_model = load_model("weight_gain_xgb_model.pkl")
 mort_model = load_model("mortality_xgb_model.pkl")
-
-# ❌ FCR MODEL REMOVED (DERIVED INSTEAD)
 
 # -------------------------------------------------
 # CLEAN IDS
@@ -53,9 +52,6 @@ batch_id = st.selectbox(
 # -------------------------------------------------
 if st.button("📈 Run Recursive Forecast"):
 
-    # -------------------------------------------------
-    # FULL BATCH DATA
-    # -------------------------------------------------
     batch_full = df[
         (df["farm_id"] == farm_id) &
         (df["batch_id"] == batch_id)
@@ -71,23 +67,17 @@ if st.button("📈 Run Recursive Forecast"):
     max_day = int(batch_full["day_number"].max())
 
     cutoff_day = st.slider(
-        "Select Cutoff Day (simulate unknown future)",
+        "Select Cutoff Day",
         min_value=5,
         max_value=max_day - 1,
         value=max_day - 7
     )
 
-    # -------------------------------------------------
-    # CUTOFF HISTORY
-    # -------------------------------------------------
     history = batch_full[batch_full["day_number"] <= cutoff_day]
     future_actual = batch_full[
         (batch_full["day_number"] > cutoff_day) &
         (batch_full["day_number"] <= cutoff_day + 7)
     ]
-
-    st.subheader("✂️ Data Visible to Model (Cutoff)")
-    st.dataframe(history, use_container_width=True)
 
     last = history.iloc[-1]
 
@@ -97,7 +87,6 @@ if st.button("📈 Run Recursive Forecast"):
     current_day = int(last["day_number"])
     current_weight = float(last["sample_weight_kg"])
     current_birds = int(last["birds_alive"])
-
     feed_today = float(last["feed_today_kg"])
 
     mortality_today = 0  # predicted recursively
@@ -121,8 +110,8 @@ if st.button("📈 Run Recursive Forecast"):
             "day_number": day,
             "birds_alive": current_birds,
             "feed_today_kg": feed_today,
-            "feed_per_bird": feed_today / current_birds,
-            "mortality_rate": mortality_today / current_birds,
+            "feed_per_bird": feed_today / max(current_birds, 1),
+            "mortality_rate": mortality_today / max(current_birds, 1),
             "rolling_7d_feed": rolling_feed,
             "rolling_7d_gain": rolling_gain,
             "temp": temp,
@@ -131,26 +120,24 @@ if st.button("📈 Run Recursive Forecast"):
             "nh": nh
         }])
 
-        # enforce exact feature order
         X = X[gain_model.get_booster().feature_names]
 
         # --- MODEL PREDICTIONS ---
-        gain_pred = max(0.001, gain_model.predict(X)[0])
+        gain_pred = max(0, gain_model.predict(X)[0])
         mort_pred = max(0, int(mort_model.predict(X)[0]))
 
-        # --- DERIVED FCR (CORRECT WAY) ---
-        # daily FCR derived from feed / predicted gain
-        fcr_pred = feed_today / gain_pred
-
-        # biological caps
-        fcr_pred = min(max(fcr_pred, 1.0), 3.5)
-
-        # --- UPDATE BIOLOGICAL STATE ---
+        # --- BIOLOGICAL UPDATE ---
         current_weight += gain_pred
         current_birds = max(1, current_birds - mort_pred)
         mortality_today = mort_pred
 
         rolling_gain = (rolling_gain * 6 + gain_pred) / 7
+
+        # ✅ DERIVED FCR (NO MODEL)
+        if gain_pred > 0 and current_birds > 0:
+            fcr = feed_today / (gain_pred * current_birds)
+        else:
+            fcr = np.nan
 
         predictions.append({
             "Day": day,
@@ -158,57 +145,10 @@ if st.button("📈 Run Recursive Forecast"):
             "Predicted Daily Gain (kg)": round(gain_pred, 4),
             "Predicted Mortality": mort_pred,
             "Birds Alive": current_birds,
-            "Predicted FCR": round(fcr_pred, 3)
+            "Derived FCR": round(fcr, 3)
         })
 
     pred_df = pd.DataFrame(predictions)
 
     st.subheader("🔮 Recursive Predictions")
     st.dataframe(pred_df, use_container_width=True)
-
-    # -------------------------------------------------
-    # COMPARISON WITH ACTUAL
-    # -------------------------------------------------
-    if not future_actual.empty:
-        actual = future_actual[[
-            "day_number",
-            "sample_weight_kg"
-        ]].copy()
-
-        actual.columns = ["Day", "Actual Weight (kg)"]
-
-        compare = pred_df.merge(actual, on="Day", how="left")
-
-        st.subheader("📊 Prediction vs Actual")
-        st.dataframe(compare, use_container_width=True)
-
-        mae = np.mean(
-            np.abs(
-                compare["Predicted Weight (kg)"] -
-                compare["Actual Weight (kg)"]
-            )
-        )
-
-        st.metric("📉 Weight MAE (7-day)", round(mae, 4))
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=compare["Day"],
-            y=compare["Predicted Weight (kg)"],
-            name="Predicted",
-            mode="lines+markers"
-        ))
-        fig.add_trace(go.Scatter(
-            x=compare["Day"],
-            y=compare["Actual Weight (kg)"],
-            name="Actual",
-            mode="lines+markers"
-        ))
-        fig.update_layout(
-            title="Recursive Forecast vs Actual",
-            xaxis_title="Day",
-            yaxis_title="Weight (kg)",
-            height=450
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
