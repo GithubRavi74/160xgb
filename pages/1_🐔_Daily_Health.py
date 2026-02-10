@@ -156,37 +156,37 @@ if st.button("🔮 Predict Today"):
 
     
     
-# -------------------------------------------------
-# PREDICTION CONFIDENCE
-# -------------------------------------------------
-confidence = 100
+    # -------------------------------------------------
+    # PREDICTION CONFIDENCE
+    # -------------------------------------------------
+    confidence = 100
 
-# Data depth
-if len(batch_hist) < 7:
-    confidence -= 30
+    # Data depth
+    if len(batch_hist) < 7:
+        confidence -= 30
 
-# Early cycle uncertainty
-if current_day < 5:
-    confidence -= 20
+    # Early cycle uncertainty
+    if current_day < 5:
+        confidence -= 20
 
-# Weight observation helps gain accuracy
-if sample_weight > 0:
-    confidence += 10
+    # Weight observation helps gain accuracy
+    if sample_weight > 0:
+        confidence += 10
 
-# Environment instability
-if abs(temp - last["temp"]) > 3:
-    confidence -= 10
-if abs(nh - last["nh"]) > 10:
-    confidence -= 10
+    # Environment instability
+    if abs(temp - last["temp"]) > 3:
+        confidence -= 10
+    if abs(nh - last["nh"]) > 10:
+        confidence -= 10
 
-confidence = max(20, min(confidence, 95))
+    confidence = max(20, min(confidence, 95))
 
-if confidence >= 75:
-    confidence_label = "🟢 High"
-elif confidence >= 50:
-    confidence_label = "🟡 Medium"
-else:
-    confidence_label = "🔴 Low"
+    if confidence >= 75:
+        confidence_label = "🟢 High"
+    elif confidence >= 50:
+        confidence_label = "🟡 Medium"
+    else:
+        confidence_label = "🔴 Low"
 
     
     # -------------------------------------------------
