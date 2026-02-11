@@ -205,14 +205,45 @@ if st.button("🔮 Predict Today"):
     #colB.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
     #colC.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
 
-    colA, colB = st.columns(2)
-    colA.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
-    colB.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
+    ###############
+    #colA, colB = st.columns(2)
+    #colA.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
+    #colB.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
     
-    if not np.isnan(fcr):
-        st.metric("Derived FCR", round(fcr, 2))
+    #if not np.isnan(fcr):
+        #st.metric("Derived FCR", round(fcr, 2))
+    ##############
 
-    st.subheader("📘 How to read this")
+    st.markdown("### 📊 AI Forecast Summary")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown("#### 📈 Daily Gain")
+        st.metric(
+            label="Expected Gain (kg)",
+            value=f"{gain_pred:.3f}",
+            delta=f"{gain_arrow} vs yesterday | {gain_3d} (3-day)"
+        )
+
+    with col2:
+        st.markdown("#### ☠️ Mortality Risk")
+        st.metric(
+            label="Tomorrow Risk",
+            value=f"{mort_pred}",
+            delta=f"{mort_arrow} vs yesterday | {mort_3d} (3-day)"
+        )
+
+    with col3:
+        if not np.isnan(fcr):
+            st.markdown("#### 🍽️ Feed Efficiency")
+            st.metric(
+                label="Derived FCR",
+                value=f"{fcr:.2f}"
+            )
+
+
+    
+    #st.subheader("📘 How to read this")
+    st.markdown("📘 How to read this")
     st.info(
         "⬆️ means higher than recent days, ⬇️ means lower, ➖ means no reliable comparison. "
         "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
