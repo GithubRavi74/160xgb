@@ -10,10 +10,16 @@ st.title("📊 Disease Monitoring Dashboard")
 # Load Dataset
 # -------------------------------------------------
 @st.cache_data
-def load_data():
-    return pd.read_csv("farm_data.csv")
 
-df = load_data()
+# COMMENTED BELOW SO AS TO NOT HARDCODE THE CSV
+#def load_data():
+    #return pd.read_csv("farm_data.csv")
+#df = load_data()
+
+from utils.data_loader import load_farm_data
+df = load_farm_data()
+
+
 
 if df.empty:
     st.error("No farm data available.")
