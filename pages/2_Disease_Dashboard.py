@@ -2,25 +2,25 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
-st.set_page_config(page_title="Disease Dashboard", layout="wide")
+from utils.data_loader import load_farm_data
 
+st.set_page_config(page_title="Disease Dashboard", layout="wide")
 st.title("📊 Disease Monitoring Dashboard")
 
 # -------------------------------------------------
 # Load Dataset
 # -------------------------------------------------
+df = load_farm_data()
+
 @st.cache_data
 
+#######################################################
 # COMMENTED BELOW SO AS TO NOT HARDCODE THE CSV
 #def load_data():
     #return pd.read_csv("farm_data.csv")
 #df = load_data()
-
-from utils.data_loader import load_farm_data
-df = load_farm_data()
-
-
-
+#######################################################
+ 
 if df.empty:
     st.error("No farm data available.")
     st.stop()
