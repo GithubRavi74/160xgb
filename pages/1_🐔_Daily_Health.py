@@ -250,7 +250,8 @@ if st.button("🔮 Predict Today"):
         "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
     )
 
-
+    st.markdown("\n")
+    st.markdown("\n")
     # -------------------------------------------------
     # DISEASE-TYPE PROBABILITY (Explainable Rule Engine)
     # -------------------------------------------------
