@@ -148,11 +148,11 @@ if st.button("🔮 Predict Today"):
     if not np.isnan(fcr) and fcr > 2.2: health_score -= 15
 
     if health_score >= 75:
-        st.success("🟢 Normal - Flock condition appears stable 👍")
+        status = "🟢 Normal - Flock condition appears stable 👍"
     elif health_score >= 50:
-        st.warning("🟡 Watch - Monitor closely")
+        status = ""🟡 Watch - Monitor closely"
     else:
-        st.error("🔴 Risk - Immediate attention required")
+        status = "🔴 Risk - Immediate attention required"
 
     
     # -------------------------------------------------
@@ -175,12 +175,40 @@ if st.button("🔮 Predict Today"):
     confidence = max(50, confidence)
 
     if confidence >= 85:
-        st.success(f"High Confidence ({confidence}%)")
-    elif confidence >= 70:
-        st.warning(f"Moderate Confidence ({confidence}%)")
+        #st.success(f"High Confidence ({confidence}%)")
+        confidence_label = "🟢🟢Very High Confidence"
+    if confidence >= 75:
+        #st.success(f"High Confidence ({confidence}%)")
+        confidence_label = "🟢Good Condifence"    
+    elif confidence >= 50:
+        confidence_label = "🟡 Medium Confidence"
+        #st.warning(f"Moderate Confidence ({confidence}%)")
     else:
-        st.error(f"Low Confidence ({confidence}%) – Inputs far from historical patterns")
+        confidence_label = "🔴Low Confidence"
+        #st.error(f"Low Confidence ({confidence}%) – Inputs far from historical patterns")
 
+    
+    # -------------------------------------------------
+    # OUTPUT
+    # -------------------------------------------------
+    st.subheader("📊 AI Assessment for Today")
+
+    st.metric("Prediction Confidence", confidence_label)
+
+    colA, colB, colC = st.columns(3)
+
+    colA.metric("Health Status", status)
+    colB.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
+    colC.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
+
+    if not np.isnan(fcr):
+        st.metric("Derived FCR", round(fcr, 2))
+
+    st.subheader("📘 How to read this")
+    st.info(
+        "⬆️ means higher than recent days, ⬇️ means lower, ➖ means no reliable comparison. "
+        "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
+    )
 
 
     # -------------------------------------------------
