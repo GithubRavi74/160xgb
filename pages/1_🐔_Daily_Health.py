@@ -176,10 +176,10 @@ if st.button("🔮 Predict Today"):
 
     if confidence >= 85:
         #st.success(f"High Confidence ({confidence}%)")
-        confidence_label = "🟢🟢Very High Confidence"
+        confidence_label = "⭐Very High Confidence"
     if confidence >= 75:
         #st.success(f"High Confidence ({confidence}%)")
-        confidence_label = "🟢Good Condifence"    
+        confidence_label = "🟢Good Confidence"    
     elif confidence >= 50:
         confidence_label = "🟡 Medium Confidence"
         #st.warning(f"Moderate Confidence ({confidence}%)")
@@ -193,8 +193,12 @@ if st.button("🔮 Predict Today"):
     # -------------------------------------------------
     st.subheader("📊 AI Assessment for Today")
 
-    st.metric("Prediction Confidence", confidence_label)
-    st.metric("Health Status", status)
+    #st.metric("Prediction Confidence", confidence_label)
+    #st.metric("Health Status", status)
+
+    #TO PRINT CONFIDENCE AND HEALTH IN SMALLER FONT
+    st.markdown(f"**Prediction Confidence:** {confidence_label}")
+    st.markdown(f"**Health Status:** {status}")
 
     #colA, colB, colC = st.columns(3)
     #colA.metric("Health Status", status)
