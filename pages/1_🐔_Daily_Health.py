@@ -158,7 +158,7 @@ if st.button("🔮 Predict Today"):
     # -------------------------------------------------
     # CONFIDENCE SCORE (Model Stability Check)
     # -------------------------------------------------
-    st.subheader("🎯 Prediction Confidence")
+    #st.subheader("🎯 Prediction Confidence")
 
     confidence = 100
 
