@@ -209,6 +209,57 @@ if st.button("🔮 Predict Today"):
     else:
         confidence_label = "🔴 Low"
 
+
+    # -------------------------------------------------
+    # DISEASE-TYPE PROBABILITY (Explainable Rule Engine)
+    # -------------------------------------------------
+    disease_scores = {
+        "🫁 Respiratory Stress": 0,
+        "🦠 Gut / Enteric Stress": 0,
+        "🌡 Heat Stress": 0
+    }
+
+    # --- Respiratory Pattern ---
+    if nh > 25:
+        disease_scores["🫁 Respiratory Stress"] += 30
+    if co > 3000:
+        disease_scores["🫁 Respiratory Stress"] += 20
+    if mortality_rate > 0.004:
+        disease_scores["🫁 Respiratory Stress"] += 20
+    if gain_pred < rolling_gain * 0.9:
+        disease_scores["🫁 Respiratory Stress"] += 10
+
+    # --- Gut / Enteric Pattern ---
+    if not np.isnan(fcr) and fcr > 2.3:
+        disease_scores["🦠 Gut / Enteric Stress"] += 35
+    if gain_pred < rolling_gain * 0.9:
+        disease_scores["🦠 Gut / Enteric Stress"] += 25
+    if mortality_rate > 0.003:
+        disease_scores["🦠 Gut / Enteric Stress"] += 15
+
+    # --- Heat Stress Pattern ---
+    if temp > 32:
+        disease_scores["🌡 Heat Stress"] += 40
+    if rh > 75:
+        disease_scores["🌡 Heat Stress"] += 20
+    if gain_pred < y_gain * 0.9:
+        disease_scores["🌡 Heat Stress"] += 15
+    if mortality_rate > 0.004:
+        disease_scores["🌡 Heat Stress"] += 10
+
+    # -------------------------------------------------
+    # Adjust by Confidence (low confidence reduces certainty)
+    # -------------------------------------------------
+    confidence_factor = confidence / 100
+
+    for k in disease_scores:
+        disease_scores[k] = min(int(disease_scores[k] * confidence_factor), 95)
+
+    # Sort highest first
+    sorted_diseases = sorted(disease_scores.items(), key=lambda x: x[1], reverse=True)
+
+
+
     
     # -------------------------------------------------
     # OUTPUT
@@ -232,6 +283,25 @@ if st.button("🔮 Predict Today"):
         "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
     )
 
+    # -------------------------------------------------
+    # DISEASE-TYPE DISPLAY
+    # -------------------------------------------------
+    st.subheader("🧬 Likely Stress Type")
+
+    top_disease, top_score = sorted_diseases[0]
+
+    for disease, score in sorted_diseases:
+        st.write(f"**{disease} — {score}% likelihood**")
+        st.progress(score / 100)
+
+    if top_score >= 50:
+        st.warning(f"Primary concern: {top_disease}")
+    elif top_score >= 30:
+        st.info(f"Possible developing issue: {top_disease}")
+    else:
+        st.success("No strong stress pattern detected.")
+
+    
     st.subheader("⚠ Alerts & Actions")
     if temp > 34:
         st.warning("High temperature — improve cooling or ventilation")
