@@ -213,6 +213,7 @@ if st.button("🔮 Predict Today"):
     #if not np.isnan(fcr):
         #st.metric("Derived FCR", round(fcr, 2))
     ##############
+    st.markdown("\n")
 
     st.markdown("### 📊 AI Forecast Summary")
     col1, col2, col3 = st.columns(3)
@@ -241,9 +242,9 @@ if st.button("🔮 Predict Today"):
             )
 
 
-    
+    st.markdown("\n")
     #st.subheader("📘 How to read this")
-    #st.markdown("📘 How to read this")
+    st.markdown("📘 How to read this")
     st.info(
         "⬆️ means higher than recent days, ⬇️ means lower, ➖ means no reliable comparison. "
         "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
