@@ -260,6 +260,35 @@ if st.button("🔮 Predict Today"):
 
 
 
+    # -------------------------------------------------
+    # RECOMMENDED ACTIONS (Dynamic by Stress Type)
+    # -------------------------------------------------
+    st.subheader("🛠 Recommended Actions")
+
+    top_disease, top_score = sorted_diseases[0]
+
+    if top_disease == "🫁 Respiratory Stress":
+        st.write("• Increase ventilation rate immediately")
+        st.write("• Check litter moisture and remove wet spots")
+        st.write("• Inspect birds for coughing / nasal discharge")
+        st.write("• Review ammonia and CO₂ sensor calibration")
+
+    elif top_disease == "🦠 Gut / Enteric Stress":
+        st.write("• Check feed quality and storage conditions")
+        st.write("• Inspect droppings for consistency changes")
+        st.write("• Review recent feed formulation changes")
+        st.write("• Consider probiotic / gut health support program")
+
+    elif top_disease == "🌡 Heat Stress":
+        st.write("• Activate cooling system or foggers")
+        st.write("• Increase air speed across birds")
+        st.write("• Ensure cool, clean drinking water supply")
+        st.write("• Reduce stocking density impact if possible")
+
+    else:
+        st.write("Continue standard monitoring procedures.")
+
+
     
     # -------------------------------------------------
     # OUTPUT
