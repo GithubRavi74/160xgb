@@ -244,7 +244,7 @@ if st.button("🔮 Predict Today"):
         st.success("Flock condition appears stable 👍")
 
     if early_risk:
-    st.error(
+     st.error(
         "🚨 Early health stress detected: " +
         ", ".join(risk_reasons) +
         ". Consider checking ventilation, litter, and bird behavior."
