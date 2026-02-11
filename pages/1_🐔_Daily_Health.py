@@ -243,7 +243,7 @@ if st.button("🔮 Predict Today"):
 
     
     #st.subheader("📘 How to read this")
-    st.markdown("📘 How to read this")
+    #st.markdown("📘 How to read this")
     st.info(
         "⬆️ means higher than recent days, ⬇️ means lower, ➖ means no reliable comparison. "
         "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
