@@ -150,7 +150,7 @@ if st.button("🔮 Predict Today"):
     if health_score >= 75:
         status = "🟢 Normal - Flock condition appears stable 👍"
     elif health_score >= 50:
-        status = ""🟡 Watch - Monitor closely"
+        status = "🟡 Watch - Monitor closely"
     else:
         status = "🔴 Risk - Immediate attention required"
 
