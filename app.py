@@ -6,6 +6,26 @@ st.set_page_config(
     layout="wide"
 )
 
+# Hide default "app" label
+st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] > div:first-child {
+            padding-top: 1rem;
+        }
+        section[data-testid="stSidebarNav"] > ul {
+            margin-top: 0px;
+        }
+        section[data-testid="stSidebarNav"]::before {
+            content: "Menu";
+            font-size: 22px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+
 #st.sidebar.title("🐔 iPoultry AI Suite")
 #st.sidebar.markdown("Smart Broiler Intelligence Platform")
 
