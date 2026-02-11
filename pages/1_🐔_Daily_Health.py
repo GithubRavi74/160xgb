@@ -194,13 +194,17 @@ if st.button("🔮 Predict Today"):
     st.subheader("📊 AI Assessment for Today")
 
     st.metric("Prediction Confidence", confidence_label)
+    st.metric("Health Status", status)
 
-    colA, colB, colC = st.columns(3)
+    #colA, colB, colC = st.columns(3)
+    #colA.metric("Health Status", status)
+    #colB.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
+    #colC.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
 
-    colA.metric("Health Status", status)
-    colB.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
-    colC.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
-
+    colA, colB = st.columns(2)
+    colA.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
+    colB.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
+    
     if not np.isnan(fcr):
         st.metric("Derived FCR", round(fcr, 2))
 
