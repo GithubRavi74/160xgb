@@ -154,8 +154,8 @@ if st.button("🔮 Predict Today"):
     else:
         status = "🔴 Risk"
 
-    #if health_score >= 75:
-        #st.success("Flock condition appears stable 👍")
+    if health_score >= 75:
+        st.success("Flock condition appears stable 👍")
 
     # -------------------------------------------------
     # CONFIDENCE SCORE (Model Stability Check)
