@@ -6,6 +6,10 @@ st.set_page_config(
     layout="wide"
 )
 
+st.sidebar.title("🐔 iPoultry AI Suite")
+st.sidebar.markdown("Smart Broiler Intelligence Platform")
+
+
 st.title("🐔 iPoultry AI Shield")
 st.markdown("""
 Welcome to **iPoultry AI**.
