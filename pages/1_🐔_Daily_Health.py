@@ -179,12 +179,12 @@ if st.button("🔮 Predict Today"):
         confidence_label = "⭐Very High Confidence"
     if confidence >= 75:
         #st.success(f"High Confidence ({confidence}%)")
-        confidence_label = "🟢Good Confidence"    
+        confidence_label = "🟢Good"    
     elif confidence >= 50:
-        confidence_label = "🟡 Medium Confidence"
+        confidence_label = "🟡 Medium"
         #st.warning(f"Moderate Confidence ({confidence}%)")
     else:
-        confidence_label = "🔴Low Confidence"
+        confidence_label = "🔴Poor"
         #st.error(f"Low Confidence ({confidence}%) – Inputs far from historical patterns")
 
     
