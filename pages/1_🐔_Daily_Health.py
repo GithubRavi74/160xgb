@@ -148,7 +148,14 @@ if st.button("🔮 Predict Today"):
     if not np.isnan(fcr) and fcr > 2.2: health_score -= 15
 
     if health_score >= 75:
-        st.success("Flock condition appears stable 👍")
+        status = "🟢 Normal-Flock condition appears stable 👍"
+    elif health_score >= 50:
+        status = "🟡 Watch"
+    else:
+        status = "🔴 Risk"
+
+    #if health_score >= 75:
+        #st.success("Flock condition appears stable 👍")
 
     # -------------------------------------------------
     # CONFIDENCE SCORE (Model Stability Check)
