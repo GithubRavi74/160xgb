@@ -316,6 +316,8 @@ if st.button("🔮 Predict Today"):
     else:
         st.success("No dominant stress pattern detected.")
 
+    st.markdown("\n")
+    st.markdown("\n")
     # -------------------------------------------------
     # RECOMMENDED ACTIONS PER STRESS TYPE
     # -------------------------------------------------
