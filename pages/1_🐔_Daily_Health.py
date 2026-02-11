@@ -154,7 +154,28 @@ if st.button("🔮 Predict Today"):
     else:
         status = "🔴 Risk"
 
-    
+    # -------------------------------------------------
+    # EARLY DISEASE / STRESS WARNING
+    # -------------------------------------------------
+    early_risk = False
+    risk_reasons = []
+
+    if mortality_rate > 0.004:
+        early_risk = True
+        risk_reasons.append("rising mortality")
+
+    if gain_pred < rolling_gain * 0.9:
+        early_risk = True
+        risk_reasons.append("slowing weight gain")
+
+    if nh > 25:
+        early_risk = True
+        risk_reasons.append("high ammonia")
+
+    if not np.isnan(fcr) and fcr > 2.3:
+        early_risk = True
+        risk_reasons.append("poor feed conversion")
+
     
     # -------------------------------------------------
     # PREDICTION CONFIDENCE
@@ -194,6 +215,8 @@ if st.button("🔮 Predict Today"):
     # -------------------------------------------------
     st.subheader("📊 AI Assessment for Today")
 
+    st.metric("Prediction Confidence", confidence_label)
+
     colA, colB, colC = st.columns(3)
 
     colA.metric("Health Status", status)
@@ -219,3 +242,11 @@ if st.button("🔮 Predict Today"):
 
     if health_score >= 75:
         st.success("Flock condition appears stable 👍")
+
+    if early_risk:
+    st.error(
+        "🚨 Early health stress detected: " +
+        ", ".join(risk_reasons) +
+        ". Consider checking ventilation, litter, and bird behavior."
+            )
+
