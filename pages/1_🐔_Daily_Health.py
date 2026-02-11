@@ -148,140 +148,203 @@ if st.button("🔮 Predict Today"):
     if not np.isnan(fcr) and fcr > 2.2: health_score -= 15
 
     if health_score >= 75:
-        st.success("Flock condition appears stable 👍")
+        status = "🟢 Normal"
+    elif health_score >= 50:
+        status = "🟡 Watch"
+    else:
+        status = "🔴 Risk"
 
     # -------------------------------------------------
-    # CONFIDENCE SCORE (Model Stability Check)
+    # EARLY DISEASE / STRESS WARNING
     # -------------------------------------------------
-    st.subheader("🎯 Prediction Confidence")
+    early_risk = False
+    risk_reasons = []
 
+    if mortality_rate > 0.004:
+        early_risk = True
+        risk_reasons.append("rising mortality")
+
+    if gain_pred < rolling_gain * 0.9:
+        early_risk = True
+        risk_reasons.append("slowing weight gain")
+
+    if nh > 25:
+        early_risk = True
+        risk_reasons.append("high ammonia")
+
+    if not np.isnan(fcr) and fcr > 2.3:
+        early_risk = True
+        risk_reasons.append("poor feed conversion")
+
+    
+    # -------------------------------------------------
+    # PREDICTION CONFIDENCE
+    # -------------------------------------------------
     confidence = 100
 
-    # Penalize if inputs deviate strongly from historical averages
-    if abs(temp - batch_hist["temp"].mean()) > 5:
-        confidence -= 15
-    if abs(nh - batch_hist["nh"].mean()) > 10:
-        confidence -= 15
-    if abs(feed_today - batch_hist["feed_today_kg"].mean()) > batch_hist["feed_today_kg"].std():
+    # Data depth
+    if len(batch_hist) < 7:
+        confidence -= 30
+
+    # Early cycle uncertainty
+    if current_day < 5:
+        confidence -= 20
+
+    # Weight observation helps gain accuracy
+    if sample_weight > 0:
+        confidence += 10
+
+    # Environment instability
+    if abs(temp - last["temp"]) > 3:
         confidence -= 10
-    if birds_alive < birds_alive_yesterday * 0.95:
+    if abs(nh - last["nh"]) > 10:
         confidence -= 10
 
-    confidence = max(50, confidence)
+    confidence = max(20, min(confidence, 95))
 
-    if confidence >= 85:
-        st.success(f"High Confidence ({confidence}%)")
-    elif confidence >= 70:
-        st.warning(f"Moderate Confidence ({confidence}%)")
+    if confidence >= 75:
+        confidence_label = "🟢 High"
+    elif confidence >= 50:
+        confidence_label = "🟡 Medium"
     else:
-        st.error(f"Low Confidence ({confidence}%) – Inputs far from historical patterns")
-
+        confidence_label = "🔴 Low"
 
 
     # -------------------------------------------------
     # DISEASE-TYPE PROBABILITY (Explainable Rule Engine)
     # -------------------------------------------------
     disease_scores = {
-        "Respiratory Stress": 0,
-        "Gut / Enteric Stress": 0,
-        "Heat Stress": 0
-     }
+        "🫁 Respiratory Stress": 0,
+        "🦠 Gut / Enteric Stress": 0,
+        "🌡 Heat Stress": 0
+    }
 
-    # Respiratory pattern
+    # --- Respiratory Pattern ---
     if nh > 25:
-        disease_scores["Respiratory Stress"] += 30
+        disease_scores["🫁 Respiratory Stress"] += 30
     if co > 3000:
-        disease_scores["Respiratory Stress"] += 20
+        disease_scores["🫁 Respiratory Stress"] += 20
     if mortality_rate > 0.004:
-        disease_scores["Respiratory Stress"] += 20
+        disease_scores["🫁 Respiratory Stress"] += 20
     if gain_pred < rolling_gain * 0.9:
-        disease_scores["Respiratory Stress"] += 10
+        disease_scores["🫁 Respiratory Stress"] += 10
 
-    # Gut / Enteric pattern
+    # --- Gut / Enteric Pattern ---
     if not np.isnan(fcr) and fcr > 2.3:
-        disease_scores["Gut / Enteric Stress"] += 35
+        disease_scores["🦠 Gut / Enteric Stress"] += 35
     if gain_pred < rolling_gain * 0.9:
-        disease_scores["Gut / Enteric Stress"] += 25
+        disease_scores["🦠 Gut / Enteric Stress"] += 25
     if mortality_rate > 0.003:
-        disease_scores["Gut / Enteric Stress"] += 15
+        disease_scores["🦠 Gut / Enteric Stress"] += 15
 
-    # Heat stress pattern
+    # --- Heat Stress Pattern ---
     if temp > 32:
-        disease_scores["Heat Stress"] += 40
+        disease_scores["🌡 Heat Stress"] += 40
     if rh > 75:
-        disease_scores["Heat Stress"] += 20
+        disease_scores["🌡 Heat Stress"] += 20
     if gain_pred < y_gain * 0.9:
-        disease_scores["Heat Stress"] += 15
+        disease_scores["🌡 Heat Stress"] += 15
     if mortality_rate > 0.004:
-        disease_scores["Heat Stress"] += 10
+        disease_scores["🌡 Heat Stress"] += 10
 
-    # Confidence adjustment
+    # -------------------------------------------------
+    # Adjust by Confidence (low confidence reduces certainty)
+    # -------------------------------------------------
     confidence_factor = confidence / 100
+
     for k in disease_scores:
         disease_scores[k] = min(int(disease_scores[k] * confidence_factor), 95)
 
     # Sort highest first
     sorted_diseases = sorted(disease_scores.items(), key=lambda x: x[1], reverse=True)
 
+
+
+    # -------------------------------------------------
+    # RECOMMENDED ACTIONS (Dynamic by Stress Type)
+    # -------------------------------------------------
+    st.subheader("🛠 Recommended Actions")
+
+    top_disease, top_score = sorted_diseases[0]
+
+    if top_disease == "🫁 Respiratory Stress":
+        st.write("• Increase ventilation rate immediately")
+        st.write("• Check litter moisture and remove wet spots")
+        st.write("• Inspect birds for coughing / nasal discharge")
+        st.write("• Review ammonia and CO₂ sensor calibration")
+
+    elif top_disease == "🦠 Gut / Enteric Stress":
+        st.write("• Check feed quality and storage conditions")
+        st.write("• Inspect droppings for consistency changes")
+        st.write("• Review recent feed formulation changes")
+        st.write("• Consider probiotic / gut health support program")
+
+    elif top_disease == "🌡 Heat Stress":
+        st.write("• Activate cooling system or foggers")
+        st.write("• Increase air speed across birds")
+        st.write("• Ensure cool, clean drinking water supply")
+        st.write("• Reduce stocking density impact if possible")
+
+    else:
+        st.write("Continue standard monitoring procedures.")
+
+
     
     # -------------------------------------------------
-    # DETAILED DISEASE DASHBOARD SECTION
+    # OUTPUT
     # -------------------------------------------------
-    st.subheader("🧬 Stress Probability Breakdown")
+    st.subheader("📊 AI Assessment for Today")
+
+    st.metric("Prediction Confidence", confidence_label)
+
+    colA, colB, colC = st.columns(3)
+
+    colA.metric("Health Status", status)
+    colB.metric("Expected Daily Gain (kg)", round(gain_pred, 3), f"{gain_arrow} vs yesterday | {gain_3d} 3‑day")
+    colC.metric("Mortality Risk Tomorrow", mort_pred, f"{mort_arrow} vs yesterday | {mort_3d} 3‑day")
+
+    if not np.isnan(fcr):
+        st.metric("Derived FCR", round(fcr, 2))
+
+    st.subheader("📘 How to read this")
+    st.info(
+        "⬆️ means higher than recent days, ⬇️ means lower, ➖ means no reliable comparison. "
+        "We compare today’s prediction against yesterday and the last 3 days to avoid false alarms."
+    )
+
+    # -------------------------------------------------
+    # DISEASE-TYPE DISPLAY
+    # -------------------------------------------------
+    st.subheader("🧬 Likely Stress Type")
+
+    top_disease, top_score = sorted_diseases[0]
 
     for disease, score in sorted_diseases:
         st.write(f"**{disease} — {score}% likelihood**")
         st.progress(score / 100)
 
-    top_disease, top_score = sorted_diseases[0]
-
     if top_score >= 50:
-        st.error(f"Primary Concern: {top_disease}")
+        st.warning(f"Primary concern: {top_disease}")
     elif top_score >= 30:
-        st.warning(f"Emerging Risk: {top_disease}")
+        st.info(f"Possible developing issue: {top_disease}")
     else:
-        st.success("No dominant stress pattern detected.")
+        st.success("No strong stress pattern detected.")
 
-    # -------------------------------------------------
-    # RECOMMENDED ACTIONS PER STRESS TYPE
-    # -------------------------------------------------
-    st.subheader("🛠 Recommended Actions")
+    
+    st.subheader("⚠ Alerts & Actions")
+    if temp > 34:
+        st.warning("High temperature — improve cooling or ventilation")
+    if nh > 25:
+        st.warning("High ammonia — increase air exchange")
+    if mortality_rate > 0.005:
+        st.warning("Mortality above normal — inspect flock closely")
 
-    if top_disease == "Respiratory Stress":
-        st.write("• Increase ventilation rate immediately")
-        st.write("• Remove wet litter patches")
-        st.write("• Inspect birds for coughing or nasal discharge")
-        st.write("• Validate ammonia and CO₂ sensor readings")
+    if health_score >= 75:
+        st.success("Flock condition appears stable 👍")
 
-    elif top_disease == "Gut / Enteric Stress":
-        st.write("• Check feed quality and storage")
-        st.write("• Inspect droppings consistency")
-        st.write("• Review recent feed changes")
-        st.write("• Consider gut health supplements")
-
-    elif top_disease == "Heat Stress":
-        st.write("• Activate cooling / foggers")
-        st.write("• Increase airflow speed")
-        st.write("• Ensure cool drinking water availability")
-        st.write("• Reduce stocking heat load if possible")
-
-    # -------------------------------------------------
-    # HISTORICAL COMPARISON (Batch Benchmarking)
-    # -------------------------------------------------
-    st.subheader("📊 Batch Benchmark Comparison")
-
-    farm_avg_gain = df[df["farm_id"] == farm_id]["daily_weight_gain_kg"].mean()
-    farm_avg_mort = df[df["farm_id"] == farm_id]["mortality_today"].mean()
-
-    st.write(f"Farm Avg Daily Gain: {round(farm_avg_gain,3)} kg")
-    st.write(f"Farm Avg Mortality: {round(farm_avg_mort,2)} birds/day")
-
-    if gain_pred > farm_avg_gain:
-        st.success("Gain above farm average")
-    else:
-        st.warning("Gain below farm average")
-
-    if mort_pred < farm_avg_mort:
-        st.success("Mortality below farm average")
-    else:
-        st.error("Mortality above farm average")
+    if early_risk:
+     st.error(
+        "🚨 Early health stress detected: " +
+        ", ".join(risk_reasons) +
+        ". Consider checking ventilation, litter, and bird behavior."
+            )
