@@ -18,7 +18,7 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
-st.write(df.columns)
+#st.write(df.columns)
 
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
@@ -32,11 +32,34 @@ df["batch_id"] = df["batch_id"].astype(str).str.strip()
 st.subheader("🏭 Select Farm & Batch")
 
 farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
-batch_id = st.selectbox(
-    "Batch ID",
-    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+
+#####################
+farm_batches = (
+    df[df["farm_id"] == farm_id]
+    .groupby("batch_id")["date"]
+    .min()
+    .reset_index()
 )
 
+batch_options = {
+    f"Batch {row.batch_id} (Start: {row.date})": row.batch_id
+    for _, row in farm_batches.iterrows()
+}
+
+selected_display = st.selectbox(
+    "Batch",
+    list(batch_options.keys())
+)
+
+batch_id = batch_options[selected_display]
+
+
+##########################################
+#batch_id = st.selectbox(
+#    "Batch ID",
+#    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+#)
+################
 batch_hist = df[
     (df["farm_id"] == farm_id) &
     (df["batch_id"] == batch_id)
