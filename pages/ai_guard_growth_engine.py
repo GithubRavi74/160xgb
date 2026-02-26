@@ -18,6 +18,11 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
+st.write("Loaded file preview:")
+st.write(df.head())
+
+st.write("Columns:")
+st.write(list(df.columns))
 st.write(df.columns)
 # Clean column names (important)
 df.columns = df.columns.str.strip()
