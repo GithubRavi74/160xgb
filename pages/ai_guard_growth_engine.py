@@ -18,6 +18,7 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
+st.write(df.columns)
 
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
@@ -55,7 +56,8 @@ batch_id = batch_options[selected_display]
 
 batch_hist = df[
     (df["farm_id"] == farm_id) &
-    (df["batch_id"] == batch_id)
+    (df["batch_id"] == batch_id)&
+    (df["batchName"] == batchName)
 ].sort_values("day_number")
 ####################################################################################################################################
 if batch_hist.empty:
