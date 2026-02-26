@@ -58,6 +58,11 @@ batch_hist = df[
     (df["batch_id"] == batch_id)
 ].sort_values("day_number")
 ####################################################################################################################################
+if batch_hist.empty:
+    st.error("No historical data found for this batch.")
+    st.stop()
+
+last = batch_hist.iloc[-1]
 
 # -------------------------------------------------
 # AUTO CONTEXT
