@@ -25,6 +25,9 @@ df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
 #df["batchName"] = df["batchName"].astype(str).str.strip()
  
+st.write("Total rows:", len(df))
+st.write("Unique farms:", df["farm_id"].nunique())
+st.write("Farm IDs:", sorted(df["farm_id"].unique()))
 
 # -------------------------------------------------
 # SELECT FARM & BATCH
