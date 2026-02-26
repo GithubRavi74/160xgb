@@ -58,6 +58,7 @@ batch_id = batch_options[selected_display]
 batch_hist = df[
     (df["farm_id"] == farm_id) &
     (df["batch_id"] == batch_id)
+    (df["batchName"] == batchName)
 ].sort_values("day_number")
 
 if batch_hist.empty:
