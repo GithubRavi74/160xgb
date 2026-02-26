@@ -1,99 +1,190 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 from scipy.interpolate import interp1d
+from datetime import datetime
 
-st.set_page_config(page_title="AI Guard - Growth Forecast", layout="wide")
+# -------------------------------------------------
+# CONFIG
+# -------------------------------------------------
+st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
+st.title("📈 iPoultry AI Guard – Harvest Growth Forecast")
 
-st.title("🐔 AI Guard - Broiler Growth Forecast Engine")
+# -------------------------------------------------
+# LOAD DATA
+# -------------------------------------------------
+@st.cache_data
+def load_data():
+    return pd.read_csv("ml_ready_daily.csv")
 
-# ---------------------------------------------------
-# IDEAL GROWTH DATA (Arbor Acres Example)
-# ---------------------------------------------------
+df = load_data()
+
+# Clean IDs
+df["farm_id"] = df["farm_id"].astype(str).str.strip()
+df["batch_id"] = df["batch_id"].astype(str).str.strip()
+
+# -------------------------------------------------
+# SELECT FARM & BATCH
+# -------------------------------------------------
+st.subheader("🏭 Select Farm & Batch")
+
+farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
+batch_id = st.selectbox(
+    "Batch ID",
+    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+)
+
+batch_hist = df[
+    (df["farm_id"] == farm_id) &
+    (df["batch_id"] == batch_id)
+].sort_values("day_number")
+
+if batch_hist.empty:
+    st.error("No historical data found for this batch.")
+    st.stop()
+
+last = batch_hist.iloc[-1]
+
+# -------------------------------------------------
+# AUTO CONTEXT
+# -------------------------------------------------
+current_day = int(last["day_number"])
+birds_alive = int(last["birds_alive"])
+
+rolling_7 = batch_hist.tail(7)
+
+temp_7d = rolling_7["temp"].mean()
+rh_7d = rolling_7["rh"].mean()
+nh_7d = rolling_7["nh"].mean()
+co_7d = rolling_7["co"].mean()
+
+# -------------------------------------------------
+# IDEAL GROWTH BASELINE (Arbor Acres Example)
+# -------------------------------------------------
 ideal_days = np.array([1, 7, 14, 21, 28, 35])
-ideal_weights = np.array([42, 180, 450, 900, 1500, 2200])
+ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])  # in kg
 
-# Smooth interpolation
-growth_curve = interp1d(ideal_days, ideal_weights, kind='cubic', fill_value="extrapolate")
+growth_curve = interp1d(
+    ideal_days,
+    ideal_weights,
+    kind="cubic",
+    fill_value="extrapolate"
+)
 
-# ---------------------------------------------------
-# USER INPUT
-# ---------------------------------------------------
-st.subheader("📥 Current Batch Inputs")
+ideal_current_weight = float(growth_curve(current_day))
+ideal_final_weight = float(growth_curve(35))
 
-current_day = st.slider("Current Bird Age (Day)", 1, 35, 12)
-current_weight = st.number_input("Current Average Weight (g)", 100, 2000, 420)
-
-avg_temp = st.number_input("Avg Temperature (Last 3 Days °C)", 20.0, 40.0, 32.0)
-avg_humidity = st.number_input("Avg Humidity (%)", 40.0, 95.0, 75.0)
-avg_nh3 = st.number_input("Avg Ammonia (ppm)", 0.0, 60.0, 28.0)
-avg_co2 = st.number_input("Avg CO2 (ppm)", 500.0, 5000.0, 2800.0)
-
-# ---------------------------------------------------
-# STRESS CALCULATIONS
-# ---------------------------------------------------
-
-# Heat stress index
+# -------------------------------------------------
+# ENVIRONMENTAL STRESS CALCULATION
+# -------------------------------------------------
+# Age-based optimal temp
 optimal_temp = 30 if current_day < 21 else 28
-heat_index = max(0, (avg_temp - optimal_temp) / 5)
 
-# Gas stress index
+heat_index = max(0, (temp_7d - optimal_temp) / 5)
+
 gas_index = 0
-if avg_nh3 > 25:
-    gas_index += (avg_nh3 - 25) / 20
-if avg_co2 > 3000:
-    gas_index += (avg_co2 - 3000) / 2000
+if nh_7d > 25:
+    gas_index += (nh_7d - 25) / 20
+if co_7d > 3000:
+    gas_index += (co_7d - 3000) / 2000
 
-# Ventilation proxy
-ventilation_index = heat_index * 0.5 + gas_index * 0.5
+ventilation_index = 0.5 * heat_index + 0.5 * gas_index
 
-# Total stress
 total_stress = 0.4*heat_index + 0.4*gas_index + 0.2*ventilation_index
 total_stress = min(total_stress, 1.5)
 
 suppression_factor = 1 - min(total_stress * 0.08, 0.12)
 
-# ---------------------------------------------------
-# IDEAL VS ADJUSTED FORECAST
-# ---------------------------------------------------
-ideal_final_weight = growth_curve(35)
 predicted_final_weight = ideal_final_weight * suppression_factor
 
-# ---------------------------------------------------
-# DISPLAY RESULTS
-# ---------------------------------------------------
-st.subheader("📊 Growth Forecast Result")
+growth_impact_pct = (1 - suppression_factor) * 100
+
+# -------------------------------------------------
+# DISPLAY CONTEXT
+# -------------------------------------------------
+st.subheader("📊 Current Batch Context")
+
+colA, colB, colC = st.columns(3)
+
+colA.metric("Current Age (Day)", current_day)
+colB.metric("Birds Alive", birds_alive)
+colC.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
+
+# -------------------------------------------------
+# FORECAST RESULTS
+# -------------------------------------------------
+st.subheader("🚀 Harvest Forecast (Day 35 Projection)")
 
 col1, col2, col3 = st.columns(3)
 
-col1.metric("Ideal Harvest Weight (Day 35)", f"{ideal_final_weight:.0f} g")
-col2.metric("Predicted Harvest Weight", f"{predicted_final_weight:.0f} g")
-col3.metric("Growth Impact", f"-{(1-suppression_factor)*100:.1f}%")
+col1.metric("Ideal Harvest Weight (kg)", f"{ideal_final_weight:.2f}")
+col2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
+col3.metric("Growth Suppression Impact", f"-{growth_impact_pct:.1f}%")
 
-# ---------------------------------------------------
-# PLOT GROWTH CURVE
-# ---------------------------------------------------
+# -------------------------------------------------
+# INTERPRETATION
+# -------------------------------------------------
+st.subheader("🧠 AI Interpretation")
+
+if suppression_factor > 0.97:
+    st.success("Environment stable. Growth trajectory aligned with genetic potential.")
+elif suppression_factor > 0.92:
+    st.warning("Mild environmental suppression detected. Monitor ventilation and gas levels.")
+else:
+    st.error("Significant growth suppression risk detected. Immediate ventilation and gas correction recommended.")
+
+# -------------------------------------------------
+# STRESS BREAKDOWN
+# -------------------------------------------------
+st.subheader("🔍 Environmental Stress Breakdown")
+
+st.write(f"Heat Stress Index: {heat_index:.2f}")
+st.progress(min(heat_index / 2, 1.0))
+
+st.write(f"Gas Stress Index: {gas_index:.2f}")
+st.progress(min(gas_index / 2, 1.0))
+
+st.write(f"Ventilation Risk Index: {ventilation_index:.2f}")
+st.progress(min(ventilation_index / 2, 1.0))
+
+# -------------------------------------------------
+# GROWTH CURVE VISUALIZATION
+# -------------------------------------------------
+st.subheader("📈 Growth Curve Projection")
+
 days = np.arange(1, 36)
 ideal_curve = growth_curve(days)
 adjusted_curve = ideal_curve * suppression_factor
 
+import matplotlib.pyplot as plt
+
 plt.figure()
 plt.plot(days, ideal_curve)
 plt.plot(days, adjusted_curve)
-plt.scatter(current_day, current_weight)
+plt.scatter(current_day, ideal_current_weight)
 plt.xlabel("Day")
-plt.ylabel("Weight (g)")
+plt.ylabel("Weight (kg)")
 st.pyplot(plt)
 
-# ---------------------------------------------------
-# INTERPRETATION
-# ---------------------------------------------------
-st.subheader("🧠 AI Interpretation")
+# -------------------------------------------------
+# CONFIDENCE INDICATOR
+# -------------------------------------------------
+st.subheader("🎯 Forecast Confidence")
 
-if suppression_factor > 0.97:
-    st.success("Environment stable. Growth trajectory healthy.")
-elif suppression_factor > 0.92:
-    st.warning("Mild growth suppression detected due to environmental stress.")
+confidence = 100
+
+if abs(temp_7d - batch_hist["temp"].mean()) > 5:
+    confidence -= 10
+if abs(nh_7d - batch_hist["nh"].mean()) > 10:
+    confidence -= 10
+if birds_alive < batch_hist["birds_alive"].max() * 0.9:
+    confidence -= 10
+
+confidence = max(60, confidence)
+
+if confidence >= 85:
+    st.success(f"High Confidence ({confidence}%)")
+elif confidence >= 70:
+    st.warning(f"Moderate Confidence ({confidence}%)")
 else:
-    st.error("Significant growth suppression detected. Improve ventilation and reduce gas exposure.")
+    st.error(f"Lower Confidence ({confidence}%) – Environmental variability detected")
