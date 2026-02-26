@@ -19,6 +19,7 @@ def load_data():
 
 df = load_data()
 #st.write(df.columns)
+
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
@@ -35,12 +36,14 @@ farm_id = st.selectbox(
     sorted(df["farm_id"].unique())
 )
 
+st.write("FARM OVER")
 # Get unique batches for selected farm
 farm_batches = (
     df[df["farm_id"] == farm_id][["batch_id", "batchName"]]
     .drop_duplicates()
     .sort_values("batchName")
 )
+st.write("BATCH OVER")
 
 # Create display mapping
 batch_options = {
