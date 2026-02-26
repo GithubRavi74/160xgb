@@ -36,12 +36,12 @@ farm_id = st.selectbox(
 )
 
 farm_batches = df[df["farm_id"] == farm_id][
-    ["batch_id", "batch_name"]
+    ["batch_id", "batchName"]
 ].drop_duplicates()
 
 # Create mapping: Display Name → batch_id
 batch_options = {
-    f"{row.batch_name} (ID: {row.batch_id})": row.batch_id
+    f"{row.batchName} (ID: {row.batch_id})": row.batch_id
     for _, row in farm_batches.iterrows()
 }
 
@@ -57,17 +57,6 @@ batch_hist = df[
     (df["batch_id"] == batch_id)
 ].sort_values("day_number")
 ####################################################################################################################################
-
-# -------------------------------------------------
-# SELECT FARM & BATCH
-# -------------------------------------------------
-
-
-if batch_hist.empty:
-    st.error("No historical data found for this batch.")
-    st.stop()
-
-last = batch_hist.iloc[-1]
 
 # -------------------------------------------------
 # AUTO CONTEXT
