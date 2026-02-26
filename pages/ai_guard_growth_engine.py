@@ -19,21 +19,21 @@ def load_daily():
     return pd.read_csv("ml_ready_daily.csv")
 
 @st.cache_data
-def load_batchsummary():
+def load_batchmaster():
     return pd.read_csv("batchmaster.csv")
 
 df = load_daily()
-batch_summary = load_batchsummary()
+batch_master = load_batchmaster()
 
 # Clean column names
 df.columns = df.columns.str.strip()
-batch_summary.columns = batch_summary.columns.str.strip()
+batch_master.columns = batch_master.columns.str.strip()
 
 # Clean key columns
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
-batch_summary["batchID"] = batch_summary["batchID"].astype(str).str.strip()
-batch_summary["batchName"] = batch_summary["batchName"].astype(str).str.strip()
+batch_master["batchID"] = batch_master["batchID"].astype(str).str.strip()
+batch_master["batchName"] = batch_master["batchName"].astype(str).str.strip()
 
 # Merge batchName into daily dataset
 df = df.merge(
