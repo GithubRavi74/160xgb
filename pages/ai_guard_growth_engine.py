@@ -23,9 +23,8 @@ st.write(df.columns)
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
-df["batchName"] = df["batchName"].astype(str).str.strip()
-
-####################################################################################################################################
+#df["batchName"] = df["batchName"].astype(str).str.strip()
+ 
 
 # -------------------------------------------------
 # SELECT FARM & BATCH
