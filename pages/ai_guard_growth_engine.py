@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 # -------------------------------------------------
 # CONFIG
@@ -14,33 +15,43 @@ st.title("📈 iPoultry AI Guard – Harvest Growth Forecast")
 # LOAD DATA
 # -------------------------------------------------
 @st.cache_data
-def load_data():
+def load_daily():
     return pd.read_csv("ml_ready_daily.csv")
 
-df = load_data()
+@st.cache_data
+def load_batchsummary():
+    return pd.read_csv("batchsummary.csv")
 
-#st.write("Loaded file preview:")
-#st.write(df.head())
+df = load_daily()
+batch_summary = load_batchsummary()
 
-#st.write("Columns:")
-#st.write(list(df.columns))
-#st.write(df.columns)
-# Clean column names (important)
+# Clean column names
 df.columns = df.columns.str.strip()
+batch_summary.columns = batch_summary.columns.str.strip()
 
-# Clean IDs
+# Clean key columns
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
+batch_summary["batchID"] = batch_summary["batchID"].astype(str).str.strip()
+batch_summary["batchName"] = batch_summary["batchName"].astype(str).str.strip()
 
-if "batchName" in df.columns:
-    df["batchName"] = df["batchName"].astype(str).str.strip()
-else:
-    df["batchName"] = df["batch_id"]  # fallback
+# Merge batchName into daily dataset
+df = df.merge(
+    batch_summary[["batchID", "batchName"]],
+    left_on="batch_id",
+    right_on="batchID",
+    how="left"
+)
+
+# Drop duplicate key column
+df.drop(columns=["batchID"], inplace=True)
+
+# Fallback if batchName missing
+df["batchName"] = df["batchName"].fillna(df["batch_id"])
 
 # -------------------------------------------------
 # SELECT FARM & BATCH
 # -------------------------------------------------
-
 st.subheader("🏭 Select Farm & Batch")
 
 farm_id = st.selectbox(
@@ -73,6 +84,7 @@ if batch_hist.empty:
     st.stop()
 
 last = batch_hist.iloc[-1]
+
 # -------------------------------------------------
 # AUTO CONTEXT
 # -------------------------------------------------
@@ -87,10 +99,10 @@ nh_7d = rolling_7["nh"].mean()
 co_7d = rolling_7["co"].mean()
 
 # -------------------------------------------------
-# IDEAL GROWTH BASELINE (Arbor Acres Example)
+# IDEAL GROWTH BASELINE
 # -------------------------------------------------
 ideal_days = np.array([1, 7, 14, 21, 28, 35])
-ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])  # in kg
+ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])
 
 growth_curve = interp1d(
     ideal_days,
@@ -105,7 +117,6 @@ ideal_final_weight = float(growth_curve(35))
 # -------------------------------------------------
 # ENVIRONMENTAL STRESS CALCULATION
 # -------------------------------------------------
-# Age-based optimal temp
 optimal_temp = 30 if current_day < 21 else 28
 
 heat_index = max(0, (temp_7d - optimal_temp) / 5)
@@ -124,7 +135,6 @@ total_stress = min(total_stress, 1.5)
 suppression_factor = 1 - min(total_stress * 0.08, 0.12)
 
 predicted_final_weight = ideal_final_weight * suppression_factor
-
 growth_impact_pct = (1 - suppression_factor) * 100
 
 # -------------------------------------------------
@@ -133,7 +143,6 @@ growth_impact_pct = (1 - suppression_factor) * 100
 st.subheader("📊 Current Batch Context")
 
 colA, colB, colC = st.columns(3)
-
 colA.metric("Current Age (Day)", current_day)
 colB.metric("Birds Alive", birds_alive)
 colC.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
@@ -144,7 +153,6 @@ colC.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
 st.subheader("🚀 Harvest Forecast (Day 35 Projection)")
 
 col1, col2, col3 = st.columns(3)
-
 col1.metric("Ideal Harvest Weight (kg)", f"{ideal_final_weight:.2f}")
 col2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
 col3.metric("Growth Suppression Impact", f"-{growth_impact_pct:.1f}%")
@@ -183,8 +191,6 @@ st.subheader("📈 Growth Curve Projection")
 days = np.arange(1, 36)
 ideal_curve = growth_curve(days)
 adjusted_curve = ideal_curve * suppression_factor
-
-import matplotlib.pyplot as plt
 
 plt.figure()
 plt.plot(days, ideal_curve)
