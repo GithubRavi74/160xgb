@@ -23,29 +23,34 @@ df = load_data()
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
-#df["batchName"] = df["batchName"].astype(str).str.strip()
+df["batchName"] = df["batchName"].astype(str).str.strip()
  
 #st.write("Total rows:", len(df))
 #st.write("Unique farms:", df["farm_id"].nunique())
 #st.write("Farm IDs:", sorted(df["farm_id"].unique()))
 
+ 
 # -------------------------------------------------
-# SELECT FARM & BATCH
+# SELECT FARM & BATCH (Using Actual batchName)
 # -------------------------------------------------
+
 st.subheader("🏭 Select Farm & Batch")
 
-farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
-
-#####################
-farm_batches = (
-    df[df["farm_id"] == farm_id]
-    .groupby("batch_id")["date"]
-    .min()
-    .reset_index()
+farm_id = st.selectbox(
+    "Farm ID",
+    sorted(df["farm_id"].unique())
 )
 
+# Get unique batches for selected farm
+farm_batches = (
+    df[df["farm_id"] == farm_id][["batch_id", "batchName"]]
+    .drop_duplicates()
+    .sort_values("batchName")
+)
+
+# Create display mapping: batchName → batch_id
 batch_options = {
-    f"Batch {row.batch_id} (Start: {row.date})": row.batch_id
+    f"{row.batchName} (ID: {row.batch_id})": row.batch_id
     for _, row in farm_batches.iterrows()
 }
 
@@ -56,17 +61,15 @@ selected_display = st.selectbox(
 
 batch_id = batch_options[selected_display]
 
-
-##########################################
-#batch_id = st.selectbox(
-#    "Batch ID",
-#    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
-#)
-################
 batch_hist = df[
     (df["farm_id"] == farm_id) &
     (df["batch_id"] == batch_id)
 ].sort_values("day_number")
+
+batch_options = {
+    f"Batch {row.batch_id} (Start: {row.date})": row.batch_id
+    for _, row in farm_batches.iterrows()
+}
 
 if batch_hist.empty:
     st.error("No historical data found for this batch.")
