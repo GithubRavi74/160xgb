@@ -39,7 +39,7 @@ farm_id = st.selectbox(
 st.write("FARM OVER")
 # Get unique batches for selected farm
 farm_batches = (
-    df[df["farm_id"] == farm_id][["batch_id", "batchName"]]
+    df[df["farm_id"] == farm_id][df["batch_id", "batchName"]]
     .drop_duplicates()
     .sort_values("batchName")
 )
