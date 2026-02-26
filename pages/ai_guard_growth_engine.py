@@ -23,27 +23,41 @@ df = load_data()
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
 
+####################################################################################################################################
 # -------------------------------------------------
-# SELECT FARM & BATCH
+# SELECT FARM & BATCH (With Batch Name Display)
 # -------------------------------------------------
+
 st.subheader("🏭 Select Farm & Batch")
 
-farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
-batch_id = st.selectbox(
-    "Batch ID",
-    sorted(df[df["farm_id"] == farm_id]["batch_id"].unique())
+farm_id = st.selectbox(
+    "Farm ID",
+    sorted(df["farm_id"].unique())
 )
+
+farm_batches = df[df["farm_id"] == farm_id][
+    ["batch_id", "batch_name"]
+].drop_duplicates()
+
+# Create mapping: Display Name → batch_id
+batch_options = {
+    f"{row.batch_name} (ID: {row.batch_id})": row.batch_id
+    for _, row in farm_batches.iterrows()
+}
+
+selected_display = st.selectbox(
+    "Batch",
+    list(batch_options.keys())
+)
+
+batch_id = batch_options[selected_display]
 
 batch_hist = df[
     (df["farm_id"] == farm_id) &
     (df["batch_id"] == batch_id)
 ].sort_values("day_number")
+####################################################################################################################################
 
-if batch_hist.empty:
-    st.error("No historical data found for this batch.")
-    st.stop()
-
-last = batch_hist.iloc[-1]
 
 # -------------------------------------------------
 # AUTO CONTEXT
