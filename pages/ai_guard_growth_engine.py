@@ -19,17 +19,11 @@ def load_data():
 
 df = load_data()
 #st.write(df.columns)
-
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
 df["batchName"] = df["batchName"].astype(str).str.strip()
- 
-#st.write("Total rows:", len(df))
-#st.write("Unique farms:", df["farm_id"].nunique())
-#st.write("Farm IDs:", sorted(df["farm_id"].unique()))
 
- 
 # -------------------------------------------------
 # SELECT FARM & BATCH (Using Actual batchName)
 # -------------------------------------------------
@@ -48,7 +42,7 @@ farm_batches = (
     .sort_values("batchName")
 )
 
-# Create display mapping: batchName → batch_id
+# Create display mapping
 batch_options = {
     f"{row.batchName} (ID: {row.batch_id})": row.batch_id
     for _, row in farm_batches.iterrows()
@@ -66,22 +60,11 @@ batch_hist = df[
     (df["batch_id"] == batch_id)
 ].sort_values("day_number")
 
-batch_options = {
-    f"Batch {row.batch_id} (Start: {row.date})": row.batch_id
-    for _, row in farm_batches.iterrows()
-}
-
 if batch_hist.empty:
     st.error("No historical data found for this batch.")
     st.stop()
 
 last = batch_hist.iloc[-1]
-if batch_hist.empty:
-    st.error("No historical data found for this batch.")
-    st.stop()
-
-last = batch_hist.iloc[-1]
-
 # -------------------------------------------------
 # AUTO CONTEXT
 # -------------------------------------------------
