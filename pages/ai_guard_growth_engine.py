@@ -18,7 +18,7 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
-#st.write(df.columns)
+st.write(df.columns)
 
 # Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
