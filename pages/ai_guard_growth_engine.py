@@ -37,7 +37,7 @@ batch_master["batchName"] = batch_master["batchName"].astype(str).str.strip()
 
 # Merge batchName into daily dataset
 df = df.merge(
-    batch_summary[["batchID", "batchName"]],
+    batch_master[["batchID", "batchName"]],
     left_on="batch_id",
     right_on="batchID",
     how="left"
