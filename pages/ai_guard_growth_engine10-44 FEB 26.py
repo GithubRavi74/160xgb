@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
 st.title("📈 iPoultry AI Guard")
-st.subheader("Bird Harvest Weight Prediction")
+#st.subheader("Bird Harvest Weight Prediction")
+st.markdown("<h3 style='color: green;'>Bird Harvest Weight Prediction</h3>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # LOAD DATA
