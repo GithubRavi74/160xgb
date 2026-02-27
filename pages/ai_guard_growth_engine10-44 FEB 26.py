@@ -80,6 +80,7 @@ rolling_7 = batch_hist.tail(7)
 
 temp_7d = rolling_7["temp"].mean()
 nh_7d = rolling_7["nh"].mean()
+rh_7d = rolling_7["rh"].mean()  
 co_7d = rolling_7["co"].mean()
 
 # -------------------------------------------------
