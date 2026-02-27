@@ -250,4 +250,4 @@ elif confidence >= 70:
 else:
     st.error(f"Lower Confidence ({confidence}%)")
 
-st.write("END OF FILE REACHED")
+
