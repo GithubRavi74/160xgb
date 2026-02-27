@@ -99,7 +99,10 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # 7-DAY ENVIRONMENT SNAPSHOT (Non-Technical View)
     # -------------------------------------------------
-    st.subheader("🌤 7-Day Environmental Snapshot")
+   
+    st.write("")
+    st.write("")
+    st.subheader("🌤 Last 7-Day Environmental Snapshot")
     
     col1, col2, col3, col4 = st.columns(4)
     
