@@ -249,3 +249,5 @@ elif confidence >= 70:
     st.warning(f"Moderate Confidence ({confidence}%)")
 else:
     st.error(f"Lower Confidence ({confidence}%)")
+
+st.write("END OF FILE REACHED")
