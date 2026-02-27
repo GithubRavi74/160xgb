@@ -20,7 +20,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h3 style='color: green;'>Bird Harvest Weight Prediction</h3>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>Bird Harvest Weight Prediction</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # LOAD DATA
@@ -38,7 +38,7 @@ df["batch_id"] = df["batch_id"].astype(str).str.strip()
 # -------------------------------------------------
 # SELECT FARM & BATCH
 # -------------------------------------------------
-st.subheader("🏭 Select Farm & Batch")
+st.subheader("🏭 Select Your Farm & Batch")
 
 farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
 
@@ -64,7 +64,7 @@ last = batch_hist.iloc[-1]
 # -------------------------------------------------
 # MANUAL INPUT SECTION
 # -------------------------------------------------
-st.subheader("📝 Enter Bird Information")
+st.subheader("📝 Enter the Bird Information")
 
 col1, col2 = st.columns(2)
 
