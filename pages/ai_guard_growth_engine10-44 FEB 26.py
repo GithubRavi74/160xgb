@@ -8,7 +8,7 @@ from datetime import datetime
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
-st.title("📈 iPoultry AI Guard – Harvest Growth Forecast")
+st.title("📈 iPoultry AI Guard – Bird Harvest Weight Prediction")
 
 # -------------------------------------------------
 # LOAD DATA
