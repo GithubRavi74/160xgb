@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
-st.title("📈 iPoultry AI Guard – Smart Harvest Weight Prediction")
+st.title("📈 iPoultry AI Guard")
+st.subheader("Bird Harvest Weight Prediction")
 
 # -------------------------------------------------
 # LOAD DATA
