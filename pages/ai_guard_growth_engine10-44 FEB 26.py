@@ -64,7 +64,7 @@ last = batch_hist.iloc[-1]
 # -------------------------------------------------
 # MANUAL INPUT SECTION
 # -------------------------------------------------
-st.subheader("📝 Enter Current Bird Information")
+st.subheader("📝 Enter Bird Information")
 
 col1, col2 = st.columns(2)
 
@@ -85,7 +85,7 @@ today_weight = col2.number_input(
 
 birds_alive = int(last["birds_alive"])
 
-if st.button("🚀 Provide Insights"):
+if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # ENVIRONMENTAL CONTEXT (Last 7 Days)
     # -------------------------------------------------
