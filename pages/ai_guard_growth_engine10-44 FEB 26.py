@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
-from datetime import datetime
+import matplotlib.pyplot as plt
 
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
-st.title("📈 iPoultry AI Guard – Bird Harvest Weight Prediction")
+st.title("📈 iPoultry AI Guard – Smart Harvest Weight Prediction")
 
 # -------------------------------------------------
 # LOAD DATA
@@ -18,50 +18,25 @@ def load_data():
     return pd.read_csv("ml_ready_daily.csv")
 
 df = load_data()
-
-#st.write("Loaded file preview:")
-#st.write(df.head())
-
-#st.write("Columns:")
-#st.write(list(df.columns))
-#st.write(df.columns)
-# Clean column names (important)
 df.columns = df.columns.str.strip()
 
-# Clean IDs
 df["farm_id"] = df["farm_id"].astype(str).str.strip()
 df["batch_id"] = df["batch_id"].astype(str).str.strip()
-
-if "batchName" in df.columns:
-    df["batchName"] = df["batchName"].astype(str).str.strip()
-else:
-    df["batchName"] = df["batch_id"]  # fallback
 
 # -------------------------------------------------
 # SELECT FARM & BATCH
 # -------------------------------------------------
-
 st.subheader("🏭 Select Farm & Batch")
 
-farm_id = st.selectbox(
-    "Farm ID",
-    sorted(df["farm_id"].unique())
-)
+farm_id = st.selectbox("Farm ID", sorted(df["farm_id"].unique()))
 
 farm_batches = (
-    df[df["farm_id"] == farm_id][["batch_id", "batchName"]]
+    df[df["farm_id"] == farm_id][["batch_id"]]
     .drop_duplicates()
-    .sort_values("batchName")
+    .sort_values("batch_id")
 )
 
-batch_options = {
-    f"{row.batchName} (ID: {row.batch_id})": row.batch_id
-    for _, row in farm_batches.iterrows()
-}
-
-selected_display = st.selectbox("Batch", list(batch_options.keys()))
-
-batch_id = batch_options[selected_display]
+batch_id = st.selectbox("Batch ID", farm_batches["batch_id"])
 
 batch_hist = df[
     (df["farm_id"] == farm_id) &
@@ -69,28 +44,49 @@ batch_hist = df[
 ].sort_values("day_number")
 
 if batch_hist.empty:
-    st.error("No historical data found for this batch.")
+    st.error("No historical data found.")
     st.stop()
 
 last = batch_hist.iloc[-1]
+
 # -------------------------------------------------
-# AUTO CONTEXT
+# MANUAL INPUT SECTION
 # -------------------------------------------------
-current_day = int(last["day_number"])
+st.subheader("📝 Enter Current Bird Information")
+
+col1, col2 = st.columns(2)
+
+current_day = col1.number_input(
+    "Bird Age (Day)",
+    min_value=1,
+    max_value=60,
+    value=int(last["day_number"])
+)
+
+today_weight = col2.number_input(
+    "Today's Average Weight (kg)",
+    min_value=0.01,
+    max_value=5.0,
+    value=float(last.get("sample_weight_kg", 1.0)),
+    step=0.01
+)
+
 birds_alive = int(last["birds_alive"])
 
+# -------------------------------------------------
+# ENVIRONMENTAL CONTEXT (Last 7 Days)
+# -------------------------------------------------
 rolling_7 = batch_hist.tail(7)
 
 temp_7d = rolling_7["temp"].mean()
-rh_7d = rolling_7["rh"].mean()
 nh_7d = rolling_7["nh"].mean()
 co_7d = rolling_7["co"].mean()
 
 # -------------------------------------------------
-# IDEAL GROWTH BASELINE (Arbor Acres Example)
+# IDEAL GENETIC CURVE (Arbor Acres Example)
 # -------------------------------------------------
 ideal_days = np.array([1, 7, 14, 21, 28, 35])
-ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])  # in kg
+ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])
 
 growth_curve = interp1d(
     ideal_days,
@@ -103,9 +99,25 @@ ideal_current_weight = float(growth_curve(current_day))
 ideal_final_weight = float(growth_curve(35))
 
 # -------------------------------------------------
+# PERFORMANCE VS IDEAL
+# -------------------------------------------------
+performance_ratio = today_weight / ideal_current_weight
+adjusted_final_weight = ideal_final_weight * performance_ratio
+
+# Status classification
+if performance_ratio > 1.05:
+    status = "Ahead of Target"
+    status_color = "success"
+elif performance_ratio >= 0.95:
+    status = "On Track"
+    status_color = "warning"
+else:
+    status = "Behind Target"
+    status_color = "error"
+
+# -------------------------------------------------
 # ENVIRONMENTAL STRESS CALCULATION
 # -------------------------------------------------
-# Age-based optimal temp
 optimal_temp = 30 if current_day < 21 else 28
 
 heat_index = max(0, (temp_7d - optimal_temp) / 5)
@@ -123,57 +135,40 @@ total_stress = min(total_stress, 1.5)
 
 suppression_factor = 1 - min(total_stress * 0.08, 0.12)
 
-predicted_final_weight = ideal_final_weight * suppression_factor
-
+# -------------------------------------------------
+# FINAL PREDICTION
+# -------------------------------------------------
+predicted_final_weight = adjusted_final_weight * suppression_factor
 growth_impact_pct = (1 - suppression_factor) * 100
 
 # -------------------------------------------------
-# DISPLAY CONTEXT
+# DISPLAY RESULTS
 # -------------------------------------------------
-st.subheader("📊 Current Batch Context")
+st.subheader("📊 Current Status")
 
 colA, colB, colC = st.columns(3)
 
-colA.metric("Current Age (Day)", current_day)
-colB.metric("Birds Alive", birds_alive)
-colC.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
+colA.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
+colB.metric("Actual Weight Today (kg)", f"{today_weight:.2f}")
+colC.metric("Birds Alive", birds_alive)
+
+if status_color == "success":
+    st.success(f"🟢 {status}")
+elif status_color == "warning":
+    st.warning(f"🟡 {status}")
+else:
+    st.error(f"🔴 {status}")
 
 # -------------------------------------------------
-# FORECAST RESULTS
+# HARVEST FORECAST
 # -------------------------------------------------
 st.subheader("🚀 Harvest Forecast (Day 35 Projection)")
 
-col1, col2, col3 = st.columns(3)
+c1, c2, c3 = st.columns(3)
 
-col1.metric("Ideal Harvest Weight (kg)", f"{ideal_final_weight:.2f}")
-col2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
-col3.metric("Growth Suppression Impact", f"-{growth_impact_pct:.1f}%")
-
-# -------------------------------------------------
-# INTERPRETATION
-# -------------------------------------------------
-st.subheader("🧠 AI Interpretation")
-
-if suppression_factor > 0.97:
-    st.success("Environment stable. Growth trajectory aligned with genetic potential.")
-elif suppression_factor > 0.92:
-    st.warning("Mild environmental suppression detected. Monitor ventilation and gas levels.")
-else:
-    st.error("Significant growth suppression risk detected. Immediate ventilation and gas correction recommended.")
-
-# -------------------------------------------------
-# STRESS BREAKDOWN
-# -------------------------------------------------
-st.subheader("🔍 Environmental Stress Breakdown")
-
-st.write(f"Heat Stress Index: {heat_index:.2f}")
-st.progress(min(heat_index / 2, 1.0))
-
-st.write(f"Gas Stress Index: {gas_index:.2f}")
-st.progress(min(gas_index / 2, 1.0))
-
-st.write(f"Ventilation Risk Index: {ventilation_index:.2f}")
-st.progress(min(ventilation_index / 2, 1.0))
+c1.metric("Genetic Target (kg)", f"{ideal_final_weight:.2f}")
+c2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
+c3.metric("Environmental Impact", f"-{growth_impact_pct:.1f}%")
 
 # -------------------------------------------------
 # GROWTH CURVE VISUALIZATION
@@ -182,20 +177,20 @@ st.subheader("📈 Growth Curve Projection")
 
 days = np.arange(1, 36)
 ideal_curve = growth_curve(days)
-adjusted_curve = ideal_curve * suppression_factor
-
-import matplotlib.pyplot as plt
+performance_curve = ideal_curve * performance_ratio
+adjusted_curve = performance_curve * suppression_factor
 
 plt.figure()
 plt.plot(days, ideal_curve)
+plt.plot(days, performance_curve)
 plt.plot(days, adjusted_curve)
-plt.scatter(current_day, ideal_current_weight)
+plt.scatter(current_day, today_weight)
 plt.xlabel("Day")
 plt.ylabel("Weight (kg)")
 st.pyplot(plt)
 
 # -------------------------------------------------
-# CONFIDENCE INDICATOR
+# CONFIDENCE SCORE
 # -------------------------------------------------
 st.subheader("🎯 Forecast Confidence")
 
@@ -215,4 +210,4 @@ if confidence >= 85:
 elif confidence >= 70:
     st.warning(f"Moderate Confidence ({confidence}%)")
 else:
-    st.error(f"Lower Confidence ({confidence}%) – Environmental variability detected")
+    st.error(f"Lower Confidence ({confidence}%)")
