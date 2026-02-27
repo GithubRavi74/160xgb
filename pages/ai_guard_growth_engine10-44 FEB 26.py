@@ -138,10 +138,10 @@ if st.button("🚀 Provide Forecasting"):
     
     
     # -------------------------------------------------
-    # IDEAL GENETIC CURVE (Arbor Acres Example)
+    # IDEAL GENETIC CURVE (Ross 308 Example)
     # -------------------------------------------------
-    ideal_days = np.array([1, 7, 14, 21, 28, 35])
-    ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])
+    ideal_days = np.array([0, 7, 14, 21, 28, 35])
+    ideal_weights = np.array([0.043, 0.208, 0.519, 0.985, 1.573, 2.235])
     
     growth_curve = interp1d(
         ideal_days,
