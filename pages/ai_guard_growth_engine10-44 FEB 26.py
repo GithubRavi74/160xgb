@@ -125,13 +125,13 @@ if st.button("🚀 Provide Forecasting"):
     
     # Status classification
     if performance_ratio > 1.05:
-        status = "Ahead of Target"
+        status = "STATUS : Ahead of Target"
         status_color = "success"
     elif performance_ratio >= 0.95:
-        status = "On Track"
+        status = "STATUS : On Track"
         status_color = "warning"
     else:
-        status = "Behind Target"
+        status = "STATUS : Behind Target"
         status_color = "error"
 
 
@@ -175,7 +175,7 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # DISPLAY RESULTS
     # -------------------------------------------------
-    st.subheader("📊 Current Status Of Birds")
+    st.subheader("📊 Today's weight comparison wiTH Today's Ideal Weight")
     
     colA, colB, colC = st.columns(3)
     
@@ -189,11 +189,13 @@ if st.button("🚀 Provide Forecasting"):
         st.warning(f"🟡 {status}")
     else:
         st.error(f"🔴 {status}")
-    
+        
+    st.write(\n\n")
     # -------------------------------------------------
     # HARVEST FORECAST
     # -------------------------------------------------
-    st.subheader("🚀 Harvest Forecast (Day 35 Projection)")
+    st.subheader("🚀 Harvest Forecast\n\n")
+    st.subheader("Day 35 Projection")
     
     c1, c2, c3 = st.columns(3)
     
