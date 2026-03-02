@@ -199,7 +199,7 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # DISPLAY RESULTS
     # -------------------------------------------------
-    st.subheader("📊 Current Status")
+    st.subheader("📊 Current Status Of Birds")
     
     colA, colB, colC = st.columns(3)
     
