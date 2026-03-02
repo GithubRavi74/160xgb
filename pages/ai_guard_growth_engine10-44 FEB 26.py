@@ -190,7 +190,7 @@ if st.button("🚀 Provide Forecasting"):
     else:
         st.error(f"🔴 {status}")
         
-    st.write(\n\n")
+    st.write("\n\n")
     # -------------------------------------------------
     # HARVEST FORECAST
     # -------------------------------------------------
