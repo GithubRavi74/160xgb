@@ -69,9 +69,7 @@ birds_alive = int(last["birds_alive"])
 # -------------------------------------------------
 st.subheader("📝 Enter the Bird Age")
 
-col1 = st.columns(1)
-
-current_day = col1.number_input(
+current_day = st.number_input(
     "Bird Age (Day)",
     min_value=1,
     max_value=60,
