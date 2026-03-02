@@ -197,17 +197,17 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # HARVEST FORECAST
     # -------------------------------------------------
-    #st.subheader("🚀 Harvest Forecast\n\n")
+    #st.subheader("🚀 Harvest Weight Forecast\n\n")
     st.markdown(
     "<h2 style='text-align: center;'>🚀 Harvest Forecast</h2>",
     unsafe_allow_html=True
     )
     st.text("\n")
-    st.subheader("Day 35 Projection")
+    st.subheader("Day 35 Weight Projection")
     
     c1, c2, c3 = st.columns(3)
     
-    c1.metric("Ideal Target (kg)", f"{ideal_final_weight:.2f}")
+    c1.metric("Ideal Target Weight (kg)", f"{ideal_final_weight:.2f}")
     c2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
     c3.metric("Environmental Impact", f"-{growth_impact_pct:.1f}%")
     
