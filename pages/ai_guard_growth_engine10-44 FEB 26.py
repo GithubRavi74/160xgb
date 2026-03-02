@@ -87,6 +87,7 @@ birds_alive = int(last["birds_alive"])
 
 if st.button("🚀 Provide Forecasting"):
     
+    st.text("\n")
     # -------------------------------------------------
     # IDEAL WEIGHT CURVE (Ross 308 Example)
     # -------------------------------------------------
@@ -175,7 +176,7 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # DISPLAY RESULTS
     # -------------------------------------------------
-    st.subheader("📊 Today's weight comparison wiTH Today's Ideal Weight")
+    st.subheader("📊 Today's weight comparison with Today's Ideal Weight")
     
     colA, colB, colC = st.columns(3)
     
@@ -190,7 +191,9 @@ if st.button("🚀 Provide Forecasting"):
     else:
         st.error(f"🔴 {status}")
         
-    st.write("\n\n")
+     
+    st.text("\n")
+    st.text("\n")
     # -------------------------------------------------
     # HARVEST FORECAST
     # -------------------------------------------------
@@ -228,9 +231,9 @@ if st.button("🚀 Provide Forecasting"):
     # 7-DAY ENVIRONMENT SNAPSHOT (Non-Technical View)
     # -------------------------------------------------
    
+    st.write("\n")
     st.write("")
-    st.write("")
-    st.subheader("🌤 Last 7-Day Environmental Snapshot & 🎯 Forecast Confidence")
+    st.subheader("🌤 Last 7-Day Environmental Snapshot")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -268,7 +271,7 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # CONFIDENCE SCORE
     # -------------------------------------------------
-   # st.subheader("🎯 Forecast Confidence")
+    st.subheader("🎯 Forecast Confidence")
     
     confidence = 100
     
