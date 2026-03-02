@@ -126,13 +126,13 @@ if st.button("🚀 Provide Forecasting"):
     
     # Status classification
     if performance_ratio > 1.05:
-        status = "STATUS : Ahead of Target"
+        status = "TODAY'S STATUS : Ahead of Target"
         status_color = "success"
     elif performance_ratio >= 0.95:
-        status = "STATUS : On Track"
+        status = "TODAY'S STATUS : On Track"
         status_color = "warning"
     else:
-        status = "STATUS : Behind Target"
+        status = "TODAY'S STATUS : Behind Target"
         status_color = "error"
 
 
@@ -266,11 +266,11 @@ if st.button("🚀 Provide Forecasting"):
     
     # Final Status
     if env_score == 3:
-        st.success("🟢 Environment Stable – Conditions support optimal growth.")
+        st.success("🟢 Environment is stable – Conditions support optimal growth.")
     elif env_score == 2:
-        st.warning("🟡 Minor Environmental Deviation – Monitor ventilation and litter.")
+        st.warning("🟡 Minor Environmental Deviation exists – Monitor ventilation and litter")
     else:
-        st.error("🔴 Environmental Stress Detected – Immediate correction recommended.")
+        st.error("🔴 Environmental Stress is detected – Immediate correction is recommended.")
 
     
     # -------------------------------------------------
