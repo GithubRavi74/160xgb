@@ -145,9 +145,7 @@ if st.button("🚀 Provide Forecasting"):
     rh_7d = rolling_7["rh"].mean()  
     co_7d = rolling_7["co"].mean()
     
-   
-    
-    
+      
     # -------------------------------------------------
     # ENVIRONMENTAL STRESS CALCULATION
     # -------------------------------------------------
@@ -221,6 +219,49 @@ if st.button("🚀 Provide Forecasting"):
     plt.xlabel("Day")
     plt.ylabel("Weight (kg)")
     st.pyplot(plt)
+
+
+
+     # -------------------------------------------------
+    # 7-DAY ENVIRONMENT SNAPSHOT (Non-Technical View)
+    # -------------------------------------------------
+   
+    st.write("")
+    st.write("")
+    st.subheader("🌤 Last 7-Day Environmental Snapshot")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    col1.metric("Avg Temperature (°C)", f"{temp_7d:.1f}")
+    col2.metric("Avg Humidity (%)", f"{rh_7d:.1f}")
+    col3.metric("Avg Ammonia (ppm)", f"{nh_7d:.1f}")
+    col4.metric("Avg CO₂ (ppm)", f"{co_7d:.0f}")
+    
+    # -------------------------------------------------
+    # Simple Environmental Status Logic
+    # -------------------------------------------------
+    env_score = 0
+    
+    # Temperature scoring
+    if 26 <= temp_7d <= 32:
+        env_score += 1
+    
+    # Ammonia scoring
+    if nh_7d <= 25:
+        env_score += 1
+    
+    # CO2 scoring
+    if co_7d <= 3000:
+        env_score += 1
+    
+    # Final Status
+    if env_score == 3:
+        st.success("🟢 Environment Stable – Conditions support optimal growth.")
+    elif env_score == 2:
+        st.warning("🟡 Minor Environmental Deviation – Monitor ventilation and litter.")
+    else:
+        st.error("🔴 Environmental Stress Detected – Immediate correction recommended.")
+
     
     # -------------------------------------------------
     # CONFIDENCE SCORE
