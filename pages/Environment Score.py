@@ -64,6 +64,20 @@ last = batch_hist.iloc[-1]
  
 birds_alive = int(last["birds_alive"])
 
+# -------------------------------------------------
+# MANUAL INPUT SECTION
+# -------------------------------------------------
+st.subheader("📝 Enter the Bird Age")
+
+col1 = st.columns(1)
+
+current_day = col1.number_input(
+    "Bird Age (Day)",
+    min_value=1,
+    max_value=60,
+    value=int(last["day_number"])
+)
+
 if st.button("🚀 Show Barn Score"):
     # -------------------------------------------------
     # ENVIRONMENTAL CONTEXT (Last 7 Days)
