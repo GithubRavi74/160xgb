@@ -228,7 +228,7 @@ if st.button("🚀 Provide Forecasting"):
    
     st.write("")
     st.write("")
-    st.subheader("🌤 Last 7-Day Environmental Snapshot")
+    st.subheader("🌤 Last 7-Day Environmental Snapshot & 🎯 Forecast Confidence")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -266,7 +266,7 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # CONFIDENCE SCORE
     # -------------------------------------------------
-    st.subheader("🎯 Forecast Confidence")
+   # st.subheader("🎯 Forecast Confidence")
     
     confidence = 100
     
