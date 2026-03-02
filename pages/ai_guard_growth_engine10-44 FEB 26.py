@@ -197,7 +197,12 @@ if st.button("🚀 Provide Forecasting"):
     # -------------------------------------------------
     # HARVEST FORECAST
     # -------------------------------------------------
-    st.subheader("🚀 Harvest Forecast\n\n")
+    #st.subheader("🚀 Harvest Forecast\n\n")
+    st.markdown(
+    "<h2 style='text-align: center;'>🚀 Harvest Forecast</h2>",
+    unsafe_allow_html=True
+    )
+    st.text("\n")
     st.subheader("Day 35 Projection")
     
     c1, c2, c3 = st.columns(3)
