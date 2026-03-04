@@ -150,16 +150,47 @@ if st.button("🚀 Provide Forecasting"):
     days = np.arange(1, 36)
     ideal_curve = growth_curve(days)
     performance_curve = ideal_curve * performance_ratio
-        
+    
     plt.figure()
-    plt.plot(days, ideal_curve)
-    plt.plot(days, performance_curve)
-     
-    plt.scatter(current_day, today_weight)
+    
+    # Ideal growth curve with data points
+    plt.plot(
+        days,
+        ideal_curve,
+        marker='o',
+        markersize=5,
+        linewidth=2
+    )
+    
+    # Adjusted performance curve with data points
+    plt.plot(
+        days,
+        performance_curve,
+        marker='o',
+        markersize=5,
+        linewidth=2
+    )
+    
+    # Highlight today's actual weight clearly
+    plt.scatter(
+        current_day,
+        today_weight,
+        s=150
+    )
+    
     plt.xlabel("Day")
     plt.ylabel("Weight (kg)")
+    plt.grid(True)
+
+    #plt.legend(["Ideal Growth", "Predicted Growth", "Today's Weight"])
+
+    legend = plt.legend(
+    ["Ideal Growth", "Predicted Growth", "Today's Weight"]
+)
+
+    # Set legend text color to green
+    for text in legend.get_texts():
+        text.set_color("green")
     st.pyplot(plt)
 
  
-
-
