@@ -45,8 +45,7 @@ today_weight = col2.number_input(
     value=0.321,
     step=0.01
 )
-
-#birds_alive = int(last["birds_alive"])
+ 
 
 if st.button("🚀 Provide Forecasting"):
     
