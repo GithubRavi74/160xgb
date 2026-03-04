@@ -43,5 +43,4 @@ st.markdown("""
 
 Use the menu on the left to:-
 - 🧑‍🌾 **Insights For Farmer**
-#- 🧪 Vendor's section for **Validating Forecast & Models**
 """)
