@@ -8,7 +8,7 @@ import pickle
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Daily Health", layout="wide")
-st.title("🐔 iPoultry AI – Daily Health Prediction")
+#st.title("🐔 iPoultry AI – Daily Health Prediction")
 
 st.markdown(
     """
