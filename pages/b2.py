@@ -182,7 +182,15 @@ if st.button("🚀 Provide Forecasting"):
     plt.ylabel("Weight (kg)")
     plt.grid(True)
 
-    plt.legend(["Ideal Growth", "Predicted Growth", "Today's Weight"])
+    #plt.legend(["Ideal Growth", "Predicted Growth", "Today's Weight"])
+
+    legend = plt.legend(
+    ["Ideal Growth", "Predicted Growth", "Today's Weight"]
+)
+
+    # Set legend text color to green
+    for text in legend.get_texts():
+        text.set_color("green")
     st.pyplot(plt)
 
  
