@@ -42,7 +42,7 @@ today_weight = col2.number_input(
     min_value=0.01,
     max_value=5.0,
     #value=float(last.get("sample_weight_kg", 1.0)),
-    value=0.321
+    value=0.321,
     step=0.01
 )
 
