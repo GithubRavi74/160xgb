@@ -167,8 +167,8 @@ if st.button("🚀 Provide FCR Forecasting"):
     plt.ylabel("FCR")
     plt.grid(True)
     
-    plt.plot(days, ideal_curve, marker='o', markersize=3, linewidth=1)
-    plt.plot(days, performance_curve, marker='o', markersize=3, linewidth=1)
+    plt.plot(days, ideal_curve, marker='o', markersize=1, linewidth=1)
+    plt.plot(days, performance_curve, marker='o', markersize=1, linewidth=1)
 
     plt.scatter(current_day, today_fcr, s=150)
     st.pyplot(plt)
