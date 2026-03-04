@@ -8,7 +8,7 @@ import pickle
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Daily Health", layout="wide")
-#st.title("🐔 iPoultry AI – Daily Health Prediction")
+ 
 
 st.markdown(
     """
@@ -19,7 +19,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>Bird Daily Health </h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>Bird Daily Health Insights</h2>", unsafe_allow_html=True)
 
 #########################################################################################
 
