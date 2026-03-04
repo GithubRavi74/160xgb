@@ -167,8 +167,8 @@ if st.button("🚀 Provide Forecasting"):
         days,
         performance_curve,
         marker='o',
-        markersize=5,
-        linewidth=2
+        markersize=2,
+        linewidth=1
     )
     
     # Highlight today's actual weight clearly
