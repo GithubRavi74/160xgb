@@ -41,6 +41,6 @@ st.markdown(
 st.markdown("""
 **Welcome**.
 
-Use the menu on the left to:-
-- 🧑‍🌾 **Insights For Farmer**
+🧑‍🌾Use the menu on the left to get:-
+-  **Insights about Farm**
 """)
