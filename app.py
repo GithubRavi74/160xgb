@@ -25,16 +25,23 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-#st.sidebar.title("🐔 iPoultry AI Suite")
-#st.sidebar.markdown("Smart Broiler Intelligence Platform")
+ 
 
 
 st.title("🐔 iPoultry AI Shield")
+st.markdown(
+    """
+    <h1 style='color: black;'>
+        📈🐔iPoultry <span style='color: #FFD700;'>AI Guard</span>
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
+
 st.markdown("""
-Welcome to **iPoultry AI**.
+**Welcome**.
 
 Use the menu on the left to:-
-- 🧑‍🌾 Farmer's section for **Daily Health Predictions**
-- 🧪 Vendor's section for **Validating Forecast & Models**
+- 🧑‍🌾 **Insights ForFarmer**
+#- 🧪 Vendor's section for **Validating Forecast & Models**
 """)
