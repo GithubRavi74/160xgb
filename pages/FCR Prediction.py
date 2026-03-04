@@ -143,8 +143,8 @@ if st.button("🚀 Provide FCR Forecasting"):
         days,
         ideal_curve,
         marker='o',
-        markersize=6,
-        linewidth=2
+        markersize=3,
+        linewidth=1
     )
     
     # Predicted curve with highlighted points
@@ -152,8 +152,8 @@ if st.button("🚀 Provide FCR Forecasting"):
         days,
         performance_curve,
         marker='o',
-        markersize=6,
-        linewidth=2
+        markersize=3,
+        linewidth=1
     )
     
     # Highlight today's datapoint clearly
