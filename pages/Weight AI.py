@@ -33,7 +33,8 @@ current_day = col1.number_input(
     "Bird Age (Day)",
     min_value=1,
     max_value=60,
-    value=int(last["day_number"])
+    #value=int(last["day_number"])
+    value=10
 )
 
 today_weight = col2.number_input(
