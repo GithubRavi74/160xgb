@@ -155,8 +155,10 @@ if st.button("🚀 Provide FCR Forecasting"):
         markersize=3,
         linewidth=1
     )
-    
-  
+
+ 
+    # Highlight today's datapoint clearly
+    plt.scatter(current_day, today_fcr, s=150)
     plt.xlabel("Day")
     plt.ylabel("FCR")
     plt.grid(True)
@@ -164,8 +166,7 @@ if st.button("🚀 Provide FCR Forecasting"):
     plt.plot(days, ideal_curve, marker='o', markersize=1, linewidth=1)
     plt.plot(days, performance_curve, marker='o', markersize=1, linewidth=1)
 
-    # Highlight today's datapoint clearly
-    plt.scatter(current_day, today_fcr, s=150)
+   
 
     legend = plt.legend(
     ["Ideal FCR", "Predicted FCR", "Todays FCR"]
