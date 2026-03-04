@@ -126,20 +126,52 @@ if st.button("🚀 Provide FCR Forecasting"):
     c1.metric("Ideal Target FCR (Day 35)", f"{ideal_final_fcr:.2f}")
     c2.metric("Predicted Final FCR", f"{predicted_final_fcr:.2f}")
 
+
     # -------------------------------------------------
     # FCR CURVE VISUALIZATION
     # -------------------------------------------------
     st.subheader("📈 FCR Projection Curve")
-
+    
     days = np.arange(7, 36)
     ideal_curve = fcr_curve(days)
     performance_curve = ideal_curve * performance_ratio
-
+    
     plt.figure()
-    plt.plot(days, ideal_curve)
-    plt.plot(days, performance_curve)
-    plt.scatter(current_day, today_fcr)
+    
+    # Ideal curve with highlighted points
+    plt.plot(
+        days,
+        ideal_curve,
+        marker='o',
+        markersize=6,
+        linewidth=2
+    )
+    
+    # Predicted curve with highlighted points
+    plt.plot(
+        days,
+        performance_curve,
+        marker='o',
+        markersize=6,
+        linewidth=2
+    )
+    
+    # Highlight today's datapoint clearly
+    plt.scatter(
+        current_day,
+        today_fcr,
+        s=120
+    )
+    
+    #plt.xlabel("Day")
+    #plt.ylabel("FCR")
+    #plt.grid(True)
+    
+    plt.plot(days, ideal_curve, marker='o', markersize=5, linewidth=2)
+    plt.plot(days, performance_curve, marker='o', markersize=5, linewidth=2)
 
-    plt.xlabel("Day")
-    plt.ylabel("FCR")
+    plt.scatter(current_day, today_fcr, s=150)
     st.pyplot(plt)
+
+    
+    
