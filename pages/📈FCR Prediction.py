@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>Bird FCR Prediction</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # MANUAL INPUT SECTION
