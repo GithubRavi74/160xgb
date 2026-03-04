@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # CONFIG
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – Growth Forecast", layout="wide")
-st.title("📈 iPoultry AI Guard – Harvest Growth Forecast")
+st.title("Harvest Growth Forecast")
 
 # -------------------------------------------------
 # LOAD DATA
