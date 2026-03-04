@@ -158,8 +158,8 @@ if st.button("🚀 Provide Forecasting"):
         days,
         ideal_curve,
         marker='o',
-        markersize=5,
-        linewidth=2
+        markersize=3,
+        linewidth=1
     )
     
     # Adjusted performance curve with data points
@@ -167,7 +167,7 @@ if st.button("🚀 Provide Forecasting"):
         days,
         performance_curve,
         marker='o',
-        markersize=2,
+        markersize=3,
         linewidth=1
     )
     
