@@ -127,7 +127,7 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     st.subheader("🔥 Brooding Period Risk (Day 1–10)")
     
     heat_risk_pct = min(int(early_stress_score * 50), 100)
-    st.subheader("🔥 Brooding Heat Stress Risk")
+    #st.subheader("🔥 Brooding Heat Stress Risk")
 
     heat_risk_pct = min(int(early_stress_score * 50), 100)
 
@@ -159,7 +159,7 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     #st.progress(heat_risk_pct / 100)
 
    
-
+    st.write ("\n")st.write ("\n")
     col1, col2, col3 = st.columns(3)
 
     col1.metric("Avg Brooding Temp (°C)", f"{avg_temp:.1f}")
