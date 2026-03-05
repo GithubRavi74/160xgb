@@ -129,26 +129,27 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     heat_risk_pct = min(int(early_stress_score * 50), 100)
     st.subheader("🔥 Brooding Heat Stress Risk")
 
-heat_risk_pct = min(int(early_stress_score * 50), 100)
+    heat_risk_pct = min(int(early_stress_score * 50), 100)
 
-st.write(f"Heat Stress — {heat_risk_pct}% likelihood")
+    st.write(f"Heat Stress — {heat_risk_pct}% likelihood")
 
-st.markdown(f"""
-<div style="background-color:#e0e0e0;border-radius:10px;height:20px;width:100%;">
-    <div style="
-        background-color:#ff4b4b;
-        width:{heat_risk_pct}%;
-        height:100%;
-        border-radius:10px;
-        text-align:right;
-        padding-right:5px;
-        color:white;
-        font-size:12px;
-        line-height:20px;">
-        {heat_risk_pct}%
+    st.markdown(f"""
+    <div style="background-color:#e0e0e0;border-radius:10px;height:20px;width:100%;">
+        <div style="
+            background-color:#ff4b4b;
+            width:{heat_risk_pct}%;
+            height:100%;
+            border-radius:10px;
+            text-align:right;
+            padding-right:5px;
+            color:white;
+            font-size:12px;
+            line-height:20px;">
+            {heat_risk_pct}%
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
     #if heat_risk_pct < 25:
     #    st.success(f"Low Heat Stress Risk — {heat_risk_pct}%")
     #elif heat_risk_pct < 50:
