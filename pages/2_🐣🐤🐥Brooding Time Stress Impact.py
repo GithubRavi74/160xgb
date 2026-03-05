@@ -57,7 +57,7 @@ if batch_hist.empty:
 # -------------------------------------------------
 # BUTTON TRIGGER
 # -------------------------------------------------
-if st.button("🚀 Analyze Early Life Impact"):
+if st.button("🚀 Analyze Brooding Life Impact"):
 
     # -------------------------------------------------
     # BROODING PERIOD (Day 1–10)
@@ -131,7 +131,7 @@ if st.button("🚀 Analyze Early Life Impact"):
 
     c1, c2, c3 = st.columns(3)
 
-    c1.metric("Genetic Target (kg)", f"{ideal_final_weight:.2f}")
+    c1.metric("Ideal Target Weight(kg)", f"{ideal_final_weight:.2f}")
     c2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
     c3.metric("Early Life Impact", f"-{impact_pct:.1f}%")
 
