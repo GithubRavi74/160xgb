@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'> Brooding Time Stress Impact Forecasting</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'> Brooding Phase Impact Forecasting</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # LOAD DATA
