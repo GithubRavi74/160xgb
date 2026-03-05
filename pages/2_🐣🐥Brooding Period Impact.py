@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Brooding Phase Impact Forecasting", layout="wide")
+st.set_page_config(page_title="iPoultry AI – Brooding Period Impact Forecasting", layout="wide")
 
 st.markdown(
     """
@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'> Brooding Phase Impact Forecasting</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'> Brooding Period Impact Forecasting</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # LOAD DATA
@@ -57,7 +57,7 @@ if batch_hist.empty:
 # -------------------------------------------------
 # BUTTON TRIGGER
 # -------------------------------------------------
-if st.button("🚀 Analyze Brooding Phase Impact On Harvest Weight"):
+if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
 
     # -------------------------------------------------
     # BROODING PERIOD (Day 1–10)
