@@ -75,7 +75,6 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     # EARLY HEAT STRESS CALCULATION
     # -------------------------------------------------
     optimal_brooding_temp = 32  # ideal average brooding temp
-
     temp_deviation = abs(avg_temp - optimal_brooding_temp)
     heat_stress_index = max(0, temp_deviation / 5)
 
@@ -95,7 +94,7 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     #ideal_days = np.array([1, 7, 14, 21, 28, 35])
     #ideal_weights = np.array([0.042, 0.18, 0.45, 0.9, 1.5, 2.2])
 
-   
+    #IDEAL WEIGHT CURVE (Ross 308 Example)
     ideal_days = np.array([
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
     10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
