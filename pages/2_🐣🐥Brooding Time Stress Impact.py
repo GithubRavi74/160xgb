@@ -57,7 +57,7 @@ if batch_hist.empty:
 # -------------------------------------------------
 # BUTTON TRIGGER
 # -------------------------------------------------
-if st.button("🚀 Analyze Brooding Life Impact"):
+if st.button("🚀 Analyze Brooding Life Impact On Harvest Weight"):
 
     # -------------------------------------------------
     # BROODING PERIOD (Day 1–10)
