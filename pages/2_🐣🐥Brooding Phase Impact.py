@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Brooding Time Stres Impact Forecasting", layout="wide")
+st.set_page_config(page_title="iPoultry AI – Brooding Phase Impact Forecasting", layout="wide")
 
 st.markdown(
     """
