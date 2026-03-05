@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Early Life Impact", layout="wide")
+st.set_page_config(page_title="iPoultry AI – Brooding Time Stres Impact Forecasting", layout="wide")
 
 st.markdown(
     """
@@ -18,7 +18,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>Early Life Impact Forecasting Engine</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'> Brooding Time Stres Impact Forecasting</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # LOAD DATA
