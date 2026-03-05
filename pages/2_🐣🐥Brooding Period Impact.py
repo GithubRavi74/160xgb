@@ -188,7 +188,7 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
 
     c1.metric("Ideal Target Weight(kg)", f"{ideal_final_weight:.2f}")
     c2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
-    c3.metric("Early Life Impact", f"-{impact_pct:.1f}%")
+    c3.metric("Brooding Period Impact", f"-{impact_pct:.1f}%")
 
     # -------------------------------------------------
     # GROWTH CURVE VISUALIZATION
