@@ -159,7 +159,8 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     #st.progress(heat_risk_pct / 100)
 
    
-    st.markdown("\n")st.markdown("\n")
+    st.markdown(" \n")
+    st.markdown(" \n")
     col1, col2, col3 = st.columns(3)
 
     col1.metric("Avg Brooding Temp (°C)", f"{avg_temp:.1f}")
