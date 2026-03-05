@@ -180,7 +180,8 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
     # -------------------------------------------------
     # HARVEST IMPACT FORECAST
     # -------------------------------------------------
-    st.markdown(" \n") st.markdown(" \n")
+    st.markdown(" \n") 
+    st.markdown(" \n")
     st.subheader("🚀 Day 35 Harvest Impact Forecast")
 
     c1, c2, c3 = st.columns(3)
