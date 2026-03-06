@@ -161,6 +161,9 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
 
    
     st.markdown(" \n") 
+    st.markdown("""
+    <hr style="height:1px;border:none;color:#D3D3D3;background-color:#D3D3D3;margin-top:5px;margin-bottom:5px;">
+    """, unsafe_allow_html=True)
     st.markdown(" \n")
     st.subheader("🔥 Brooding Period Risk (Day 1–10)")
     st.markdown(" \n")
