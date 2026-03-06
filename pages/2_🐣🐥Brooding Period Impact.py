@@ -131,7 +131,8 @@ if st.button("🚀 Analyze Brooding Period Impact On Harvest Weight"):
 
     heat_risk_pct = min(int(early_stress_score * 50), 100)
 
-    st.write(f"Heat Stress — {heat_risk_pct}% likelihood")
+    #st.write(f"Heat Stress — {heat_risk_pct}% likelihood")
+    st.subheader(f"Heat Stress — {heat_risk_pct}% likelihood")
 
     st.markdown(f"""
     <div style="background-color:#e0e0e0;border-radius:10px;height:20px;width:100%;">
