@@ -111,9 +111,11 @@ if st.button("🚀 Provide Forecasting"):
     
     colA, colB = st.columns(2)
     
-    colA.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
-    colB.metric("Actual Weight Today (kg)", f"{today_weight:.2f}")
-   
+    #colA.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
+    #colB.metric("Actual Weight Today (kg)", f"{today_weight:.2f}")
+  
+    colA.metric("Actual Weight Today (kg)", f"{today_weight:.2f}")
+    colB.metric("Ideal Weight Today (kg)", f"{ideal_current_weight:.2f}")
     
     if status_color == "success":
         st.success(f"🟢 {status}")
@@ -140,6 +142,9 @@ if st.button("🚀 Provide Forecasting"):
     
     c1.metric("Ideal Target Weight (kg)", f"{ideal_final_weight:.2f}")
     c2.metric("Predicted Harvest Weight (kg)", f"{predicted_final_weight:.2f}")
+
+    
+    
     
     
     # -------------------------------------------------
