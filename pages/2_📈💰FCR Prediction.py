@@ -32,7 +32,14 @@ col1= st.columns(1)
 #   value=10000
 #)
 
-bird_age = col1.number_input(
+#bird_age = col1.number_input(
+#    "Bird Age (Day)",
+#    min_value=1,
+#    max_value=60,
+#   value=10
+#)
+
+bird_age = st.number_input(
     "Bird Age (Day)",
     min_value=1,
     max_value=60,
