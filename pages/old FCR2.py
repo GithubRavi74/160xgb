@@ -80,7 +80,7 @@ st.markdown("### 📊 Auto Calculated Values")
 
 c1, c2 = st.columns(2)
 
-c1.metric("Accumulated Live Weight Today (kg)", f"{current_total_weight:,.0f}")
+c1.metric("Total Flock Weight At This Age (kg)", f"{current_total_weight:,.0f}")
 c2.metric("Current FCR", f"{current_fcr:.2f}")
 
 # -------------------------------------------------
