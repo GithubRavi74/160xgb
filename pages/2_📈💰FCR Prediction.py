@@ -23,7 +23,7 @@ st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=T
 # -------------------------------------------------
 # INPUT SECTION
 # -------------------------------------------------
-st.subheader("📝 Enter the following for FCR Forecasting")
+st.subheader("📝 Enter the following information of the Batch")
 
 initial_flock = st.number_input(
     "Initial Flock Size",
