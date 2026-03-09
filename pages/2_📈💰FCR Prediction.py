@@ -142,19 +142,19 @@ if st.button("🚀 Provide FCR Forecasting"):
 
     # Status classification
     if performance_ratio < 0.95:
-        status = "TODAY'S FCR STATUS : Better than Target"
+        status = "CURRENT FCR STATUS : Better than Target"
         status_color = "success"
     elif performance_ratio <= 1.05:
-        status = "TODAY'S FCR STATUS : On Track"
+        status = "CURRENT FCR STATUS : On Track"
         status_color = "warning"
     else:
-        status = "TODAY'S FCR STATUS : Worse than Target"
+        status = "CURRENT FCR STATUS : Worse than Target"
         status_color = "error"
 
     # -------------------------------------------------
     # TODAY COMPARISON
     # -------------------------------------------------
-    st.subheader("📊 Today's FCR Comparison with Ideal")
+    st.subheader("📊 Current FCR Comparison with Ideal")
 
     colA, colB = st.columns(2)
 
@@ -205,7 +205,7 @@ if st.button("🚀 Provide FCR Forecasting"):
     plt.grid(True)
 
     legend = plt.legend(
-        ["Ideal FCR", "Predicted FCR", "Today's FCR"]
+        ["Ideal FCR", "Predicted FCR", "Current FCR"]
     )
 
     for text in legend.get_texts():
