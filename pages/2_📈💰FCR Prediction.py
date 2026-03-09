@@ -26,11 +26,11 @@ st.subheader("📝 Enter the Following Information Of The Batch")
 
 col1, col2 = st.columns(2)
 
-initial_flock = col1.number_input(
-    "Initial Flock Size",
-    min_value=1,
-    value=10000
-)
+#initial_flock = col1.number_input(
+#    "Initial Flock Size",
+#   min_value=1,
+#   value=10000
+#)
 
 bird_age = col2.number_input(
     "Bird Age (Day)",
