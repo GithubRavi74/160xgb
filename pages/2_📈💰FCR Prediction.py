@@ -154,7 +154,7 @@ if st.button("🚀 Provide FCR Forecasting"):
     # -------------------------------------------------
     # TODAY COMPARISON
     # -------------------------------------------------
-    st.subheader("📊 Current FCR Comparison with Ideal")
+    st.subheader("📊 Current FCR Comparison with Benchmarks")
 
     colA, colB = st.columns(2)
 
