@@ -25,11 +25,11 @@ st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=T
 # -------------------------------------------------
 st.subheader("📝 Enter the following information of the Batch")
 
-initial_flock = st.number_input(
-    "Initial Flock Size",
-    min_value=1,
-    value=10000
-)
+#initial_flock = st.number_input(
+#   "Initial Flock Size",
+#   min_value=1,
+#   value=10000
+#)
 
 #st.markdown("### CURRENT DAY INPUT")
 
