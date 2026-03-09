@@ -22,7 +22,7 @@ st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=T
 # -------------------------------------------------
 # INPUT SECTION
 # -------------------------------------------------
-st.subheader("📝 Enter the Following for FCR Forecasting")
+st.subheader("📝 Enter the Following Information Of The Batch")
 
 col1, col2 = st.columns(2)
 
@@ -39,7 +39,7 @@ bird_age = col2.number_input(
     value=10
 )
 
-st.markdown("### CURRENT DAY INPUT")
+#st.markdown("### CURRENT DAY INPUT")
 
 c1, c2, c3 = st.columns(3)
 
