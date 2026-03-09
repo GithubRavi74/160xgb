@@ -95,13 +95,7 @@ c5.metric("Current FCR", f"{current_fcr:.2f}")
 # -------------------------------------------------
 # BUTTON
 # -------------------------------------------------
-<style>
-[data-testid="stMetricValue"] {
-    color:  #000000;   /* blue color */
-    font-weight: bold;
-}
-</style>
-""", unsafe_allow_html=True)
+ 
 if st.button("🚀 Provide FCR Forecasting"):
 
     # -------------------------------------------------
