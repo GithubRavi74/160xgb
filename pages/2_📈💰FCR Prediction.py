@@ -8,14 +8,23 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – FCR Forecast", layout="wide")
 
+
+
 st.markdown("""
-<style>
-.auto-metric [data-testid="stMetricValue"] {
-    color: #1E90FF;
-    font-weight: bold;
-}
-</style>
-""", unsafe_allow_html=True)
+    <style>
+    /* Targets the value (the number) only inside our custom div */
+    div.auto-metric div[data-testid="stMetricValue"] {
+        color: #007BFF !important;
+    }
+    
+    /* Targets the label (the text) only inside our custom div */
+    div.auto-metric [data-testid="stMetricLabel"] p {
+        color: #007BFF !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
 
 
 st.markdown(
