@@ -51,7 +51,7 @@ birds_alive = col2.number_input(
 col3, col4 = st.columns(2)
 
 avg_weight = col3.number_input(
-    "Average Bird Weight (kg)",
+    "Average Bird Weight (kg) At This Age",
     min_value=0.01,
     value=0.35,
     step=0.01
