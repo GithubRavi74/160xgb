@@ -62,12 +62,13 @@ total_feed = c3.number_input(
     value=4200.0
 )
 
+###################################
 # -------------------------------------------------
 # AUTO CALCULATIONS
 # -------------------------------------------------
 total_weight = birds_alive * avg_weight
-
 current_fcr = total_feed / total_weight
+
 
 # -------------------------------------------------
 # DISPLAY AUTO CALCULATED VALUES
@@ -76,29 +77,21 @@ st.markdown("### 📊 Auto Calculated Values")
 
 st.markdown(
     """
-    <style>
-    .calc-box {
-        background-color: #F0F8FF;
-        padding: 20px;
-        border-radius: 10px;
-        border: 2px solid #1E90FF;
-    }
-    </style>
+    <div style="
+        background-color:#F0F8FF;
+        padding:20px;
+        border-radius:10px;
+        border:2px solid #1E90FF;
+    ">
+    </div>
     """,
     unsafe_allow_html=True
 )
 
-with st.container():
-    st.markdown('<div class="calc-box">', unsafe_allow_html=True)
+c4, c5 = st.columns(2)
 
-    c4, c5 = st.columns(2)
-
-    c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
-    c5.metric("Current FCR", f"{current_fcr:.2f}")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.text("")
+c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
+c5.metric("Current FCR", f"{current_fcr:.2f}")
 
 # -------------------------------------------------
 # BUTTON
