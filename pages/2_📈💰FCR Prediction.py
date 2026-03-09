@@ -159,7 +159,7 @@ if st.button("🚀 Provide FCR Forecasting"):
     colA, colB = st.columns(2)
 
     colA.metric("Ideal FCR For This Age", f"{ideal_current_fcr:.2f}")
-    colB.metric("Current FCR At This Age", f"{current_fcr:.2f}")
+    colB.metric("Current FCR", f"{current_fcr:.2f}")
 
     if status_color == "success":
         st.success(f"🟢 {status}")
