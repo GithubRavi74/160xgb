@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Bird Harvest Weight Prediction", layout="wide")
+st.set_page_config(page_title="iPoultry AI – Bird Harvest Weight Benchmark Forecasting", layout="wide")
 #st.title("📈 iPoultry AI Guard")
 #st.subheader("Bird Harvest Weight Prediction")
 
