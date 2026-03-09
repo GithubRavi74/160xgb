@@ -82,19 +82,26 @@ st.markdown("""
     color: #1E90FF;   /* blue color */
     font-weight: bold;
 }
-
+</style>
+""", unsafe_allow_html=True)
 st.markdown("### 📊 Auto Calculated Values")
 
 c4, c5 = st.columns(2)
 
 c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
 c5.metric("Current FCR", f"{current_fcr:.2f}")
-</style>
-""", unsafe_allow_html=True)
+
 
 # -------------------------------------------------
 # BUTTON
 # -------------------------------------------------
+<style>
+[data-testid="stMetricValue"] {
+    color:  #000000;   /* blue color */
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
 if st.button("🚀 Provide FCR Forecasting"):
 
     # -------------------------------------------------
