@@ -78,18 +78,21 @@ current_fcr = total_feed / total_weight
 
 st.markdown("""
 <style>
-[data-testid="stMetricValue"] {
-    color: #1E90FF;   /* blue color */
+.auto-metric [data-testid="stMetricValue"] {
+    color: #1E90FF;
     font-weight: bold;
 }
 </style>
 """, unsafe_allow_html=True)
+
 st.markdown("### 📊 Auto Calculated Values")
-
+st.markdown('<div class="auto-metric">', unsafe_allow_html=True)
 c4, c5 = st.columns(2)
-
 c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
 c5.metric("Current FCR", f"{current_fcr:.2f}")
+st.markdown('</div>', unsafe_allow_html=True)
+ 
+ 
 
 
 # -------------------------------------------------
