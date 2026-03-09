@@ -69,11 +69,12 @@ feed_today = col4.number_input(
 chick_weight = 0.04
 
 current_total_weight = birds_alive * avg_weight
-initial_total_weight = initial_flock * chick_weight
+# IF INITIAL FLOCK SIZE IS CONSIDERED INTO FCR CALCULATON
+#initial_total_weight = initial_flock * chick_weight
+#weight_gain = current_total_weight - initial_total_weight
+#current_fcr = feed_today / weight_gain if weight_gain > 0 else 0
 
-weight_gain = current_total_weight - initial_total_weight
-
-current_fcr = feed_today / weight_gain if weight_gain > 0 else 0
+current_fcr = feed_today / current_total_weight if current_total_weight > 0 else 0
 
 st.markdown("### 📊 Auto Calculated Values")
 
