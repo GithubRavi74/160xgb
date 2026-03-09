@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 st.set_page_config(page_title="iPoultry AI – FCR Forecast", layout="wide")
 
+st.markdown("""
+<style>
+.auto-metric [data-testid="stMetricValue"] {
+    color: #1E90FF;
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 st.markdown(
     """
     <h1 style='color: black;'>
@@ -85,14 +95,7 @@ c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
 c5.metric("Current FCR", f"{current_fcr:.2f}")
 st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-.auto-metric [data-testid="stMetricValue"] {
-    color: #1E90FF;
-    font-weight: bold;
-}
-</style>
-""", unsafe_allow_html=True)
+
  
  
 
