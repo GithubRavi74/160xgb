@@ -36,7 +36,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'> Benchmark FCR Forecast</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # INPUT SECTION
