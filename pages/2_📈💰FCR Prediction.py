@@ -31,7 +31,7 @@ initial_flock = st.number_input(
     value=10000
 )
 
-st.markdown("### CURRENT DAY INPUT")
+#st.markdown("### CURRENT DAY INPUT")
 
 col1, col2 = st.columns(2)
 
