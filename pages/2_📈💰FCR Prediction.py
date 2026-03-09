@@ -75,19 +75,6 @@ current_fcr = total_feed / total_weight
 # -------------------------------------------------
 st.markdown("### 📊 Auto Calculated Values")
 
-st.markdown(
-    """
-    <div style="
-        background-color:#F0F8FF;
-        padding:20px;
-        border-radius:10px;
-        border:2px solid #1E90FF;
-    ">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 c4, c5 = st.columns(2)
 
 c4.metric("Accumulated Live Weight (kg)", f"{total_weight:.2f}")
