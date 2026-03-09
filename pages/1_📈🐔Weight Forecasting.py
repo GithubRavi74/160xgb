@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # -------------------------------------------------
 # CONFIG
 # -------------------------------------------------
-st.set_page_config(page_title="iPoultry AI – Weight Forecasting With Benchmark Comparison", layout="wide")
+st.set_page_config(page_title="iPoultry AI – Benchmark Based Weight Forecasting", layout="wide")
 #st.title("📈 iPoultry AI Guard")
 #st.subheader("Bird Harvest Weight Prediction")
 
@@ -20,7 +20,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>Bird Harvest Weight Prediction</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>Benchmark Based Weight Forecasting</h2>", unsafe_allow_html=True)
 
 # -------------------------------------------------
 # MANUAL INPUT SECTION
