@@ -24,15 +24,15 @@ st.markdown("<h2 style='color: green;'>FCR Prediction</h2>", unsafe_allow_html=T
 # -------------------------------------------------
 st.subheader("📝 Enter the Following Information Of The Batch")
 
-col1, col2 = st.columns(2)
-
+#col1, col2 = st.columns(2)
+col1= st.columns(1)
 #initial_flock = col1.number_input(
 #    "Initial Flock Size",
 #   min_value=1,
 #   value=10000
 #)
 
-bird_age = col2.number_input(
+bird_age = col1.number_input(
     "Bird Age (Day)",
     min_value=1,
     max_value=60,
