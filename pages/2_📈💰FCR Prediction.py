@@ -44,7 +44,7 @@ bird_age = col2.number_input(
 c1, c2, c3 = st.columns(3)
 
 birds_alive = c1.number_input(
-    "Birds Alive",
+    "Total Birds Alive At This Age",
     min_value=1,
     value=9800
 )
