@@ -50,14 +50,14 @@ birds_alive = c1.number_input(
 )
 
 avg_weight = c2.number_input(
-    "Average Weight (kg)",
+    "Average Weight (kg) At This Age",
     min_value=0.01,
     value=0.35,
     step=0.01
 )
 
 total_feed = c3.number_input(
-    "Total Feed Consumed (kg)",
+    "Total Feed Consumed (kg) Till Now",
     min_value=0.01,
     value=4200.0
 )
