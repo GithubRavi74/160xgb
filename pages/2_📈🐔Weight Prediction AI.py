@@ -55,7 +55,7 @@ else:
         col1, col2 = st.columns(2)
         
         with col1:
-            st.subheader("📅 Batch & Mortality")
+            st.subheader("📅 Enter Batch & Mortality Information")
             initial_flock = st.number_input("Initial Flock Size", 100, 100000, 5000)
             total_mortality = st.number_input("Total Mortality to Date", 0, initial_flock, 150)
             day_number = st.number_input("Day Number (Age)", 1, 40, 21)
@@ -65,7 +65,7 @@ else:
             st.info(f"**Current Birds Alive:** {birds_alive}")
 
         with col2:
-            st.subheader("🌡️ Environment & Feed")
+            st.subheader("🌡️ Provide Environment & Feed Information")
             feed_today = st.number_input("Total Feed Today (kg)", 0.0, 5000.0, 450.0)
             temp = st.slider("Mean Temperature (°C)", 15.0, 40.0, 28.5)
             rh = st.slider("Relative Humidity (%)", 20.0, 100.0, 65.0)
