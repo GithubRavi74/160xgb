@@ -20,7 +20,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<h2 style='color: green;'>Benchmark Based Weight Forecasting</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='color: green;'>Bird Harvest Weight Prediction by Farm Trained AI Model</h2>", unsafe_allow_html=True)
 
 # 1. PAGE TITLE (The sidebar menu will use the filename)
 #st.title("🐥 iPoultry AI Guard: Weight Prediction")
