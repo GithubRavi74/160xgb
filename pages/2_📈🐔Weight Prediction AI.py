@@ -48,7 +48,7 @@ else:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        st.subheader("📅 Batch Stats")
+        st.subheader("📅 Batch Statistics")
         day_number = st.number_input("Day Number (Age)", 1, 45, 21)
         birds_alive = st.number_input("Birds Currently Alive", 1, 50000, 5000)
         feed_today = st.number_input("Total Feed Today (kg)", 0.0, 5000.0, 450.0)
