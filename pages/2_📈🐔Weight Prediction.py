@@ -10,7 +10,7 @@ st.markdown("Use this tool to estimate bird weight based on current environmenta
 
 # 2. LOAD THE TRAINED MODEL
 # We look for the pickle file in the root directory
-MODEL_PATH = "poultry_weight_model.pkl"
+MODEL_PATH = "kishorebatches_weight_model.pkl"
 
 @st.cache_resource
 def load_model():
