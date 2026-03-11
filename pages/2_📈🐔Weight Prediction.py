@@ -4,9 +4,27 @@ import pickle
 import numpy as np
 import os
 
+# -------------------------------------------------
+# CONFIG
+# -------------------------------------------------
+st.set_page_config(page_title="iPoultry AI – Weight Prediction Based On Farm Trained Model", layout="wide")
+#st.title("📈 iPoultry AI Guard")
+#st.subheader("Bird Harvest Weight Prediction by Farm Trained AI Model")
+
+st.markdown(
+    """
+    <h1 style='color: black;'>
+        📈 iPoultry <span style='color: #FFD700;'>AI Guard</span>
+    </h1>
+    """, 
+    unsafe_allow_html=True
+)
+
+st.markdown("<h2 style='color: green;'>Benchmark Based Weight Forecasting</h2>", unsafe_allow_html=True)
+
 # 1. PAGE TITLE (The sidebar menu will use the filename)
-st.title("🐥 iPoultry AI Guard: Weight Prediction")
-st.markdown("Use this tool to estimate bird weight based on current environmental and feed data.")
+#st.title("🐥 iPoultry AI Guard: Weight Prediction")
+#st.markdown("Use this tool to estimate bird weight based on current environmental and feed data.")
 
 # 2. LOAD THE TRAINED MODEL
 # We look for the pickle file in the root directory
