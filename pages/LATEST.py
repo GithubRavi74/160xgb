@@ -23,7 +23,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Integrated Weight, FCR & Profit Analytics</h2>
+    <h2 style='color: green;'> Farm Data Trained AI Model's Weight, FCR & Profit Analytics</h2>
     """, unsafe_allow_html=True)
 
 # --- 3. LOAD MODEL ---
