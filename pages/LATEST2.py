@@ -216,7 +216,8 @@ else:
             pdf.set_text_color(128)
             pdf.cell(0, 10, "iPoultry AI Guard © 2026 - Confidential Precision Farming Data", align="C")
             
-            return pdf.output()
+            #return pdf.output()
+            return bytes(pdf.output())
         
         # --- INSIDE THE 'if st.button' SECTION ---
         # Create a dictionary of all results for the PDF
@@ -230,6 +231,7 @@ else:
         }
         
         pdf_bytes = create_pdf(report_data)
+        
         
         st.download_button(
             label="📩 Download Official PDF Report",
