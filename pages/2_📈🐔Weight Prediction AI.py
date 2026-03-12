@@ -21,7 +21,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Integrated Weight & FCR Analysis</h2>
+    <h2 style='color: green;'>Weight & FCR prediction by AI Trained On Farm Data</h2>
     """, unsafe_allow_html=True)
 
 # --- 3. LOAD MODEL ---
@@ -46,7 +46,7 @@ else:
     top_col1, top_col2, top_col3 = st.columns(3)
 
     with top_col1:
-        st.markdown("**📊 Batch Stats**")
+        st.markdown("**📊 Batch Statistics**")
         initial_flock = st.number_input("Initial Flock Size", 100, 100000, 5000)
         total_mortality = st.number_input("Total Mortality to Date", 0, initial_flock, 150)
         day_number = st.number_input("Day Number (Age)", 1, 40, 21)
@@ -54,14 +54,14 @@ else:
         st.info(f"Current Birds Alive: {birds_alive}")
 
     with top_col2:
-        st.markdown("**🌡️ Environment**")
+        st.markdown("**🌡️ Environment Data**")
         temp = st.slider("Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
         nh = st.number_input("Ammonia (NH3)", 0.0, 50.0, 10.0)
         feed_today = st.number_input("Total Feed Today (kg)", 0.0, 5000.0, 450.0)
 
     with top_col3:
-        st.markdown("**🎯 Forecast Targets**")
+        st.markdown("**🎯 For Forecasing Targets**")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
         total_feed_to_date = st.number_input("Total Feed Consumed to Date (kg)", value=feed_today * day_number)
         st.caption("Includes today's feed")
