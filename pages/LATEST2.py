@@ -166,80 +166,76 @@ else:
             pdf.add_page()
             
             # Header
-            pdf.set_font("Arial", "B", 20)
-            pdf.set_text_color(46, 139, 87) # Dark Green
+            pdf.set_font("helvetica", "B", 20) # 'Arial' is now 'helvetica' in fpdf2
+            pdf.set_text_color(46, 139, 87) 
             pdf.cell(190, 15, "iPoultry AI Guard - Executive Report", ln=True, align="C")
             
-            pdf.set_font("Arial", "I", 10)
+            pdf.set_font("helvetica", "I", 10)
             pdf.set_text_color(100)
             pdf.cell(190, 10, f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
             pdf.ln(10)
         
-            # Section 1: Batch Overview
-            pdf.set_font("Arial", "B", 14)
+            # --- Section 1: Batch Overview ---
+            pdf.set_font("helvetica", "B", 14)
             pdf.set_text_color(0)
             pdf.set_fill_color(240, 240, 240)
             pdf.cell(190, 10, " 1. Batch & Environmental Status", ln=True, fill=True)
-            pdf.set_font("Arial", "", 12)
+            pdf.set_font("helvetica", "", 12)
             pdf.cell(95, 10, f"Age: {data['day_number']} Days")
             pdf.cell(95, 10, f"Birds Alive: {data['birds_alive']:,}", ln=True)
             pdf.cell(95, 10, f"Temperature: {data['temp']} C")
             pdf.cell(95, 10, f"Heat Index: {data['heat_index']:.2f}", ln=True)
             pdf.ln(5)
         
-            # Section 2: AI Predictions
-            pdf.set_font("Arial", "B", 14)
+            # --- Section 2: AI Predictions ---
+            pdf.set_font("helvetica", "B", 14)
             pdf.cell(190, 10, " 2. AI Growth Predictions", ln=True, fill=True)
-            pdf.set_font("Arial", "", 12)
+            pdf.set_font("helvetica", "", 12)
             pdf.cell(95, 10, f"Current Est. Weight: {data['current_pred']:.3f} kg")
             pdf.cell(95, 10, f"Performance: {data['perf_ratio']:.1%}", ln=True)
             pdf.cell(95, 10, f"Projected Harvest Weight: {data['proj_weight']:.3f} kg")
             pdf.cell(95, 10, f"Harvest Day: {data['harvest_day']}", ln=True)
             pdf.ln(5)
         
-            # Section 3: Financials
-            pdf.set_font("Arial", "B", 14)
+            # --- Section 3: Financials ---
+            pdf.set_font("helvetica", "B", 14)
             pdf.cell(190, 10, " 3. Financial Forecast", ln=True, fill=True)
-            pdf.set_font("Arial", "B", 12)
-            pdf.set_text_color(0, 100, 0) # Profit Green
+            pdf.set_font("helvetica", "B", 12)
+            pdf.set_text_color(0, 100, 0) 
             pdf.cell(190, 10, f"Projected Net Profit: ${data['profit']:,.2f}", ln=True)
-            pdf.set_font("Arial", "", 12)
+            pdf.set_font("helvetica", "", 12)
             pdf.set_text_color(0)
             pdf.cell(95, 10, f"Total Revenue: ${data['revenue']:,.2f}")
             pdf.cell(95, 10, f"Total Costs: ${data['total_cost']:,.2f}", ln=True)
             pdf.cell(95, 10, f"Projected FCR: {data['harvest_fcr']:.2f}")
             pdf.cell(95, 10, f"Estimated ROI: {data['roi']:.1f}%", ln=True)
         
-            # Footer
-            pdf.set_y(-30)
-            pdf.set_font("Arial", "I", 8)
-            pdf.set_text_color(128)
-            pdf.cell(0, 10, "iPoultry AI Guard © 2026 - Confidential Precision Farming Data", align="C")
-            
-            #return pdf.output()
+            # Final conversion to bytes for Streamlit
             return bytes(pdf.output())
         
-        # --- INSIDE THE 'if st.button' SECTION ---
-        # Create a dictionary of all results for the PDF
-        report_data = {
-            'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
-            'heat_index': heat_index, 'current_pred': current_pred, 
-            'perf_ratio': perf_ratio, 'proj_weight': projected_weight, 
-            'harvest_day': harvest_day, 'profit': profit, 'revenue': revenue, 
-            'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 
-            'roi': (profit/total_cost)*100
-        }
+        # --- Inside the Button Logic ---
+        if st.button("🚀 Run Full AI Business Analysis", use_container_width=True):
+            # ... (Your prediction and calculation code here) ...
         
-        pdf_bytes = create_pdf(report_data)
+            report_data = {
+                'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
+                'heat_index': heat_index, 'current_pred': current_pred, 
+                'perf_ratio': perf_ratio, 'proj_weight': projected_weight, 
+                'harvest_day': harvest_day, 'profit': profit, 'revenue': revenue, 
+                'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 
+                'roi': (profit/total_cost)*100 if total_cost > 0 else 0
+            }
         
+            # Generate the bytes
+            pdf_bytes = create_pdf(report_data)
         
-        st.download_button(
-            label="📩 Download Official PDF Report",
-            data=pdf_bytes,
-            file_name=f"iPoultry_Official_Report_Day{day_number}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+            st.download_button(
+                label="📩 Download Official PDF Report",
+                data=pdf_bytes,
+                file_name=f"iPoultry_Report_Day{day_number}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
          
 
 st.divider()
