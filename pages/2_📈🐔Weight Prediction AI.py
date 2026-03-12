@@ -40,7 +40,7 @@ if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found in the root directory.")
 else:
     # --- 4. MAIN INPUT AREA ---
-    st.subheader("📝 Enter Farm Data Entry ")
+    st.subheader("📝 Enter Farm Data")
     
     # We use three columns to fit all inputs on the main screen
     top_col1, top_col2, top_col3 = st.columns(3)
