@@ -193,14 +193,14 @@ else:
     h1, h2 = st.columns([1, 1])
 
     with h1:
-        st.markdown("### 🌾 Feed Management")
+        st.markdown("### 🌾 Enter Feed Details")
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
         hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
 
     with h2:
-        st.markdown("### 🎯 Harvest Day")
+        st.markdown("### 🎯 Enter Desired Harvest Day")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
         days_left = harvest_day - day_number
         if days_left >= 0:
@@ -213,7 +213,7 @@ else:
     
     # --- 4.5 BATCH PERFORMANCE SECTION ---
     st.markdown("---")
-    st.subheader("🐥 Batch Performance Info")
+    st.subheader("🐥 Enter Batch Performance Details")
     
     col_a, col_b = st.columns(2)
     
