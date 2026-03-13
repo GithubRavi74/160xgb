@@ -177,7 +177,7 @@ else:
 
     with t2:
         st.markdown("**🌡️ Environment**")
-        temp = st.slider("Mean Temp (°C)", 15.0, 40.0, 28.5)
+        temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
 
