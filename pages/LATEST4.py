@@ -21,10 +21,36 @@ IDEAL_WEIGHT = {
 }
 
 # --- 2. PDF GENERATOR FUNCTION ---
-def create_pdf(data):
+def create_pdf(data, lang="English"):
     pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15) # Prevents extra blank page
     pdf.add_page()
     
+    # Translations
+    t = {
+        "English": {
+            "title": "iPoultry AI Guard - Executive Report",
+            "subtitle": "Precision Analytics for Batch Management",
+            "sec1": " 1. Batch & Environmental Status",
+            "age": "Bird Age", "alive": "Birds Alive", "temp": "Mean Temp",
+            "sec2": " 2. AI Growth Analytics",
+            "today_w": "Today's Est. Weight", "perf": "Growth Performance", "proj_w": "Proj. Harvest Weight", "target_d": "Target Harvest Day",
+            "sec3": " 3. Financial Intelligence",
+            "profit": "Projected Net Profit", "rev": "Estimated Revenue", "cost": "Total Est. Costs", "roi": "Projected ROI"
+        },
+        "Bahasa Melayu": {
+            "title": "iPoultry AI Guard - Laporan Eksekutif",
+            "subtitle": "Analitik Kepersisan untuk Pengurusan Kelompok",
+            "sec1": " 1. Status Kelompok & Persekitaran",
+            "age": "Umur Ayam", "alive": "Ayam Hidup", "temp": "Suhu Purata",
+            "sec2": " 2. Analitik Pertumbuhan AI",
+            "today_w": "Anggaran Berat Hari Ini", "perf": "Prestasi Pertumbuhan", "proj_w": "Proj. Berat Tuai", "target_d": "Hari Tuaian Sasaran",
+            "sec3": " 3. Kecerdasan Kewangan",
+            "profit": "Unjuran Untung Bersih", "rev": "Anggaran Hasil", "cost": "Jumlah Anggaran Kos", "roi": "Unjuran ROI"
+        }
+    }[lang]
+
+    # Logo
     logo_path = "IDEA LOGIC Logo.jpg"
     if os.path.exists(logo_path):
         pdf.image(logo_path, 10, 8, 35) 
@@ -32,55 +58,56 @@ def create_pdf(data):
     pdf.set_font("helvetica", "B", 18)
     pdf.set_text_color(46, 139, 87) 
     pdf.cell(50) 
-    pdf.cell(140, 15, "iPoultry AI Guard - Executive Report", ln=True, align="L")
+    pdf.cell(140, 15, t["title"], ln=True, align="L")
     
     pdf.set_font("helvetica", "I", 9)
     pdf.set_text_color(100)
     pdf.cell(50) 
-    pdf.cell(140, 5, "Precision Analytics for Batch Management", ln=True, align="L")
+    pdf.cell(140, 5, t["subtitle"], ln=True, align="L")
     pdf.cell(50) 
     pdf.cell(140, 5, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="L")
     pdf.ln(15)
 
-    # Section 1: Batch Overview
+    # Section 1
     pdf.set_font("helvetica", "B", 14)
     pdf.set_text_color(0)
     pdf.set_fill_color(240, 240, 240)
-    pdf.cell(190, 10, " 1. Batch & Environmental Status", ln=True, fill=True)
+    pdf.cell(190, 10, t["sec1"], ln=True, fill=True)
     pdf.set_font("helvetica", "", 11)
     pdf.ln(2)
-    pdf.cell(95, 8, f"Bird Age: {data['day_number']} Days")
-    pdf.cell(95, 8, f"Birds Alive: {data['birds_alive']:,}", ln=True)
-    pdf.cell(95, 8, f"Mean Temperature: {data['temp']} C")
+    pdf.cell(95, 8, f"{t['age']}: {data['day_number']} Days")
+    pdf.cell(95, 8, f"{t['alive']}: {data['birds_alive']:,}", ln=True)
+    pdf.cell(95, 8, f"{t['temp']}: {data['temp']} C")
     pdf.cell(95, 8, f"Heat Index: {data['heat_index']:.2f}", ln=True)
     pdf.ln(5)
 
-    # Section 2: AI Predictions
+    # Section 2
     pdf.set_font("helvetica", "B", 14)
-    pdf.cell(190, 10, " 2. AI Growth Analytics", ln=True, fill=True)
+    pdf.cell(190, 10, t["sec2"], ln=True, fill=True)
     pdf.set_font("helvetica", "", 11)
     pdf.ln(2)
-    pdf.cell(95, 8, f"Today's Est. Weight: {data['current_pred']:.3f} kg")
-    pdf.cell(95, 8, f"Growth Performance: {data['perf_ratio']:.1%}", ln=True)
-    pdf.cell(95, 8, f"Projected Harvest Weight: {data['proj_weight']:.3f} kg")
-    pdf.cell(95, 8, f"Target Harvest Day: Day {data['harvest_day']}", ln=True)
+    pdf.cell(95, 8, f"{t['today_w']}: {data['current_pred']:.3f} kg")
+    pdf.cell(95, 8, f"{t['perf']}: {data['perf_ratio']:.1%}", ln=True)
+    pdf.cell(95, 8, f"{t['proj_w']}: {data['proj_weight']:.3f} kg")
+    pdf.cell(95, 8, f"{t['target_d']}: Day {data['harvest_day']}", ln=True)
     pdf.ln(5)
 
-    # Section 3: Financials (Updated to RM)
+    # Section 3
     pdf.set_font("helvetica", "B", 14)
-    pdf.cell(190, 10, " 3. Financial Intelligence", ln=True, fill=True)
+    pdf.cell(190, 10, t["sec3"], ln=True, fill=True)
     pdf.ln(4)
     pdf.set_font("helvetica", "B", 12)
     pdf.set_text_color(0, 100, 0) 
-    pdf.cell(190, 8, f"Projected Net Profit: RM {data['profit']:,.2f}", ln=True)
+    pdf.cell(190, 8, f"{t['profit']}: RM {data['profit']:,.2f}", ln=True)
     pdf.set_font("helvetica", "", 11)
     pdf.set_text_color(0)
-    pdf.cell(95, 8, f"Estimated Revenue: RM {data['revenue']:,.2f}")
-    pdf.cell(95, 8, f"Total Est. Costs: RM {data['total_cost']:,.2f}", ln=True)
+    pdf.cell(95, 8, f"{t['rev']}: RM {data['revenue']:,.2f}")
+    pdf.cell(95, 8, f"{t['cost']}: RM {data['total_cost']:,.2f}", ln=True)
     pdf.cell(95, 8, f"Target FCR: {data['harvest_fcr']:.2f}")
-    pdf.cell(95, 8, f"Projected ROI: {data['roi']:.1f}%", ln=True)
+    pdf.cell(95, 8, f"{t['roi']}: {data['roi']:.1f}%", ln=True)
 
-    pdf.set_y(-25)
+    # FOOTER FIX - Moved slightly up to avoid blank page
+    pdf.set_y(-18) 
     pdf.set_font("helvetica", "I", 8)
     pdf.set_text_color(150)
     pdf.cell(0, 10, "Developed by Idealogic - Precision Agriculture AI Division (Malaysia)", align="C")
@@ -92,7 +119,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Farm Data Trained AI Weight, FCR & Profit Analytics (MYR)</h2>
+    <h2 style='color: green;'>AI Model's Weight, FCR & Profit Analytics (MYR)</h2>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
@@ -109,7 +136,12 @@ model = load_model()
 if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found.")
 else:
-    # --- 4. INPUTS (Updated to RM) ---
+    # Sidebar for Language Toggle
+    with st.sidebar:
+        st.header("⚙️ App Settings")
+        report_lang = st.radio("PDF Report Language", ["English", "Bahasa Melayu"])
+
+    # --- 4. INPUTS ---
     st.subheader("📝 Live Farm & Market Inputs")
     t1, t2, t3, t4 = st.columns(4)
 
@@ -134,8 +166,8 @@ else:
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
-        price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40) # Updated to common MYR price
-        feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80) # Updated to common MYR price
+        price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40)
+        feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80)
         chick_cost = st.number_input("Cost per Chick (RM)", value=2.20)
 
     heat_index = temp + (0.33 * rh) - 0.7
@@ -172,7 +204,7 @@ else:
         revenue = (projected_weight * birds_alive) * price_per_kg
         profit = revenue - total_cost
 
-        # Dashboard UI
+        # UI
         st.subheader("📊 Business Intelligence Dashboard")
         r1_c1, r1_c2, r1_c3 = st.columns(3)
         with r1_c1:
@@ -186,7 +218,6 @@ else:
             st.write(f"**Growth Performance:** {int(perf_ratio*100)}%")
             st.progress(min(perf_ratio, 1.0))
 
-        # Financial Summary and Chart Row
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
             st.markdown("### 💰 Financial Summary")
@@ -211,12 +242,12 @@ else:
             'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 
             'roi': (profit/total_cost)*100 if total_cost > 0 else 0
         }
-        st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'])
+        st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'], lang=report_lang)
 
     if 'pdf_bytes' in st.session_state:
         st.markdown("---")
         st.download_button(
-            label="📩 Download Official Idealogic PDF Report",
+            label=f"📩 Download Official Idealogic Report ({report_lang})",
             data=st.session_state['pdf_bytes'],
             file_name=f"iPoultry_Report_Day{day_number}.pdf",
             mime="application/pdf",
@@ -224,4 +255,4 @@ else:
         )
 
 st.divider()
-st.caption("iPoultry AI Guard © 2026 | Precision Ag Division")
+st.caption("iPoultry AI Guard © 2026 | Idealogic")
