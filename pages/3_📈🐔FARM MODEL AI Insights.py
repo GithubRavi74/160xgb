@@ -179,7 +179,8 @@ else:
         st.markdown("**🌡️ Current Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
-        co_level = st.number_input("CO Level (ppm)", value=5.0)
+        # Note: Switched to CO2 as discussed
+        co2_level = st.number_input("CO2 Level (ppm)", value=1200.0, help="Target for ventilation quality.")
         nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
 
     with t3:
@@ -211,13 +212,30 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION (SMART LABELS) ---
+    # --- 4.5 BATCH PERFORMANCE SECTION (SMART LABELS + CALCULATOR) ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
-    col_a, col_b = st.columns(2)
     is_early = day_number < 7
     report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
+
+    # --- TESTER'S TREND CALCULATOR ---
+    with st.expander("🧮 Trend Helper (Click here to calculate averages)"):
+        st.write("Use this if you have raw data from 7 days ago.")
+        c_calc1, c_calc2 = st.columns(2)
+        with c_calc1:
+            old_weight = st.number_input("Weight 7 Days Ago (kg)", value=0.0, format="%.3f")
+            new_weight = st.number_input("Estimated Weight Today (kg)", value=0.0, format="%.3f")
+        with c_calc2:
+            total_feed_last_7 = st.number_input("Total Feed used in last 7 days (kg)", value=0.0)
+        
+        calc_gain = (new_weight - old_weight) / 7 if old_weight > 0 else 0.050
+        calc_avg_feed = total_feed_last_7 / 7 if total_feed_last_7 > 0 else feed_today
+        
+        st.success(f"Calculated Avg Gain: {calc_gain:.3f} kg | Calculated Avg Feed: {calc_avg_feed:.1f} kg")
+        st.write("*(Note: Please manually enter these values into the boxes below)*")
+
+    col_a, col_b = st.columns(2)
 
     with col_a:
         st.markdown("##### 🏁 The Foundation (Brooding Stage)")
@@ -243,9 +261,9 @@ else:
         st.markdown(trend_title)
         a_inner1, a_inner2 = st.columns(2)
         with a_inner1:
-            roll_feed = st.number_input(feed_label, value=float(feed_today))
+            roll_feed = st.number_input(feed_label, value=float(calc_avg_feed))
         with a_inner2:
-            roll_gain = st.number_input(gain_label, value=0.050, format="%.3f")
+            roll_gain = st.number_input(gain_label, value=float(calc_gain), format="%.3f")
 
     st.markdown("---")
 
@@ -253,7 +271,7 @@ else:
     if st.button("🚀 Run AI Analysis", use_container_width=True):
         input_df = pd.DataFrame([{
             'day_number': day_number, 'birds_alive': birds_alive, 'feed_today_kg': feed_today,
-            'temp': temp, 'rh': rh, 'co': co_level, 'nh': nh_level, 'heat_index': heat_index,
+            'temp': temp, 'rh': rh, 'co': co2_level, 'nh': nh_level, 'heat_index': heat_index,
             'feed_per_bird': feed_per_bird, 'rolling_7d_feed': roll_feed,
             'rolling_7d_gain': roll_gain, 'initial_flock': initial_flock,
             'cumulative_mortality': total_mortality
