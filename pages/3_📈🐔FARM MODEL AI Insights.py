@@ -146,6 +146,9 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# THE SEPARATOR LINE
+st.divider()
+
 MODEL_PATH = "kishorebatches_weight_model.pkl"
 
 @st.cache_resource
