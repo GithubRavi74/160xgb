@@ -163,7 +163,7 @@ if model is None:
 else:
     # --- 4. INPUT SECTION ---
     st.subheader("📝 Enter Farm & Market Inputs")
-    t1, t2, t3 = st.columns(3) # Adjusted to 3 columns for better spacing
+    t1, t2, t3 = st.columns(3)
 
     with t1:
         st.markdown("**📊 Flock Statistics**")
@@ -179,8 +179,8 @@ else:
         st.markdown("**🌡️ Current Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
-        co_level = st.number_input("CO Level (ppm)", value=5.0, help="Current Carbon Monoxide level")
-        nh_level = st.number_input("NH3 Level (ppm)", value=10.0, help="Current Ammonia level")
+        co_level = st.number_input("CO Level (ppm)", value=5.0)
+        nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
 
     with t3:
         st.markdown("**💰 Market Prices (RM)**")
@@ -201,7 +201,7 @@ else:
 
     with h2:
         st.markdown("### 🎯 Harvest Strategy")
-        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35, help="Setting the target day determines the financial projection.")
+        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
         days_left = harvest_day - day_number
         if days_left >= 0:
             st.warning(f"Strategy: {days_left} days remaining until harvest.")
@@ -219,10 +219,9 @@ else:
     
     with col_a:
         st.markdown("##### 🏁 The Foundation (Brooding Stage)")
-        d7_weight = st.number_input("Average Weight on Day7(kg)", 
+        d7_weight = st.number_input("Average Weight on Day 7 (kg)", 
                                     value=current_standards.get(7, 0.200), 
-                                    format="%.3f",
-                                    help="Historical metric: Critical for setting the genetic potential of the batch.")
+                                    format="%.3f")
     
     with col_b:
         st.markdown("##### 📈 The Current Trend (Recent 7 Days)")
@@ -246,16 +245,13 @@ else:
         }])
         current_pred = model.predict(input_df)[0]
         
-        # BROODING IMPACT LOGIC
         std_7d_weight = current_standards.get(7, 0.208)
         brood_factor = d7_weight / std_7d_weight
         brood_score = int(min(brood_factor, 1.2) * 100) 
         
         perf_ratio = current_pred / current_standards.get(day_number, 1.0)
-        # 60% of harvest potential is anchored by the brooding phase success
         adjusted_perf = (perf_ratio * 0.4) + (brood_factor * 0.6)
         
-        # Projected harvest metrics
         std_harvest_weight = current_standards.get(harvest_day, 2.7)
         projected_weight = std_harvest_weight * adjusted_perf
         
@@ -268,11 +264,15 @@ else:
         revenue = (projected_weight * birds_alive) * price_per_kg
         profit = revenue - total_cost
 
-        # Dashboard UI
-        st.subheader("📊 Business Intelligence Dashboard")
+        # --- DYNAMIC DASHBOARD LABEL ---
+        dashboard_title = {
+            "English": "📊 Batch Performance & Profit Outlook",
+            "Bahasa Melayu": "📊 Prestasi Kelompok & Unjuran Keuntungan"
+        }[report_lang]
+        
+        st.subheader(dashboard_title)
         r1_c1, r1_c2, r1_c3, r1_c4 = st.columns(4)
         
-        # Percent Diff for UI visibility
         weight_diff_pct = (adjusted_perf - 1.0) * 100
 
         with r1_c1:
@@ -289,7 +289,6 @@ else:
             roi = (profit/total_cost)*100 if total_cost > 0 else 0
             st.write(f"**ROI:** {roi:.1f}%")
 
-        # Visuals & Insights
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
             st.markdown("### 🔍 Insights")
@@ -309,7 +308,6 @@ else:
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        # PDF Storage
         st.session_state['pdf_data'] = {
             'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
             'heat_index': heat_index, 'current_pred': current_pred, 
