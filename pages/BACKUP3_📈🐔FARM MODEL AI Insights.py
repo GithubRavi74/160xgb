@@ -211,27 +211,42 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION ---
+    # --- 4.5 BATCH PERFORMANCE SECTION (SMART LABELS) ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     col_a, col_b = st.columns(2)
-    
+    is_early = day_number < 7
+    report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
+
     with col_a:
         st.markdown("##### 🏁 The Foundation (Brooding Stage)")
-        d7_weight = st.number_input("Average Weight on Day 7 (kg)", 
+        if is_early:
+            brood_label = "Target Weight on Day 7 (kg)" if report_lang == "English" else "Sasaran Berat pada Hari ke-7 (kg)"
+        else:
+            brood_label = "Average Weight on Day 7 (kg)" if report_lang == "English" else "Purata Berat pada Hari ke-7 (kg)"
+            
+        d7_weight = st.number_input(brood_label, 
                                     value=current_standards.get(7, 0.200), 
                                     format="%.3f")
     
     with col_b:
-        st.markdown("##### 📈 The Current Trend (Recent 7 Days)")
+        if is_early:
+            trend_title = "##### 📈 Early Growth Expectations" if report_lang == "English" else "##### 📈 Jangkaan Pertumbuhan Awal"
+            feed_label = "Est. Daily Feed (kg)" if report_lang == "English" else "Anggaran Makanan Harian (kg)"
+            gain_label = "Est. Daily Gain (kg)" if report_lang == "English" else "Anggaran Kenaikan Harian (kg)"
+        else:
+            trend_title = "##### 📈 The Current Trend (Recent 7 Days)" if report_lang == "English" else "##### 📈 Trend Semasa (7 Hari Terkini)"
+            feed_label = "Last 7-Day Avg Feed (kg)" if report_lang == "English" else "Purata Makanan 7 Hari Lepas (kg)"
+            gain_label = "Last 7-Day Avg Gain (kg)" if report_lang == "English" else "Purata Kenaikan 7 Hari Lepas (kg)"
+            
+        st.markdown(trend_title)
         a_inner1, a_inner2 = st.columns(2)
         with a_inner1:
-            roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
+            roll_feed = st.number_input(feed_label, value=float(feed_today))
         with a_inner2:
-            roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
+            roll_gain = st.number_input(gain_label, value=0.050, format="%.3f")
 
-    report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
     st.markdown("---")
 
     # --- 5. EXECUTION ---
