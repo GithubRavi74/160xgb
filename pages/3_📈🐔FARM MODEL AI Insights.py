@@ -185,7 +185,7 @@ else:
     with t3:
         st.markdown("**🎯 Feed & Targets**")
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
-        hist_feed = st.number_input("Total Feed UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
+        hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
@@ -199,21 +199,26 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 ADVANCED SETTINGS ---
+    # --- 4.5 BATCH PERFORMANCE SECTION ---
     st.markdown("---")
-    st.subheader("🛠️ Advanced Growth & Brooding Foundation")
-    a1, a2, a3 = st.columns(3)
+    st.subheader("🐥 Batch Performance Info")
     
-    with a1:
-        # The "Foundation" Metric requested by boss
-        d7_weight = st.number_input("Average Weight at Age 7 (kg)", 
+    col_a, col_b = st.columns(2)
+    
+    with col_a:
+        st.markdown("##### 🏁 The Foundation (Brooding Stage)")
+        d7_weight = st.number_input("Actual Day 7 Weight (kg)", 
                                     value=current_standards.get(7, 0.200), 
                                     format="%.3f",
                                     help="Historical metric: Critical for setting the genetic potential of the batch.")
-    with a2:
-        roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
-    with a3:
-        roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
+    
+    with col_b:
+        st.markdown("##### 📈 The Current Trend (Recent 7 Days)")
+        a_inner1, a_inner2 = st.columns(2)
+        with a_inner1:
+            roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
+        with a_inner2:
+            roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
 
     report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
     st.markdown("---")
