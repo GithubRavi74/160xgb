@@ -199,7 +199,7 @@ else:
     
     # --- 4.5 ADVANCED SETTINGS (Now Fully Visible) ---
     st.markdown("---")
-    st.subheader("🛠️ Advanced Growth & Air Quality Metrics")
+    st.subheader("🛠️ Enter the Advanced Growth & Air Quality Metrics")
     a1, a2, a3, a4 = st.columns(4)
     
     with a1:
