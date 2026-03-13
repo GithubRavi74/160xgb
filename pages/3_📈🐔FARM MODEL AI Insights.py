@@ -166,7 +166,7 @@ else:
     t1, t2, t3, t4 = st.columns(4)
 
     with t1:
-        st.markdown("**📊 Batch Statistics**")
+        st.markdown("**📊 Flock Statistics**")
         initial_flock = st.number_input("Initial Flock Size", 100, 100000, 5000)
         total_mortality = st.number_input("Total Mortality (Cumulative)", 0, initial_flock, 150)
         day_number = st.number_input("Day Number (Age)", 1, 45, 21)
