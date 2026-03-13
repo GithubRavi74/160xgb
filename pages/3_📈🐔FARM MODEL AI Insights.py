@@ -163,7 +163,7 @@ if model is None:
 else:
     # --- 4. INPUT SECTION ---
     st.subheader("📝 Enter Farm & Market Inputs")
-    t1, t2, t3, t4 = st.columns(4)
+    t1, t2, t3 = st.columns(3) # Adjusted to 3 columns for better spacing
 
     with t1:
         st.markdown("**📊 Flock Statistics**")
@@ -183,18 +183,30 @@ else:
         nh_level = st.number_input("NH3 Level (ppm)", value=10.0, help="Current Ammonia level")
 
     with t3:
-        st.markdown("**🎯 Feed**")
-        feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
-        hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
-        total_feed_to_date = hist_feed + feed_today
-        st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
-        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
-
-    with t4:
         st.markdown("**💰 Market Prices (RM)**")
         price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40)
         feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80)
         chick_cost = st.number_input("Cost per Chick (RM)", value=2.20)
+
+    # --- 4.1 UNIQUE FEED & HARVEST STRATEGY SECTION ---
+    st.markdown("---")
+    h1, h2 = st.columns([1, 1])
+
+    with h1:
+        st.markdown("### 🌾 Feed Management")
+        feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
+        hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
+        total_feed_to_date = hist_feed + feed_today
+        st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
+
+    with h2:
+        st.markdown("### 🎯 Harvest Strategy")
+        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35, help="Setting the target day determines the financial projection.")
+        days_left = harvest_day - day_number
+        if days_left >= 0:
+            st.warning(f"Strategy: {days_left} days remaining until harvest.")
+        else:
+            st.error("Target Harvest Day must be greater than current Age.")
 
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
