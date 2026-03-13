@@ -8,7 +8,7 @@ from datetime import datetime
 from fpdf import FPDF
 import io
 
-# --- 1. BREED STANDARDS (The Single Source of Truth) ---
+# --- 1. BREED STANDARDS ---
 BREED_STANDARDS = {
     "Cobb 500": {
         1:0.061, 2:0.079, 3:0.099, 4:0.122, 5:0.148, 6:0.176, 7:0.208,
@@ -32,7 +32,7 @@ BREED_STANDARDS = {
     }
 }
 
-# --- 2. PDF GENERATOR FUNCTION ---
+# --- 2. PDF GENERATOR ---
 def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf = FPDF()
     pdf.set_auto_page_break(auto=False) 
@@ -42,10 +42,10 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
         "English": {
             "title": "iPoultry AI Guard - Executive Report",
             "subtitle": "Precision Analytics for Batch Management",
-            "sec1": " 1. Batch & Environmental Status",
+            "sec1": " 1. Flock & Environmental Status",
             "age": "Bird Age", "breed": "Breed", "alive": "Birds Alive", "temp": "Mean Temp",
-            "sec2": " 2. AI Growth Analytics",
-            "today_w": "Today's Est. Weight", "perf": "Growth Performance", "proj_w": "Proj. Harvest Weight", "target_d": "Target Harvest Day",
+            "sec2": " 2. AI Growth & Brooding Analytics",
+            "today_w": "Today's Est. Weight", "perf": "Growth Performance", "brood": "Brooding Quality", "proj_w": "Proj. Harvest Weight", "target_d": "Target Harvest Day",
             "sec3": " 3. Financial Intelligence",
             "profit": "Projected Net Profit", "rev": "Estimated Revenue", "cost": "Total Est. Costs", "roi": "Projected ROI"
         },
@@ -54,8 +54,8 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
             "subtitle": "Analitik Kepersisan untuk Pengurusan Kelompok",
             "sec1": " 1. Status Kelompok & Persekitaran",
             "age": "Umur Ayam", "breed": "Baka", "alive": "Ayam Hidup", "temp": "Suhu Purata",
-            "sec2": " 2. Analitik Pertumbuhan AI",
-            "today_w": "Anggaran Berat Hari Ini", "perf": "Prestasi Pertumbuhan", "proj_w": "Proj. Berat Tuai", "target_d": "Hari Tuaian Sasaran",
+            "sec2": " 2. Analitik Pertumbuhan AI & Perindukan",
+            "today_w": "Anggaran Berat Hari Ini", "perf": "Prestasi Pertumbuhan", "brood": "Kualiti Perindukan", "proj_w": "Proj. Berat Tuai", "target_d": "Hari Tuaian Sasaran",
             "sec3": " 3. Kecerdasan Kewangan",
             "profit": "Unjuran Untung Bersih", "rev": "Anggaran Hasil", "cost": "Jumlah Anggaran Kos", "roi": "Unjuran ROI"
         }
@@ -99,7 +99,8 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf.ln(2)
     pdf.cell(90, 7, f"{t['today_w']}: {data['current_pred']:.3f} kg")
     pdf.cell(90, 7, f"{t['perf']}: {data['perf_ratio']:.1%}", ln=True)
-    pdf.cell(90, 7, f"{t['proj_w']}: {data['proj_weight']:.3f} kg")
+    pdf.cell(90, 7, f"{t['brood']}: {data['brood_score']}%")
+    pdf.cell(90, 7, f"{t['proj_w']}: {data['proj_weight']:.3f} kg", ln=True)
     pdf.cell(90, 7, f"{t['target_d']}: Day {data['harvest_day']}", ln=True)
     pdf.ln(4)
 
@@ -144,7 +145,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Custom Branded Thick Line
 st.markdown('<hr style="height:3px;border:none;color:#2E8B57;background-color:#2E8B57; margin-bottom: 20px;" />', unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
@@ -197,14 +197,19 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 ADVANCED SETTINGS (Now Fully Visible) ---
+    # --- 4.5 ADVANCED SETTINGS ---
     st.markdown("---")
-    st.subheader("🛠️ Enter the Advanced Growth & Air Quality Metrics")
+    st.subheader("🛠️ Advanced Growth, Brooding & Air Quality Metrics")
     a1, a2, a3, a4 = st.columns(4)
     
     with a1:
         roll_feed = st.number_input("7-Day Avg Feed (kg)", value=float(feed_today))
     with a2:
+        # Brooding Metric
+        d7_weight = st.number_input("Actual Day 7 Weight (kg)", 
+                                    value=current_standards.get(7, 0.200), 
+                                    format="%.3f",
+                                    help="Standard for this breed at Day 7.")
         roll_gain = st.number_input("7-Day Avg Gain (kg)", value=0.050, format="%.3f")
     with a3:
         co_level = st.number_input("CO Level (ppm)", value=5.0)
@@ -225,8 +230,16 @@ else:
         }])
         current_pred = model.predict(input_df)[0]
         
+        # BROODING IMPACT LOGIC
+        std_7d_weight = current_standards.get(7, 0.208)
+        brood_factor = d7_weight / std_7d_weight
+        brood_score = int(min(brood_factor, 1.2) * 100) # Capped at 120%
+        
+        # Weighted projection: Current AI result influenced by early brooding success
         perf_ratio = current_pred / current_standards.get(day_number, 1.0)
-        projected_weight = current_standards.get(harvest_day, 2.7) * perf_ratio
+        adjusted_perf = (perf_ratio * 0.4) + (brood_factor * 0.6)
+        
+        projected_weight = current_standards.get(harvest_day, 2.7) * adjusted_perf
         
         current_fcr = total_feed_to_date / (current_pred * birds_alive) if (current_pred * birds_alive) > 0 else 0
         proj_total_feed = total_feed_to_date + (roll_feed * (harvest_day - day_number))
@@ -239,56 +252,53 @@ else:
 
         # Dashboard UI
         st.subheader("📊 Business Intelligence Dashboard")
-        r1_c1, r1_c2, r1_c3 = st.columns(3)
+        r1_c1, r1_c2, r1_c3, r1_c4 = st.columns(4)
         with r1_c1:
             st.metric("Est. Weight Today", f"{current_pred:.3f} kg")
             st.metric("Current FCR", f"{current_fcr:.2f}")
         with r1_c2:
-            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg", delta=f"{(perf_ratio-1)*100:.1f}%")
+            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg")
             st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
         with r1_c3:
+            st.metric("Brooding Quality", f"{brood_score}%")
+            st.write(f"**Growth Perf:** {int(perf_ratio*100)}%")
+        with r1_c4:
             st.metric("Projected Net Profit", f"RM {profit:,.2f}")
-            st.write(f"**Growth Performance:** {int(perf_ratio*100)}%")
-            st.progress(min(max(perf_ratio, 0.0), 1.0))
-
-        # Financial Summary and Chart Row
-        r2_c1, r2_c2 = st.columns([1, 2])
-        with r2_c1:
-            st.markdown("### 💰 Financial Summary")
-            st.write(f"**Total Revenue:** RM {revenue:,.2f}")
-            st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
             roi = (profit/total_cost)*100 if total_cost > 0 else 0
             st.write(f"**ROI:** {roi:.1f}%")
+
+        # Visuals
+        r2_c1, r2_c2 = st.columns([1, 2])
+        with r2_c1:
+            st.markdown("### 🔍 Insights")
+            if brood_score < 90: st.error("Low Brooding Weight detected. Harvest potential reduced.")
+            elif brood_score > 105: st.success("Excellent Brooding! High growth potential.")
+            
             if heat_index > 32: st.warning(f"Heat Stress Warning! ({heat_index:.1f})")
             else: st.success("Environment is Stable")
+            
+            st.write(f"**Total Revenue:** RM {revenue:,.2f}")
+            st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
 
         with r2_c2:
             days = list(range(30, 46))
-            profits = [(((current_standards.get(d, 2.5) * perf_ratio) * birds_alive) * price_per_kg) - 
+            profits = [(((current_standards.get(d, 2.5) * adjusted_perf) * birds_alive) * price_per_kg) - 
                        (total_chick_cost + ((total_feed_to_date + (roll_feed * (d - day_number))) * feed_cost_per_kg)) for d in days]
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        # Store results for PDF
+        # PDF Storage
         st.session_state['pdf_data'] = {
             'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
             'heat_index': heat_index, 'current_pred': current_pred, 
-            'perf_ratio': perf_ratio, 'proj_weight': projected_weight, 
+            'perf_ratio': perf_ratio, 'brood_score': brood_score, 'proj_weight': projected_weight, 
             'harvest_day': harvest_day, 'profit': profit, 'revenue': revenue, 
             'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 'roi': roi
         }
-        
         st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'], lang=report_lang, breed=selected_breed)
 
     if 'pdf_bytes' in st.session_state:
-        st.markdown("---")
-        st.download_button(
-            label=f"📩 Download Official {report_lang} PDF Report",
-            data=st.session_state['pdf_bytes'],
-            file_name=f"iPoultry_Report_Day{day_number}.pdf",
-            mime="application/pdf",
-            use_container_width=True
-        )
+        st.download_button(label=f"📩 Download {report_lang} PDF", data=st.session_state['pdf_bytes'], file_name=f"iPoultry_Day{day_number}.pdf", use_container_width=True)
 
 st.divider()
 st.caption("iPoultry AI Guard © 2026 | Idealogic Precision Agriculture AI Division")
