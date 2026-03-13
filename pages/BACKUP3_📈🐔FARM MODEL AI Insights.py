@@ -8,7 +8,7 @@ from datetime import datetime
 from fpdf import FPDF
 import io
 
-# --- 1. BREED STANDARDS ---
+# --- 1. BREED STANDARDS (The Single Source of Truth) ---
 BREED_STANDARDS = {
     "Cobb 500": {
         1:0.061, 2:0.079, 3:0.099, 4:0.122, 5:0.148, 6:0.176, 7:0.208,
@@ -127,7 +127,6 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
 # --- 3. CONFIG & STYLING ---
 st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
-# Center/Right Header
 st.markdown("""
     <div style='text-align: center;'>
         <h1 style='color: black; margin-bottom: 0;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
@@ -136,7 +135,7 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# Button Styling
+# CSS for custom button colors and layout
 st.markdown("""
     <style>
     div.stButton > button:first-child { background-color: #007BFF; color: white; border-radius: 5px; }
@@ -146,8 +145,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# THE SEPARATOR LINE
-st.divider()
+# Custom Branded Thick Line
+st.markdown('<hr style="height:3px;border:none;color:#2E8B57;background-color:#2E8B57; margin-bottom: 20px;" />', unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
 
@@ -163,7 +162,7 @@ model = load_model()
 if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found.")
 else:
-    # --- 4. INPUTS ---
+    # --- 4. INPUT SECTION ---
     st.subheader("📝 Enter Farm & Market Inputs")
     t1, t2, t3, t4 = st.columns(4)
 
@@ -175,8 +174,8 @@ else:
         birds_alive = initial_flock - total_mortality
         selected_breed = st.selectbox("Select Bird Breed", ["Cobb 500", "Ross 308"])
         
-    # Set the active reference
-    IDEAL_WEIGHT = BREED_STANDARDS[selected_breed]
+    # Get standards for the chosen breed
+    current_standards = BREED_STANDARDS[selected_breed]
 
     with t2:
         st.markdown("**🌡️ Environment**")
@@ -185,13 +184,12 @@ else:
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
 
     with t3:
-        st.markdown("**🎯 For Forecasting Targets**")
+        st.markdown("**🎯 Cumulative Data**")
+        # Logic Fix: Separating Historical Feed from Today for accuracy
+        hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
+        total_feed_to_date = hist_feed + feed_today
+        st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
-        #total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
-        # This uses the age and daily feed to suggest a total, but allows the user to edit it.
-        total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
-        
-        st.info(f"Birds Alive (Auto calculated): {birds_alive}")
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
@@ -222,12 +220,13 @@ else:
         }])
         current_pred = model.predict(input_df)[0]
         
-        perf_ratio = current_pred / IDEAL_WEIGHT.get(day_number, 1.0)
-        projected_weight = IDEAL_WEIGHT.get(harvest_day, 2.7) * perf_ratio
+        # Calculate performance against selected breed standards
+        perf_ratio = current_pred / current_standards.get(day_number, 1.0)
+        projected_weight = current_standards.get(harvest_day, 2.7) * perf_ratio
         
-        current_fcr = total_feed_to_date / (current_pred * birds_alive) if birds_alive > 0 else 0
+        current_fcr = total_feed_to_date / (current_pred * birds_alive) if (current_pred * birds_alive) > 0 else 0
         proj_total_feed = total_feed_to_date + (roll_feed * (harvest_day - day_number))
-        harvest_fcr = proj_total_feed / (projected_weight * birds_alive) if birds_alive > 0 else 0
+        harvest_fcr = proj_total_feed / (projected_weight * birds_alive) if (projected_weight * birds_alive) > 0 else 0
 
         total_chick_cost = initial_flock * chick_cost
         total_cost = total_chick_cost + (proj_total_feed * feed_cost_per_kg)
@@ -254,13 +253,14 @@ else:
             st.markdown("### 💰 Financial Summary")
             st.write(f"**Total Revenue:** RM {revenue:,.2f}")
             st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
-            st.write(f"**ROI:** {(profit/total_cost)*100:.1f}%" if total_cost > 0 else "0%")
+            roi = (profit/total_cost)*100 if total_cost > 0 else 0
+            st.write(f"**ROI:** {roi:.1f}%")
             if heat_index > 32: st.warning(f"Heat Stress Warning! ({heat_index:.1f})")
             else: st.success("Environment is Stable")
 
         with r2_c2:
             days = list(range(30, 46))
-            profits = [(((IDEAL_WEIGHT.get(d, 2.5) * perf_ratio) * birds_alive) * price_per_kg) - 
+            profits = [(((current_standards.get(d, 2.5) * perf_ratio) * birds_alive) * price_per_kg) - 
                        (total_chick_cost + ((total_feed_to_date + (roll_feed * (d - day_number))) * feed_cost_per_kg)) for d in days]
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
@@ -271,11 +271,9 @@ else:
             'heat_index': heat_index, 'current_pred': current_pred, 
             'perf_ratio': perf_ratio, 'proj_weight': projected_weight, 
             'harvest_day': harvest_day, 'profit': profit, 'revenue': revenue, 
-            'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 
-            'roi': (profit/total_cost)*100 if total_cost > 0 else 0
+            'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 'roi': roi
         }
         
-        # Generate PDF Bytes
         st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'], lang=report_lang, breed=selected_breed)
 
     if 'pdf_bytes' in st.session_state:
