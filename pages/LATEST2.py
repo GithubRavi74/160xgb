@@ -162,56 +162,75 @@ else:
 
         # --- 8. PDF REPORT GENERATOR FUNCTION ---
         def create_pdf(data):
-            pdf = FPDF()
-            pdf.add_page()
-            
-            # Header
-            pdf.set_font("helvetica", "B", 20) # 'Arial' is now 'helvetica' in fpdf2
-            pdf.set_text_color(46, 139, 87) 
-            pdf.cell(190, 15, "iPoultry AI Guard - Executive Report", ln=True, align="C")
-            
-            pdf.set_font("helvetica", "I", 10)
-            pdf.set_text_color(100)
-            pdf.cell(190, 10, f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True, align="C")
-            pdf.ln(10)
+        pdf = FPDF()
+        pdf.add_page()
         
-            # --- Section 1: Batch Overview ---
-            pdf.set_font("helvetica", "B", 14)
-            pdf.set_text_color(0)
-            pdf.set_fill_color(240, 240, 240)
-            pdf.cell(190, 10, " 1. Batch & Environmental Status", ln=True, fill=True)
-            pdf.set_font("helvetica", "", 12)
-            pdf.cell(95, 10, f"Age: {data['day_number']} Days")
-            pdf.cell(95, 10, f"Birds Alive: {data['birds_alive']:,}", ln=True)
-            pdf.cell(95, 10, f"Temperature: {data['temp']} C")
-            pdf.cell(95, 10, f"Heat Index: {data['heat_index']:.2f}", ln=True)
-            pdf.ln(5)
+        # --- LOGO & HEADER ---
+        # Add logo: x=10, y=8, w=40 (adjust width as needed)
+        logo_path = "IDEA LOGIC Logo.jpg"
+        if os.path.exists(logo_path):
+            pdf.image(logo_path, 10, 8, 35) 
         
-            # --- Section 2: AI Predictions ---
-            pdf.set_font("helvetica", "B", 14)
-            pdf.cell(190, 10, " 2. AI Growth Predictions", ln=True, fill=True)
-            pdf.set_font("helvetica", "", 12)
-            pdf.cell(95, 10, f"Current Est. Weight: {data['current_pred']:.3f} kg")
-            pdf.cell(95, 10, f"Performance: {data['perf_ratio']:.1%}", ln=True)
-            pdf.cell(95, 10, f"Projected Harvest Weight: {data['proj_weight']:.3f} kg")
-            pdf.cell(95, 10, f"Harvest Day: {data['harvest_day']}", ln=True)
-            pdf.ln(5)
+        # Header Title - shifted right to make room for logo
+        pdf.set_font("helvetica", "B", 18)
+        pdf.set_text_color(46, 139, 87) 
+        pdf.cell(50) # Spacer for logo
+        pdf.cell(140, 15, "iPoultry AI Guard - Executive Report", ln=True, align="L")
         
-            # --- Section 3: Financials ---
-            pdf.set_font("helvetica", "B", 14)
-            pdf.cell(190, 10, " 3. Financial Forecast", ln=True, fill=True)
-            pdf.set_font("helvetica", "B", 12)
-            pdf.set_text_color(0, 100, 0) 
-            pdf.cell(190, 10, f"Projected Net Profit: ${data['profit']:,.2f}", ln=True)
-            pdf.set_font("helvetica", "", 12)
-            pdf.set_text_color(0)
-            pdf.cell(95, 10, f"Total Revenue: ${data['revenue']:,.2f}")
-            pdf.cell(95, 10, f"Total Costs: ${data['total_cost']:,.2f}", ln=True)
-            pdf.cell(95, 10, f"Projected FCR: {data['harvest_fcr']:.2f}")
-            pdf.cell(95, 10, f"Estimated ROI: {data['roi']:.1f}%", ln=True)
+        pdf.set_font("helvetica", "I", 9)
+        pdf.set_text_color(100)
+        pdf.cell(50) # Spacer
+        pdf.cell(140, 5, f"Analysis for Batch ID: {data.get('batch_id', 'N/A')}", ln=True, align="L")
+        pdf.cell(50) # Spacer
+        pdf.cell(140, 5, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="L")
+        pdf.ln(15)
+    
+        # --- Section 1: Batch Overview ---
+        pdf.set_font("helvetica", "B", 14)
+        pdf.set_text_color(0)
+        pdf.set_fill_color(240, 240, 240)
+        pdf.cell(190, 10, " 1. Batch & Environmental Status", ln=True, fill=True)
+        pdf.set_font("helvetica", "", 11)
+        pdf.ln(2)
+        pdf.cell(95, 8, f"Bird Age: {data['day_number']} Days")
+        pdf.cell(95, 8, f"Birds Alive: {data['birds_alive']:,}", ln=True)
+        pdf.cell(95, 8, f"Mean Temperature: {data['temp']} C")
+        pdf.cell(95, 8, f"Heat Index: {data['heat_index']:.2f}", ln=True)
+        pdf.ln(5)
+    
+        # --- Section 2: AI Predictions ---
+        pdf.set_font("helvetica", "B", 14)
+        pdf.cell(190, 10, " 2. AI Growth Analytics", ln=True, fill=True)
+        pdf.set_font("helvetica", "", 11)
+        pdf.ln(2)
+        pdf.cell(95, 8, f"Today's Est. Weight: {data['current_pred']:.3f} kg")
+        pdf.cell(95, 8, f"Growth Performance: {data['perf_ratio']:.1%}", ln=True)
+        pdf.cell(95, 8, f"Projected Harvest Weight: {data['proj_weight']:.3f} kg")
+        pdf.cell(95, 8, f"Target Harvest Day: Day {data['harvest_day']}", ln=True)
+        pdf.ln(5)
+    
+        # --- Section 3: Financial Forecast ---
+        pdf.set_font("helvetica", "B", 14)
+        pdf.cell(190, 10, " 3. Financial Intelligence", ln=True, fill=True)
+        pdf.ln(4)
+        pdf.set_font("helvetica", "B", 12)
+        pdf.set_text_color(0, 100, 0) 
+        pdf.cell(190, 8, f"Projected Net Profit: ${data['profit']:,.2f}", ln=True)
         
-            # Final conversion to bytes for Streamlit
-            return bytes(pdf.output())
+        pdf.set_font("helvetica", "", 11)
+        pdf.set_text_color(0)
+        pdf.cell(95, 8, f"Estimated Revenue: ${data['revenue']:,.2f}")
+        pdf.cell(95, 8, f"Total Est. Costs: ${data['total_cost']:,.2f}", ln=True)
+        pdf.cell(95, 8, f"Target FCR: {data['harvest_fcr']:.2f}")
+        pdf.cell(95, 8, f"Projected ROI: {data['roi']:.1f}%", ln=True)
+    
+        # Footer
+        pdf.set_y(-25)
+        pdf.set_font("helvetica", "I", 8)
+        pdf.set_text_color(150)
+        pdf.cell(0, 10, "Developed by Idealogic - Precision Agriculture AI Division", align="C")
+        
+        return bytes(pdf.output()) 
         
         # --- Inside the Button Logic ---
         if st.button("🚀 Run Full AI Business Analysis", use_container_width=True):
