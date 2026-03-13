@@ -243,7 +243,9 @@ else:
         # 60% of harvest potential is anchored by the brooding phase success
         adjusted_perf = (perf_ratio * 0.4) + (brood_factor * 0.6)
         
-        projected_weight = current_standards.get(harvest_day, 2.7) * adjusted_perf
+        # Projected harvest metrics
+        std_harvest_weight = current_standards.get(harvest_day, 2.7)
+        projected_weight = std_harvest_weight * adjusted_perf
         
         current_fcr = total_feed_to_date / (current_pred * birds_alive) if (current_pred * birds_alive) > 0 else 0
         proj_total_feed = total_feed_to_date + (roll_feed * (harvest_day - day_number))
@@ -257,11 +259,15 @@ else:
         # Dashboard UI
         st.subheader("📊 Business Intelligence Dashboard")
         r1_c1, r1_c2, r1_c3, r1_c4 = st.columns(4)
+        
+        # Percent Diff for UI visibility
+        weight_diff_pct = (adjusted_perf - 1.0) * 100
+
         with r1_c1:
-            st.metric("Est. Weight Today", f"{current_pred:.3f} kg")
+            st.metric("Est. Weight Today", f"{current_pred:.3f} kg", delta=f"{int((perf_ratio-1)*100)}% vs Std")
             st.metric("Current FCR", f"{current_fcr:.2f}")
         with r1_c2:
-            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg")
+            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg", delta=f"{weight_diff_pct:.1f}% vs Std")
             st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
         with r1_c3:
             st.metric("Brooding Quality", f"{brood_score}%")
