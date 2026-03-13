@@ -176,14 +176,16 @@ else:
     current_standards = BREED_STANDARDS[selected_breed]
 
     with t2:
-        st.markdown("**🌡️ Environment**")
+        st.markdown("**🌡️ Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
-        feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
+        co_level = st.number_input("CO Level (ppm)", value=5.0, help="Current Carbon Monoxide level")
+        nh_level = st.number_input("NH3 Level (ppm)", value=10.0, help="Current Ammonia level")
 
     with t3:
-        st.markdown("**🎯 Cumulative Data**")
-        hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
+        st.markdown("**🎯 Feed & Targets**")
+        feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
+        hist_feed = st.number_input("Total Feed UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
@@ -199,22 +201,19 @@ else:
     
     # --- 4.5 ADVANCED SETTINGS ---
     st.markdown("---")
-    st.subheader("🛠️ Advanced Growth, Brooding & Air Quality Metrics")
-    a1, a2, a3, a4 = st.columns(4)
+    st.subheader("🛠️ Advanced Growth & Brooding Foundation")
+    a1, a2, a3 = st.columns(3)
     
     with a1:
-        roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
-    with a2:
-        # Brooding Metric
+        # The "Foundation" Metric requested by boss
         d7_weight = st.number_input("Average Weight at Age 7 (kg)", 
                                     value=current_standards.get(7, 0.200), 
                                     format="%.3f",
-                                    help="Standard for this breed at Day 7.")
-        roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
+                                    help="Historical metric: Critical for setting the genetic potential of the batch.")
+    with a2:
+        roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
     with a3:
-        co_level = st.number_input("CO Level (ppm)", value=5.0)
-    with a4:
-        nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
+        roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
 
     report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
     st.markdown("---")
@@ -233,10 +232,10 @@ else:
         # BROODING IMPACT LOGIC
         std_7d_weight = current_standards.get(7, 0.208)
         brood_factor = d7_weight / std_7d_weight
-        brood_score = int(min(brood_factor, 1.2) * 100) # Capped at 120%
+        brood_score = int(min(brood_factor, 1.2) * 100) 
         
-        # Weighted projection: Current AI result influenced by early brooding success
         perf_ratio = current_pred / current_standards.get(day_number, 1.0)
+        # 60% of harvest potential is anchored by the brooding phase success
         adjusted_perf = (perf_ratio * 0.4) + (brood_factor * 0.6)
         
         projected_weight = current_standards.get(harvest_day, 2.7) * adjusted_perf
@@ -267,18 +266,18 @@ else:
             roi = (profit/total_cost)*100 if total_cost > 0 else 0
             st.write(f"**ROI:** {roi:.1f}%")
 
-        # Visuals
+        # Visuals & Insights
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
             st.markdown("### 🔍 Insights")
-            if brood_score < 90: st.error("Low Brooding Weight detected. Harvest potential reduced.")
-            elif brood_score > 105: st.success("Excellent Brooding! High growth potential.")
+            if brood_score < 90: st.error("Foundation Risk: Low Brooding Weight detected.")
+            elif brood_score > 105: st.success("Strong Foundation: High growth potential.")
             
-            if heat_index > 32: st.warning(f"Heat Stress Warning! ({heat_index:.1f})")
+            if heat_index > 32: st.warning(f"Heat Stress Alert! ({heat_index:.1f})")
             else: st.success("Environment is Stable")
             
-            st.write(f"**Total Revenue:** RM {revenue:,.2f}")
-            st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
+            st.write(f"**Revenue:** RM {revenue:,.2f}")
+            st.write(f"**Expenses:** RM {total_cost:,.2f}")
 
         with r2_c2:
             days = list(range(30, 46))
