@@ -188,8 +188,9 @@ else:
         st.markdown("**🎯 For Forecasting Targets**")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
         #total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
-        # Change this line in the t3 column:
-        total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(previous_feed_total + feed_today))
+        # This uses the age and daily feed to suggest a total, but allows the user to edit it.
+        total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
+        
         st.info(f"Birds Alive (Auto calculated): {birds_alive}")
 
     with t4:
