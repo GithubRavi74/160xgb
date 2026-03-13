@@ -200,7 +200,7 @@ else:
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
 
     with h2:
-        st.markdown("### 🎯 Harvest Strategy")
+        st.markdown("### 🎯 Harvest Day")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
         days_left = harvest_day - day_number
         if days_left >= 0:
