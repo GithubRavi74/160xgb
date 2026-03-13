@@ -186,7 +186,7 @@ else:
         hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
-        harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
+        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
