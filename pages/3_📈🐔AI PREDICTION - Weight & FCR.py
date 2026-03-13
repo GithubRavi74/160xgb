@@ -97,7 +97,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 #   """, unsafe_allow_html=True)
 
 st.markdown("""
-    <div style='text-align: center;'>
+    <div style='text-align: right;'>
         <h1 style='color: black; margin-bottom: 0;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
         <h2 style='color: green; margin-top: 0; margin-bottom: 0;'>Weight, FCR & Profit Analytics</h2>
         <h3 style='color: black; margin-top: 0;'>By AI Trained On Farm Data</h3>
