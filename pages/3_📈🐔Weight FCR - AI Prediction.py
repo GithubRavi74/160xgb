@@ -92,7 +92,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Farm Data Trained AI Weight, FCR & Profit Analytics (MYR)</h2>
+    <h2 style='color: green;'>Weight, FCR & Profit Analytics By AI Trained On Farm Data (MYR)</h2>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
@@ -110,11 +110,11 @@ if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found.")
 else:
     # --- 4. INPUTS (Updated to RM) ---
-    st.subheader("📝 Live Farm & Market Inputs")
+    st.subheader("📝 Enter Farm & Market Inputs")
     t1, t2, t3, t4 = st.columns(4)
 
     with t1:
-        st.markdown("**📊 Batch Stats**")
+        st.markdown("**📊 Batch Statistics**")
         initial_flock = st.number_input("Initial Flock Size", 100, 100000, 5000)
         total_mortality = st.number_input("Total Mortality", 0, initial_flock, 150)
         day_number = st.number_input("Day Number (Age)", 1, 45, 21)
@@ -127,7 +127,7 @@ else:
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
 
     with t3:
-        st.markdown("**🎯 Forecast Targets**")
+        st.markdown("**🎯 For Forecasting Targets**")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
         total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
         st.info(f"Birds Alive: {birds_alive}")
