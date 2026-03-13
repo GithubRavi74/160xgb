@@ -176,14 +176,14 @@ else:
     current_standards = BREED_STANDARDS[selected_breed]
 
     with t2:
-        st.markdown("**🌡️ Environment & Air Quality**")
+        st.markdown("**🌡️ Current Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
         co_level = st.number_input("CO Level (ppm)", value=5.0, help="Current Carbon Monoxide level")
         nh_level = st.number_input("NH3 Level (ppm)", value=10.0, help="Current Ammonia level")
 
     with t3:
-        st.markdown("**🎯 Feed & Targets**")
+        st.markdown("**🎯 Feed**")
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
         hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
@@ -207,7 +207,7 @@ else:
     
     with col_a:
         st.markdown("##### 🏁 The Foundation (Brooding Stage)")
-        d7_weight = st.number_input("Actual Day 7 Weight (kg)", 
+        d7_weight = st.number_input("Average Weight on Day7(kg)", 
                                     value=current_standards.get(7, 0.200), 
                                     format="%.3f",
                                     help="Historical metric: Critical for setting the genetic potential of the batch.")
