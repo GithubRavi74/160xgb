@@ -42,7 +42,7 @@ def create_pdf(data):
     pdf.cell(140, 5, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True, align="L")
     pdf.ln(15)
 
-    # Section 1: Batch & Environment
+    # Section 1: Batch Overview
     pdf.set_font("helvetica", "B", 14)
     pdf.set_text_color(0)
     pdf.set_fill_color(240, 240, 240)
@@ -66,24 +66,24 @@ def create_pdf(data):
     pdf.cell(95, 8, f"Target Harvest Day: Day {data['harvest_day']}", ln=True)
     pdf.ln(5)
 
-    # Section 3: Financials
+    # Section 3: Financials (Updated to RM)
     pdf.set_font("helvetica", "B", 14)
     pdf.cell(190, 10, " 3. Financial Intelligence", ln=True, fill=True)
     pdf.ln(4)
     pdf.set_font("helvetica", "B", 12)
     pdf.set_text_color(0, 100, 0) 
-    pdf.cell(190, 8, f"Projected Net Profit: ${data['profit']:,.2f}", ln=True)
+    pdf.cell(190, 8, f"Projected Net Profit: RM {data['profit']:,.2f}", ln=True)
     pdf.set_font("helvetica", "", 11)
     pdf.set_text_color(0)
-    pdf.cell(95, 8, f"Estimated Revenue: ${data['revenue']:,.2f}")
-    pdf.cell(95, 8, f"Total Est. Costs: ${data['total_cost']:,.2f}", ln=True)
+    pdf.cell(95, 8, f"Estimated Revenue: RM {data['revenue']:,.2f}")
+    pdf.cell(95, 8, f"Total Est. Costs: RM {data['total_cost']:,.2f}", ln=True)
     pdf.cell(95, 8, f"Target FCR: {data['harvest_fcr']:.2f}")
     pdf.cell(95, 8, f"Projected ROI: {data['roi']:.1f}%", ln=True)
 
     pdf.set_y(-25)
     pdf.set_font("helvetica", "I", 8)
     pdf.set_text_color(150)
-    pdf.cell(0, 10, "Developed by Idealogic - Precision Agriculture AI Division", align="C")
+    pdf.cell(0, 10, "Developed by Idealogic - Precision Agriculture AI Division (Malaysia)", align="C")
     
     return bytes(pdf.output())
 
@@ -92,7 +92,7 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Farm Data Trained AI Model's Weight, FCR & Profit Analytics</h2>
+    <h2 style='color: green;'>Farm Data Trained AI Weight, FCR & Profit Analytics (MYR)</h2>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
@@ -109,7 +109,7 @@ model = load_model()
 if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found.")
 else:
-    # --- 4. INPUTS ---
+    # --- 4. INPUTS (Updated to RM) ---
     st.subheader("📝 Live Farm & Market Inputs")
     t1, t2, t3, t4 = st.columns(4)
 
@@ -133,10 +133,10 @@ else:
         st.info(f"Birds Alive: {birds_alive}")
 
     with t4:
-        st.markdown("**💰 Market Prices**")
-        price_per_kg = st.number_input("Chicken Price ($/kg)", value=2.50)
-        feed_cost_per_kg = st.number_input("Feed Cost ($/kg)", value=0.65)
-        chick_cost = st.number_input("Cost per Chick ($)", value=0.45)
+        st.markdown("**💰 Market Prices (RM)**")
+        price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40) # Updated to common MYR price
+        feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80) # Updated to common MYR price
+        chick_cost = st.number_input("Cost per Chick (RM)", value=2.20)
 
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
@@ -172,7 +172,7 @@ else:
         revenue = (projected_weight * birds_alive) * price_per_kg
         profit = revenue - total_cost
 
-        # --- RESTORED DASHBOARD UI ---
+        # Dashboard UI
         st.subheader("📊 Business Intelligence Dashboard")
         r1_c1, r1_c2, r1_c3 = st.columns(3)
         with r1_c1:
@@ -182,7 +182,7 @@ else:
             st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg", delta=f"{(perf_ratio-1)*100:.1f}%")
             st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
         with r1_c3:
-            st.metric("Projected Net Profit", f"${profit:,.2f}")
+            st.metric("Projected Net Profit", f"RM {profit:,.2f}")
             st.write(f"**Growth Performance:** {int(perf_ratio*100)}%")
             st.progress(min(perf_ratio, 1.0))
 
@@ -190,8 +190,8 @@ else:
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
             st.markdown("### 💰 Financial Summary")
-            st.write(f"**Total Revenue:** ${revenue:,.2f}")
-            st.write(f"**Total Expenses:** ${total_cost:,.2f}")
+            st.write(f"**Total Revenue:** RM {revenue:,.2f}")
+            st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
             st.write(f"**ROI:** {(profit/total_cost)*100:.1f}%")
             if heat_index > 32: st.warning(f"Heat Stress Warning! ({heat_index:.1f})")
             else: st.success("Environment is Stable")
@@ -200,10 +200,9 @@ else:
             days = list(range(30, 46))
             profits = [(((IDEAL_WEIGHT.get(d, 2.5) * perf_ratio) * birds_alive) * price_per_kg) - 
                        (total_chick_cost + ((total_feed_to_date + (roll_feed * (d - day_number))) * feed_cost_per_kg)) for d in days]
-            fig = px.line(x=days, y=profits, title="Profit Trend by Day", labels={'x':'Day', 'y':'Profit ($)'}, markers=True)
+            fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        # Save to session state for PDF persistence
         st.session_state['pdf_data'] = {
             'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
             'heat_index': heat_index, 'current_pred': current_pred, 
@@ -214,7 +213,6 @@ else:
         }
         st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'])
 
-    # --- 6. PERSISTENT DOWNLOAD BUTTON ---
     if 'pdf_bytes' in st.session_state:
         st.markdown("---")
         st.download_button(
@@ -226,4 +224,4 @@ else:
         )
 
 st.divider()
-st.caption("iPoultry AI Guard © 2026")
+st.caption("iPoultry AI Guard © 2026 | Precision Ag Division")
