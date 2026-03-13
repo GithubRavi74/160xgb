@@ -159,7 +159,7 @@ else:
     st.markdown("---")
 
     # --- 5. EXECUTION ---
-    if st.button("🚀 Run AI Business Analysis", use_container_width=True):
+    if st.button("🚀 Run AI Analysis", use_container_width=True):
         input_df = pd.DataFrame([{
             'day_number': day_number, 'birds_alive': birds_alive, 'feed_today_kg': feed_today,
             'temp': temp, 'rh': rh, 'co': co_level, 'nh': nh_level, 'heat_index': heat_index,
