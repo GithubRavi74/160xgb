@@ -203,14 +203,14 @@ else:
     a1, a2, a3, a4 = st.columns(4)
     
     with a1:
-        roll_feed = st.number_input("7-Day Avg Feed (kg)", value=float(feed_today))
+        roll_feed = st.number_input("Last 7-Day Avg Feed (kg)", value=float(feed_today))
     with a2:
         # Brooding Metric
-        d7_weight = st.number_input("Actual Day 7 Weight (kg)", 
+        d7_weight = st.number_input("Average Weight at Age 7 (kg)", 
                                     value=current_standards.get(7, 0.200), 
                                     format="%.3f",
                                     help="Standard for this breed at Day 7.")
-        roll_gain = st.number_input("7-Day Avg Gain (kg)", value=0.050, format="%.3f")
+        roll_gain = st.number_input("Last 7-Day Avg Gain (kg)", value=0.050, format="%.3f")
     with a3:
         co_level = st.number_input("CO Level (ppm)", value=5.0)
     with a4:
