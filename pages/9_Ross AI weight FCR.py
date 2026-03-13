@@ -194,8 +194,8 @@ else:
         birds_alive = initial_flock - total_mortality
         selected_breed = st.selectbox("Select Bird Breed", ["Cobb 500", "Ross 308"])
 
-# Set the active reference
-IDEAL_WEIGHT = BREED_STANDARDS[selected_breed]
+         # Set the active reference
+    IDEAL_WEIGHT = BREED_STANDARDS[selected_breed]
 
     with t2:
         st.markdown("**🌡️ Environment**")
