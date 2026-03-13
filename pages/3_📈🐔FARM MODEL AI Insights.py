@@ -188,7 +188,7 @@ else:
         st.markdown("**🎯 For Forecasting Targets**")
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
         total_feed_to_date = st.number_input("Total Feed Used (kg)", value=float(feed_today * day_number))
-        st.info(f"Birds Alive: {birds_alive}")
+        st.info(f"Birds Alive (Auto calculated): {birds_alive}")
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
