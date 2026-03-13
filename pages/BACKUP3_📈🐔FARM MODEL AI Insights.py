@@ -135,7 +135,6 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# CSS for custom button colors and layout
 st.markdown("""
     <style>
     div.stButton > button:first-child { background-color: #007BFF; color: white; border-radius: 5px; }
@@ -167,29 +166,27 @@ else:
     t1, t2, t3, t4 = st.columns(4)
 
     with t1:
-        st.markdown("**📊 Batch Statistics**")
+        st.markdown("**📊 Flock Statistics**")
         initial_flock = st.number_input("Initial Flock Size", 100, 100000, 5000)
-        total_mortality = st.number_input("Total Mortality", 0, initial_flock, 150)
+        total_mortality = st.number_input("Total Mortality (Cumulative)", 0, initial_flock, 150)
         day_number = st.number_input("Day Number (Age)", 1, 45, 21)
         birds_alive = initial_flock - total_mortality
         selected_breed = st.selectbox("Select Bird Breed", ["Cobb 500", "Ross 308"])
         
-    # Get standards for the chosen breed
     current_standards = BREED_STANDARDS[selected_breed]
 
     with t2:
         st.markdown("**🌡️ Environment**")
-        temp = st.slider("Mean Temp (°C)", 15.0, 40.0, 28.5)
+        temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
         feed_today = st.number_input("Feed Today (kg)", 0.0, 5000.0, 450.0)
 
     with t3:
         st.markdown("**🎯 Cumulative Data**")
-        # Logic Fix: Separating Historical Feed from Today for accuracy
         hist_feed = st.number_input("Total Feed Used UNTIL Yesterday (kg)", value=float(feed_today * (day_number - 1)))
         total_feed_to_date = hist_feed + feed_today
         st.info(f"Total Feed (inc. today): {total_feed_to_date:,.1f} kg")
-        harvest_day = st.number_input("Target Harvest Day", 30, 45, 40)
+        harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
@@ -200,11 +197,19 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    with st.expander("🛠️ Advanced Settings"):
-        a1, a2 = st.columns(2)
-        with a1: roll_feed = st.number_input("7-Day Avg Feed (kg)", value=feed_today)
-        with a2: roll_gain = st.number_input("7-Day Avg Gain (kg)", value=0.05)
-        co_level, nh_level = st.number_input("CO Level", value=5.0), st.number_input("NH3 Level", value=10.0)
+    # --- 4.5 ADVANCED SETTINGS (Now Fully Visible) ---
+    st.markdown("---")
+    st.subheader("🛠️ Enter the Advanced Growth & Air Quality Metrics")
+    a1, a2, a3, a4 = st.columns(4)
+    
+    with a1:
+        roll_feed = st.number_input("7-Day Avg Feed (kg)", value=float(feed_today))
+    with a2:
+        roll_gain = st.number_input("7-Day Avg Gain (kg)", value=0.050, format="%.3f")
+    with a3:
+        co_level = st.number_input("CO Level (ppm)", value=5.0)
+    with a4:
+        nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
 
     report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
     st.markdown("---")
@@ -220,7 +225,6 @@ else:
         }])
         current_pred = model.predict(input_df)[0]
         
-        # Calculate performance against selected breed standards
         perf_ratio = current_pred / current_standards.get(day_number, 1.0)
         projected_weight = current_standards.get(harvest_day, 2.7) * perf_ratio
         
@@ -245,7 +249,7 @@ else:
         with r1_c3:
             st.metric("Projected Net Profit", f"RM {profit:,.2f}")
             st.write(f"**Growth Performance:** {int(perf_ratio*100)}%")
-            st.progress(min(perf_ratio, 1.0))
+            st.progress(min(max(perf_ratio, 0.0), 1.0))
 
         # Financial Summary and Chart Row
         r2_c1, r2_c2 = st.columns([1, 2])
