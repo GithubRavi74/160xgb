@@ -92,7 +92,8 @@ st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
 st.markdown("""
     <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Weight, FCR & Profit Analytics By AI Trained On Farm Data (MYR)</h2>
+    <h2 style='color: green;'>Weight, FCR & Profit Analytics</h2>
+    <h3 style='color: black;'>By AI Trained On Farm Data</h3>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
