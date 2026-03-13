@@ -90,10 +90,18 @@ def create_pdf(data):
 # --- 3. CONFIG & MODEL LOAD ---
 st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
+#st.markdown("""
+#    <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
+#   <h2 style='color: green;'>Weight, FCR & Profit Analytics</h2>
+#   <h3 style='color: black;'>By AI Trained On Farm Data</h3>
+#   """, unsafe_allow_html=True)
+
 st.markdown("""
-    <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-    <h2 style='color: green;'>Weight, FCR & Profit Analytics</h2>
-    <h3 style='color: black;'>By AI Trained On Farm Data</h3>
+    <div style='text-align: center;'>
+        <h1 style='color: black; margin-bottom: 0;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
+        <h2 style='color: green; margin-top: 0; margin-bottom: 0;'>Weight, FCR & Profit Analytics</h2>
+        <h3 style='color: black; margin-top: 0;'>By AI Trained On Farm Data</h3>
+    </div>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
