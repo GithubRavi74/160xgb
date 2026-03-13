@@ -8,61 +8,36 @@ from datetime import datetime
 from fpdf import FPDF
 import io
 
+# --- 1. BREED STANDARDS ---
 BREED_STANDARDS = {
     "Cobb 500": {
-    1:0.061, 2:0.079, 3:0.099, 4:0.122, 5:0.148, 6:0.176, 7:0.208,
-    8:0.242, 9:0.28, 10:0.321, 11:0.366, 12:0.414, 13:0.465,
-    14:0.519, 15:0.576, 16:0.637, 17:0.701, 18:0.768, 19:0.837,
-    20:0.91, 21:0.985, 22:1.062, 23:1.142, 24:1.225, 25:1.309,
-    26:1.395, 27:1.483, 28:1.573, 29:1.664, 30:1.757,
-    31:1.851, 32:1.946, 33:2.041, 34:2.138, 35:2.235,
-    36:2.332, 37:2.43, 38:2.527, 39:2.625, 40:2.723,
-    41:2.820, 42:2.915, 43:3.010, 44:3.100, 45:3.190
-},
+        1:0.061, 2:0.079, 3:0.099, 4:0.122, 5:0.148, 6:0.176, 7:0.208,
+        8:0.242, 9:0.28, 10:0.321, 11:0.366, 12:0.414, 13:0.465,
+        14:0.519, 15:0.576, 16:0.637, 17:0.701, 18:0.768, 19:0.837,
+        20:0.91, 21:0.985, 22:1.062, 23:1.142, 24:1.225, 25:1.309,
+        26:1.395, 27:1.483, 28:1.573, 29:1.664, 30:1.757,
+        31:1.851, 32:1.946, 33:2.041, 34:2.138, 35:2.235,
+        36:2.332, 37:2.43, 38:2.527, 39:2.625, 40:2.723,
+        41:2.820, 42:2.915, 43:3.010, 44:3.100, 45:3.190
+    },
     "Ross 308": {
-    1:0.056, 2:0.071, 3:0.089, 4:0.111, 5:0.136, 6:0.166, 7:0.201,
-    8:0.240, 9:0.285, 10:0.334, 11:0.390, 12:0.451, 13:0.518,
-    14:0.591, 15:0.670, 16:0.755, 17:0.846, 18:0.943, 19:1.045,
-    20:1.154, 21:1.268, 22:1.388, 23:1.514, 24:1.644, 25:1.780,
-    26:1.921, 27:2.066, 28:2.215, 29:2.369, 30:2.525,
-    31:2.686, 32:2.848, 33:3.014, 34:3.181, 35:3.350,
-    36:3.520, 37:3.691, 38:3.861, 39:4.032, 40:4.202,
-    41:4.371, 42:4.538, 43:4.705, 44:4.869, 45:5.031
-}
-}
-
-# --- 1. IDEAL WEIGHT REFERENCE ---
-IDEAL_WEIGHT = {
-    1:0.061, 2:0.079, 3:0.099, 4:0.122, 5:0.148, 6:0.176, 7:0.208,
-    8:0.242, 9:0.28, 10:0.321, 11:0.366, 12:0.414, 13:0.465,
-    14:0.519, 15:0.576, 16:0.637, 17:0.701, 18:0.768, 19:0.837,
-    20:0.91, 21:0.985, 22:1.062, 23:1.142, 24:1.225, 25:1.309,
-    26:1.395, 27:1.483, 28:1.573, 29:1.664, 30:1.757,
-    31:1.851, 32:1.946, 33:2.041, 34:2.138, 35:2.235,
-    36:2.332, 37:2.43, 38:2.527, 39:2.625, 40:2.723,
-    41:2.820, 42:2.915, 43:3.010, 44:3.100, 45:3.190
-}
-
-# --- ROSS 308 IDEAL WEIGHT REFERENCE (kg) ---
-ROSS_308_WEIGHT = {
-    1:0.056, 2:0.071, 3:0.089, 4:0.111, 5:0.136, 6:0.166, 7:0.201,
-    8:0.240, 9:0.285, 10:0.334, 11:0.390, 12:0.451, 13:0.518,
-    14:0.591, 15:0.670, 16:0.755, 17:0.846, 18:0.943, 19:1.045,
-    20:1.154, 21:1.268, 22:1.388, 23:1.514, 24:1.644, 25:1.780,
-    26:1.921, 27:2.066, 28:2.215, 29:2.369, 30:2.525,
-    31:2.686, 32:2.848, 33:3.014, 34:3.181, 35:3.350,
-    36:3.520, 37:3.691, 38:3.861, 39:4.032, 40:4.202,
-    41:4.371, 42:4.538, 43:4.705, 44:4.869, 45:5.031
+        1:0.056, 2:0.071, 3:0.089, 4:0.111, 5:0.136, 6:0.166, 7:0.201,
+        8:0.240, 9:0.285, 10:0.334, 11:0.390, 12:0.451, 13:0.518,
+        14:0.591, 15:0.670, 16:0.755, 17:0.846, 18:0.943, 19:1.045,
+        20:1.154, 21:1.268, 22:1.388, 23:1.514, 24:1.644, 25:1.780,
+        26:1.921, 27:2.066, 28:2.215, 29:2.369, 30:2.525,
+        31:2.686, 32:2.848, 33:3.014, 34:3.181, 35:3.350,
+        36:3.520, 37:3.691, 38:3.861, 39:4.032, 40:4.202,
+        41:4.371, 42:4.538, 43:4.705, 44:4.869, 45:5.031
+    }
 }
 
 # --- 2. PDF GENERATOR FUNCTION ---
 def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf = FPDF()
-    # Disable auto page break to prevent that unnecessary second page
     pdf.set_auto_page_break(auto=False) 
     pdf.add_page()
     
-    # Translation Dictionary
     t = {
         "English": {
             "title": "iPoultry AI Guard - Executive Report",
@@ -86,7 +61,6 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
         }
     }[lang]
 
-    # Header & Logo
     logo_path = "IDEA LOGIC Logo.jpg"
     if os.path.exists(logo_path):
         pdf.image(logo_path, 10, 8, 33) 
@@ -104,7 +78,7 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf.cell(140, 5, f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ln=True)
     pdf.ln(10)
 
-    # Section 1: Batch Overview (Includes Breed)
+    # Section 1
     pdf.set_font("helvetica", "B", 12)
     pdf.set_text_color(0)
     pdf.set_fill_color(240, 240, 240)
@@ -118,7 +92,7 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf.cell(60, 7, f"Heat Index: {data['heat_index']:.2f}", ln=True)
     pdf.ln(4)
 
-    # Section 2: AI Predictions
+    # Section 2
     pdf.set_font("helvetica", "B", 12)
     pdf.cell(185, 8, t["sec2"], ln=True, fill=True)
     pdf.set_font("helvetica", "", 10)
@@ -129,7 +103,7 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf.cell(90, 7, f"{t['target_d']}: Day {data['harvest_day']}", ln=True)
     pdf.ln(4)
 
-    # Section 3: Financials
+    # Section 3
     pdf.set_font("helvetica", "B", 12)
     pdf.cell(185, 8, t["sec3"], ln=True, fill=True)
     pdf.ln(2)
@@ -143,7 +117,6 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     pdf.cell(90, 7, f"Target FCR: {data['harvest_fcr']:.2f}")
     pdf.cell(90, 7, f"{t['roi']}: {data['roi']:.1f}%", ln=True)
 
-    # Footer - Forced position to stay on page 1
     pdf.set_y(265) 
     pdf.set_font("helvetica", "I", 8)
     pdf.set_text_color(150)
@@ -151,21 +124,26 @@ def create_pdf(data, lang="English", breed="Cobb 500"):
     
     return bytes(pdf.output())
 
-# --- 3. CONFIG & MODEL LOAD ---
+# --- 3. CONFIG & STYLING ---
 st.set_page_config(page_title="iPoultry AI Guard", layout="wide")
 
-#st.markdown("""
-#    <h1 style='color: black;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
-#   <h2 style='color: green;'>Weight, FCR & Profit Analytics</h2>
-#   <h3 style='color: black;'>By AI Trained On Farm Data</h3>
-#   """, unsafe_allow_html=True)
-
+# Center/Right Header
 st.markdown("""
-    <div style='text-align: right;'>
+    <div style='text-align: center;'>
         <h1 style='color: black; margin-bottom: 0;'>📈 iPoultry <span style='color: #FFD700;'>AI Guard</span></h1>
         <h2 style='color: green; margin-top: 0; margin-bottom: 0;'>Weight, FCR & Profit Analytics</h2>
         <h3 style='color: black; margin-top: 0;'>By AI Model Trained On Farm Data</h3>
     </div>
+    """, unsafe_allow_html=True)
+
+# Button Styling
+st.markdown("""
+    <style>
+    div.stButton > button:first-child { background-color: #007BFF; color: white; border-radius: 5px; }
+    div.stButton > button:first-child:hover { background-color: #0056b3; color: white; }
+    div.stDownloadButton > button { background-color: #28a745; color: white; border-radius: 5px; }
+    div.stDownloadButton > button:hover { background-color: #218838; color: white; }
+    </style>
     """, unsafe_allow_html=True)
 
 MODEL_PATH = "kishorebatches_weight_model.pkl"
@@ -182,7 +160,7 @@ model = load_model()
 if model is None:
     st.error(f"❌ Model file '{MODEL_PATH}' not found.")
 else:
-    # --- 4. INPUTS (Updated to RM) ---
+    # --- 4. INPUTS ---
     st.subheader("📝 Enter Farm & Market Inputs")
     t1, t2, t3, t4 = st.columns(4)
 
@@ -193,8 +171,8 @@ else:
         day_number = st.number_input("Day Number (Age)", 1, 45, 21)
         birds_alive = initial_flock - total_mortality
         selected_breed = st.selectbox("Select Bird Breed", ["Cobb 500", "Ross 308"])
-
-         # Set the active reference
+        
+    # Set the active reference
     IDEAL_WEIGHT = BREED_STANDARDS[selected_breed]
 
     with t2:
@@ -211,8 +189,8 @@ else:
 
     with t4:
         st.markdown("**💰 Market Prices (RM)**")
-        price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40) # Updated to common MYR price
-        feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80) # Updated to common MYR price
+        price_per_kg = st.number_input("Chicken Price (RM/kg)", value=9.40)
+        feed_cost_per_kg = st.number_input("Feed Cost (RM/kg)", value=2.80)
         chick_cost = st.number_input("Cost per Chick (RM)", value=2.20)
 
     heat_index = temp + (0.33 * rh) - 0.7
@@ -224,6 +202,7 @@ else:
         with a2: roll_gain = st.number_input("7-Day Avg Gain (kg)", value=0.05)
         co_level, nh_level = st.number_input("CO Level", value=5.0), st.number_input("NH3 Level", value=10.0)
 
+    report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
     st.markdown("---")
 
     # --- 5. EXECUTION ---
@@ -269,7 +248,7 @@ else:
             st.markdown("### 💰 Financial Summary")
             st.write(f"**Total Revenue:** RM {revenue:,.2f}")
             st.write(f"**Total Expenses:** RM {total_cost:,.2f}")
-            st.write(f"**ROI:** {(profit/total_cost)*100:.1f}%")
+            st.write(f"**ROI:** {(profit/total_cost)*100:.1f}%" if total_cost > 0 else "0%")
             if heat_index > 32: st.warning(f"Heat Stress Warning! ({heat_index:.1f})")
             else: st.success("Environment is Stable")
 
@@ -280,6 +259,7 @@ else:
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
+        # Store results for PDF
         st.session_state['pdf_data'] = {
             'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
             'heat_index': heat_index, 'current_pred': current_pred, 
@@ -288,13 +268,14 @@ else:
             'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 
             'roi': (profit/total_cost)*100 if total_cost > 0 else 0
         }
-        #st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'])
-        st.session_state['pdf_bytes'] = create_pdf(data, lang=report_lang, breed=selected_breed)
+        
+        # Generate PDF Bytes
+        st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'], lang=report_lang, breed=selected_breed)
 
     if 'pdf_bytes' in st.session_state:
         st.markdown("---")
         st.download_button(
-            label="📩 Download Official Idealogic PDF Report",
+            label=f"📩 Download Official {report_lang} PDF Report",
             data=st.session_state['pdf_bytes'],
             file_name=f"iPoultry_Report_Day{day_number}.pdf",
             mime="application/pdf",
@@ -302,4 +283,4 @@ else:
         )
 
 st.divider()
-st.caption("iPoultry AI Guard © 2026 | Precision Ag Division")
+st.caption("iPoultry AI Guard © 2026 | Idealogic Precision Agriculture AI Division")
