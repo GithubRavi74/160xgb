@@ -301,7 +301,6 @@ else:
         with m3:
             st.metric("Brooding Quality", f"{brood_score}%")
         with m4:
-            # Heat Stress Insight Integrated Here
             if heat_index > 32:
                 st.error(f"⚠️ Heat Stress Alert! ({heat_index:.1f})")
             elif heat_index > 30:
@@ -312,15 +311,19 @@ else:
         st.markdown("---")
 
         # ROW 2: EFFICIENCY & FINANCIALS
-        st.markdown("#### 💰 FCR  & Profit Insights")
-        e1, e2, e3, e4 = st.columns(4)
+        st.markdown("#### 💰 FCR & Profit Insights")
+        
+        # Split into two lines for better visual grouping
+        e1, e2 = st.columns(2)
         with e1:
             st.metric("Current FCR", f"{current_fcr:.2f}")
         with e2:
             st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
-        with e3:
+            
+        f1, f2 = st.columns(2)
+        with f1:
             st.metric("Projected Net Profit", f"RM {profit:,.2f}")
-        with e4:
+        with f2:
             roi = (profit/total_cost)*100 if total_cost > 0 else 0
             st.metric("Projected ROI", f"{roi:.1f}%")
 
@@ -329,7 +332,6 @@ else:
         # CHARTS & DOWNLOAD
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
-            #st.markdown("### 🔍 AI Insights")
             if brood_score < 90: st.error("Foundation Risk: Low Brooding Weight detected.")
             elif brood_score > 105: st.success("Strong Foundation: High growth potential.")
             st.write(f"**Growth Perf:** {int(perf_ratio*100)}%")
