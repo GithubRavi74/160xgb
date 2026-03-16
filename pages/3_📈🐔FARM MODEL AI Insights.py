@@ -210,18 +210,15 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION (SEQUENTIAL FLOW) ---
+    # --- 4.5 BATCH PERFORMANCE SECTION ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     is_early = day_number < 7
-
-    # 1. Brooding Info
     st.markdown("##### 🏁 Enter Brooding Stage Info")
     brood_label = "Target Weight on Day 7 (kg)" if is_early else "Average Weight(kg) on Brooding Day7"
     d7_weight = st.number_input(brood_label, value=current_standards.get(7, 0.200), format="%.3f")
 
-    # 2. Current Trend
     st.markdown("---")
     trend_title = "##### 📈 Early Growth Expectations" if is_early else "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
     feed_label = "Est. Daily Feed (kg)" if is_early else "Last 7-Day Avg Feed (kg)"
@@ -234,9 +231,7 @@ else:
     with col_trend2:
         roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
 
-    # 3. Styled Trend Helper Calculator
     st.markdown("---")
-    # Using markdown to create a BIG, BOLD, ITALIC heading
     st.markdown("<p style='font-size:20px; font-weight:bold; font-style:italic;'>🧮 TREND AVERAGES ASSISTANT CALCULATOR</p>", unsafe_allow_html=True)
     
     with st.expander("Click here to open the calculator"):
@@ -293,31 +288,51 @@ else:
         revenue = (projected_weight * birds_alive) * price_per_kg
         profit = revenue - total_cost
 
-        st.subheader("📊 Batch Performance & Profit Outlook")
-        r1_c1, r1_c2, r1_c3, r1_c4 = st.columns(4)
-        weight_diff_pct = (adjusted_perf - 1.0) * 100
-
-        with r1_c1:
+        # --- REDESIGNED DASHBOARD ---
+        st.subheader("📊 AI Guard Analysis Dashboard")
+        
+        # ROW 1: BIOLOGICAL PERFORMANCE & HEALTH
+        st.markdown("#### 🍗 Flock Growth & Health Status")
+        m1, m2, m3, m4 = st.columns(4)
+        with m1:
             st.metric("Est. Weight Today", f"{current_pred:.3f} kg", delta=f"{int((perf_ratio-1)*100)}% vs Std")
-            st.metric("Current FCR", f"{current_fcr:.2f}")
-        with r1_c2:
-            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg", delta=f"{weight_diff_pct:.1f}% vs Std")
-            st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
-        with r1_c3:
+        with m2:
+            st.metric("Proj. Harvest Weight", f"{projected_weight:.3f} kg", delta=f"{((projected_weight/std_harvest_weight)-1)*100:.1f}% vs Std")
+        with m3:
             st.metric("Brooding Quality", f"{brood_score}%")
-            st.write(f"**Growth Perf:** {int(perf_ratio*100)}%")
-        with r1_c4:
-            st.metric("Projected Net Profit", f"RM {profit:,.2f}")
-            roi = (profit/total_cost)*100 if total_cost > 0 else 0
-            st.write(f"**ROI:** {roi:.1f}%")
+        with m4:
+            # Heat Stress Insight Integrated Here
+            if heat_index > 32:
+                st.error(f"⚠️ Heat Stress Alert! ({heat_index:.1f})")
+            elif heat_index > 30:
+                st.warning(f"⚠️ Monitoring Needed ({heat_index:.1f})")
+            else:
+                st.success(f"✅ Environment Stable ({heat_index:.1f})")
 
+        st.markdown("---")
+
+        # ROW 2: EFFICIENCY & FINANCIALS
+        st.markdown("#### 💰 Efficiency & Profit Outlook")
+        e1, e2, e3, e4 = st.columns(4)
+        with e1:
+            st.metric("Current FCR", f"{current_fcr:.2f}")
+        with e2:
+            st.metric("Proj. Harvest FCR", f"{harvest_fcr:.2f}", delta_color="inverse")
+        with e3:
+            st.metric("Projected Net Profit", f"RM {profit:,.2f}")
+        with e4:
+            roi = (profit/total_cost)*100 if total_cost > 0 else 0
+            st.metric("Projected ROI", f"{roi:.1f}%")
+
+        st.markdown("---")
+
+        # CHARTS & DOWNLOAD
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
-            st.markdown("### 🔍 Insights")
+            st.markdown("### 🔍 AI Insights")
             if brood_score < 90: st.error("Foundation Risk: Low Brooding Weight detected.")
             elif brood_score > 105: st.success("Strong Foundation: High growth potential.")
-            if heat_index > 32: st.warning(f"Heat Stress Alert! ({heat_index:.1f})")
-            else: st.success("Environment is Stable")
+            st.write(f"**Growth Perf:** {int(perf_ratio*100)}%")
             st.write(f"**Revenue:** RM {revenue:,.2f}")
             st.write(f"**Expenses:** RM {total_cost:,.2f}")
 
@@ -328,7 +343,6 @@ else:
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        # --- DOWNLOAD SECTION (LANGUAGE TOGGLE AT BOTTOM) ---
         st.markdown("---")
         st.markdown("### 📩 Generate Official Report")
         report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
