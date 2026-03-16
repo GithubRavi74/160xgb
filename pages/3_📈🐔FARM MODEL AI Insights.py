@@ -248,7 +248,7 @@ else:
         
         if old_w > 0 or total_f_7 > 0:
             st.success(f"Calculated Avg Gain: {calc_g:.3f} kg | Calculated Avg Feed: {calc_f:.1f} kg")
-            if st.button("🔄 Sync with Trend Inputs"):
+            if st.button("🔄 Paste these values in Current Trends Input Items"):
                 st.session_state['synced_feed'] = calc_f
                 st.session_state['synced_gain'] = calc_g
                 st.rerun()
