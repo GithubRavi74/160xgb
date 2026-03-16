@@ -225,7 +225,7 @@ else:
         c_calc1, c_calc2 = st.columns(2)
         with c_calc1:
             old_weight = st.number_input("Weight 7 Days Ago (kg)", value=0.0, format="%.3f")
-            new_weight = st.number_input("Estimated Weight Today (kg)", value=0.0, format="%.3f")
+            new_weight = st.number_input("Average Weight Today (kg)", value=0.0, format="%.3f")
         with c_calc2:
             total_feed_last_7 = st.number_input("Total Feed used in last 7 days (kg)", value=0.0)
         
@@ -238,11 +238,11 @@ else:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        st.markdown("##### 🏁 The Foundation (Brooding Stage)")
+        st.markdown("##### 🏁 Enter Brooding Stage Info)")
         if is_early:
             brood_label = "Target Weight on Day 7 (kg)" if report_lang == "English" else "Sasaran Berat pada Hari ke-7 (kg)"
         else:
-            brood_label = "Average Weight on Day 7 (kg)" if report_lang == "English" else "Purata Berat pada Hari ke-7 (kg)"
+            brood_label = "Average Weight(kg) on Brooding Day7" if report_lang == "English" else "Purata Berat pada Hari ke-7 (kg)"
             
         d7_weight = st.number_input(brood_label, 
                                     value=current_standards.get(7, 0.200), 
@@ -254,7 +254,7 @@ else:
             feed_label = "Est. Daily Feed (kg)" if report_lang == "English" else "Anggaran Makanan Harian (kg)"
             gain_label = "Est. Daily Gain (kg)" if report_lang == "English" else "Anggaran Kenaikan Harian (kg)"
         else:
-            trend_title = "##### 📈 The Current Trend (Recent 7 Days)" if report_lang == "English" else "##### 📈 Trend Semasa (7 Hari Terkini)"
+            trend_title = "##### 📈 Enter The Current Trend (Recent 7 Days Info)" if report_lang == "English" else "##### 📈 Trend Semasa (7 Hari Terkini)"
             feed_label = "Last 7-Day Avg Feed (kg)" if report_lang == "English" else "Purata Makanan 7 Hari Lepas (kg)"
             gain_label = "Last 7-Day Avg Gain (kg)" if report_lang == "English" else "Purata Kenaikan 7 Hari Lepas (kg)"
             
