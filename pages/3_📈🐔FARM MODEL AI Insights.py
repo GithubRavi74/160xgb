@@ -234,7 +234,7 @@ else:
         roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
 
     # Step 3: Trend Helper Calculator (Bottom Expander)
-    with st.expander("🧮 Need help calculating averages? (Trend Helper)"):
+    with st.expander("🧮 TREND AVERAGES ASSISTANT CALCULATOR"):
         st.write("Enter weights from 7 days ago and today to calculate your recent trend.")
         c_calc1, c_calc2 = st.columns(2)
         with c_calc1:
