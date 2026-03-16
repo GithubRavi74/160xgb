@@ -312,7 +312,7 @@ else:
         st.markdown("---")
 
         # ROW 2: EFFICIENCY & FINANCIALS
-        st.markdown("#### 💰 Efficiency & Profit Insights")
+        st.markdown("#### 💰 FCR  & Profit Insights")
         e1, e2, e3, e4 = st.columns(4)
         with e1:
             st.metric("Current FCR", f"{current_fcr:.2f}")
