@@ -210,18 +210,19 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION (REORDERED: BROODING -> TREND -> HELPER) ---
+    # --- 4.5 BATCH PERFORMANCE SECTION (SEQUENTIAL FLOW) ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     is_early = day_number < 7
 
-    # Step 1: Brooding Stage (Top)
+    # 1. Brooding Info
     st.markdown("##### 🏁 Enter Brooding Stage Info")
     brood_label = "Target Weight on Day 7 (kg)" if is_early else "Average Weight(kg) on Brooding Day7"
     d7_weight = st.number_input(brood_label, value=current_standards.get(7, 0.200), format="%.3f")
 
-    # Step 2: Current Trend (Below Brooding)
+    # 2. Current Trend
+    st.markdown("---")
     trend_title = "##### 📈 Early Growth Expectations" if is_early else "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
     feed_label = "Est. Daily Feed (kg)" if is_early else "Last 7-Day Avg Feed (kg)"
     gain_label = "Est. Daily Gain (kg)" if is_early else "Last 7-Day Avg Gain (kg)"
@@ -233,9 +234,13 @@ else:
     with col_trend2:
         roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
 
-    # Step 3: Trend Helper Calculator (Bottom Expander)
-    with st.expander("🧮 TREND AVERAGES ASSISTANT CALCULATOR"):
-        st.write("Enter weights from 7 days ago and today to calculate your recent trend.")
+    # 3. Styled Trend Helper Calculator
+    st.markdown("---")
+    # Using markdown to create a BIG, BOLD, ITALIC heading
+    st.markdown("<p style='font-size:20px; font-weight:bold; font-style:italic;'>🧮 TREND AVERAGES ASSISTANT CALCULATOR</p>", unsafe_allow_html=True)
+    
+    with st.expander("Click here to open the calculator"):
+        st.write("Use this if you only have raw total feed and weights from 7 days ago.")
         c_calc1, c_calc2 = st.columns(2)
         with c_calc1:
             old_w = st.number_input("Weight 7 Days Ago (kg)", value=0.0, format="%.3f")
@@ -248,7 +253,7 @@ else:
         
         if old_w > 0 or total_f_7 > 0:
             st.success(f"Calculated Avg Gain: {calc_g:.3f} kg | Calculated Avg Feed: {calc_f:.1f} kg")
-            if st.button("🔄 Paste these values in Current Trends Input Items"):
+            if st.button("🔄 Sync with Trend Inputs"):
                 st.session_state['synced_feed'] = calc_f
                 st.session_state['synced_gain'] = calc_g
                 st.rerun()
