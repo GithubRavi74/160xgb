@@ -205,7 +205,7 @@ else:
         harvest_day = st.number_input("Target Harvest Day", 30, 45, 35)
         days_left = harvest_day - day_number
         if days_left >= 0:
-            st.warning(f"Strategy: {days_left} days remaining until harvest.")
+            st.warning(f"{days_left} days remaining until harvest.")
         else:
             st.error("Target Harvest Day must be greater than current Age.")
 
