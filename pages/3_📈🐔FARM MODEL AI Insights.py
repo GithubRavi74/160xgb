@@ -318,7 +318,7 @@ else:
 
         # --- DOWNLOAD SECTION (LANGUAGE TOGGLE MOVED HERE) ---
         st.markdown("---")
-        st.markdown("### 📩 Generate Official Report")
+        st.markdown("### 📩 Generate Report")
         
         # This part is now directly above the download button
         report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
