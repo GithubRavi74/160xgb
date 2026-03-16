@@ -238,7 +238,7 @@ else:
         roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
 
     st.markdown("---")
-    st.markdown("<p style='font-size:20px; font-weight:bold; font-style:italic;'>🧮 TREND AVERAGES ASSISTANT CALCULATOR</p>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size:20px; font-weight:bold; font-style:italic;'>🧮 USE THE BELOW CALCULATOR FOR ABOVE VALUES</p>", unsafe_allow_html=True)
     
     with st.expander("Click here to open the calculator"):
         st.write("Use this if you only have raw total feed and weights from 7 days ago.")
