@@ -179,7 +179,6 @@ else:
         st.markdown("**🌡️ Current Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
-        # Note: Switched to CO2 as discussed
         co2_level = st.number_input("CO2 Level (ppm)", value=1200.0, help="Target for ventilation quality.")
         nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
 
@@ -212,12 +211,11 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION (SMART LABELS + CALCULATOR) ---
+    # --- 4.5 BATCH PERFORMANCE SECTION ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     is_early = day_number < 7
-    report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
 
     # --- TESTER'S TREND CALCULATOR ---
     with st.expander("🧮 Trend Helper (Click here to calculate averages)"):
@@ -238,11 +236,11 @@ else:
     col_a, col_b = st.columns(2)
 
     with col_a:
-        st.markdown("##### 🏁 Enter Brooding Stage Info)")
+        st.markdown("##### 🏁 Enter Brooding Stage Info")
         if is_early:
-            brood_label = "Target Weight on Day 7 (kg)" if report_lang == "English" else "Sasaran Berat pada Hari ke-7 (kg)"
+            brood_label = "Target Weight on Day 7 (kg)"
         else:
-            brood_label = "Average Weight(kg) on Brooding Day7" if report_lang == "English" else "Purata Berat pada Hari ke-7 (kg)"
+            brood_label = "Average Weight(kg) on Brooding Day7"
             
         d7_weight = st.number_input(brood_label, 
                                     value=current_standards.get(7, 0.200), 
@@ -250,13 +248,13 @@ else:
     
     with col_b:
         if is_early:
-            trend_title = "##### 📈 Early Growth Expectations" if report_lang == "English" else "##### 📈 Jangkaan Pertumbuhan Awal"
-            feed_label = "Est. Daily Feed (kg)" if report_lang == "English" else "Anggaran Makanan Harian (kg)"
-            gain_label = "Est. Daily Gain (kg)" if report_lang == "English" else "Anggaran Kenaikan Harian (kg)"
+            trend_title = "##### 📈 Early Growth Expectations"
+            feed_label = "Est. Daily Feed (kg)"
+            gain_label = "Est. Daily Gain (kg)"
         else:
-            trend_title = "##### 📈 Enter The Current Trend (Recent 7 Days Info)" if report_lang == "English" else "##### 📈 Trend Semasa (7 Hari Terkini)"
-            feed_label = "Last 7-Day Avg Feed (kg)" if report_lang == "English" else "Purata Makanan 7 Hari Lepas (kg)"
-            gain_label = "Last 7-Day Avg Gain (kg)" if report_lang == "English" else "Purata Kenaikan 7 Hari Lepas (kg)"
+            trend_title = "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
+            feed_label = "Last 7-Day Avg Feed (kg)"
+            gain_label = "Last 7-Day Avg Gain (kg)"
             
         st.markdown(trend_title)
         a_inner1, a_inner2 = st.columns(2)
@@ -269,6 +267,13 @@ else:
 
     # --- 5. EXECUTION ---
     if st.button("🚀 Run AI Analysis", use_container_width=True):
+        st.session_state['analysis_clicked'] = True
+
+    if st.session_state.get('analysis_clicked', False):
+        # LANGUAGE SELECTOR SHOWN ONLY AFTER CLICK
+        report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
+        st.markdown("---")
+
         input_df = pd.DataFrame([{
             'day_number': day_number, 'birds_alive': birds_alive, 'feed_today_kg': feed_today,
             'temp': temp, 'rh': rh, 'co': co2_level, 'nh': nh_level, 'heat_index': heat_index,
@@ -341,17 +346,16 @@ else:
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        st.session_state['pdf_data'] = {
+        pdf_data = {
             'day_number': day_number, 'birds_alive': birds_alive, 'temp': temp, 
             'heat_index': heat_index, 'current_pred': current_pred, 
             'perf_ratio': perf_ratio, 'brood_score': brood_score, 'proj_weight': projected_weight, 
             'harvest_day': harvest_day, 'profit': profit, 'revenue': revenue, 
             'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 'roi': roi
         }
-        st.session_state['pdf_bytes'] = create_pdf(st.session_state['pdf_data'], lang=report_lang, breed=selected_breed)
+        pdf_bytes = create_pdf(pdf_data, lang=report_lang, breed=selected_breed)
 
-    if 'pdf_bytes' in st.session_state:
-        st.download_button(label=f"📩 Download {report_lang} PDF", data=st.session_state['pdf_bytes'], file_name=f"iPoultry_Day{day_number}.pdf", use_container_width=True)
+        st.download_button(label=f"📩 Download {report_lang} PDF", data=pdf_bytes, file_name=f"iPoultry_Day{day_number}.pdf", use_container_width=True)
 
 st.divider()
 st.caption("iPoultry AI Guard © 2026 | Idealogic Precision Agriculture AI Division")
