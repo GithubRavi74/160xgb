@@ -289,10 +289,10 @@ else:
         profit = revenue - total_cost
 
         # --- REDESIGNED DASHBOARD ---
-        st.subheader("📊 AI Guard Analysis Dashboard")
+        st.subheader("📊 AI Guard Analysis")
         
         # ROW 1: BIOLOGICAL PERFORMANCE & HEALTH
-        st.markdown("#### 🍗 Flock Growth & Health Status")
+        st.markdown("#### 🍗 Flock Biological Insights")
         m1, m2, m3, m4 = st.columns(4)
         with m1:
             st.metric("Est. Weight Today", f"{current_pred:.3f} kg", delta=f"{int((perf_ratio-1)*100)}% vs Std")
@@ -312,7 +312,7 @@ else:
         st.markdown("---")
 
         # ROW 2: EFFICIENCY & FINANCIALS
-        st.markdown("#### 💰 Efficiency & Profit Outlook")
+        st.markdown("#### 💰 Efficiency & Profit Insights")
         e1, e2, e3, e4 = st.columns(4)
         with e1:
             st.metric("Current FCR", f"{current_fcr:.2f}")
@@ -329,7 +329,7 @@ else:
         # CHARTS & DOWNLOAD
         r2_c1, r2_c2 = st.columns([1, 2])
         with r2_c1:
-            st.markdown("### 🔍 AI Insights")
+            #st.markdown("### 🔍 AI Insights")
             if brood_score < 90: st.error("Foundation Risk: Low Brooding Weight detected.")
             elif brood_score > 105: st.success("Strong Foundation: High growth potential.")
             st.write(f"**Growth Perf:** {int(perf_ratio*100)}%")
@@ -344,7 +344,7 @@ else:
             st.plotly_chart(fig, use_container_width=True)
 
         st.markdown("---")
-        st.markdown("### 📩 Generate Official Report")
+        st.markdown("### 📩 Generate Report")
         report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
         
         pdf_data = {
