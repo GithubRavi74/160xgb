@@ -179,7 +179,7 @@ else:
         st.markdown("**🌡️ Current Environment & Air Quality**")
         temp = st.slider("24 hrs Mean Temp (°C)", 15.0, 40.0, 28.5)
         rh = st.slider("Humidity (%)", 20.0, 100.0, 65.0)
-        co2_level = st.number_input("CO2 Level (ppm)", value=1200.0, help="Target for ventilation quality.")
+        co2_level = st.number_input("CO2 Level (ppm)", value=1200.0)
         nh_level = st.number_input("NH3 Level (ppm)", value=10.0)
 
     with t3:
@@ -210,24 +210,13 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
+    # --- 4.5 BATCH PERFORMANCE SECTION (SEQUENTIAL ORDER) ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     is_early = day_number < 7
 
-    with st.expander("🧮 Trend Helper (Click here to calculate averages)"):
-        st.write("Use this if you have raw data from 7 days ago.")
-        c_calc1, c_calc2 = st.columns(2)
-        with c_calc1:
-            old_weight = st.number_input("Weight 7 Days Ago (kg)", value=0.0, format="%.3f")
-            new_weight = st.number_input("Average Weight Today (kg)", value=0.0, format="%.3f")
-        with c_calc2:
-            total_feed_last_7 = st.number_input("Total Feed used in last 7 days (kg)", value=0.0)
-        
-        calc_gain = (new_weight - old_weight) / 7 if old_weight > 0 else 0.050
-        calc_avg_feed = total_feed_last_7 / 7 if total_feed_last_7 > 0 else feed_today
-        st.success(f"Calculated Avg Gain: {calc_gain:.3f} kg | Calculated Avg Feed: {calc_avg_feed:.1f} kg")
-
+    # 1. BROODING & TREND INPUTS FIRST
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown("##### 🏁 Enter Brooding Stage Info")
@@ -239,11 +228,32 @@ else:
         feed_label = "Est. Daily Feed (kg)" if is_early else "Last 7-Day Avg Feed (kg)"
         gain_label = "Est. Daily Gain (kg)" if is_early else "Last 7-Day Avg Gain (kg)"
         st.markdown(trend_title)
+        
         a_inner1, a_inner2 = st.columns(2)
         with a_inner1:
-            roll_feed = st.number_input(feed_label, value=float(calc_avg_feed))
+            roll_feed = st.number_input(feed_label, value=st.session_state.get('synced_feed', 450.0), key="roll_feed_input")
         with a_inner2:
-            roll_gain = st.number_input(gain_label, value=float(calc_gain), format="%.3f")
+            roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
+
+    # 2. TREND HELPER CALCULATOR LAST
+    with st.expander("🧮 Need help calculating averages? (Trend Helper)"):
+        st.write("Enter weights from 7 days ago and today to calculate your recent trend.")
+        c_calc1, c_calc2 = st.columns(2)
+        with c_calc1:
+            old_w = st.number_input("Weight 7 Days Ago (kg)", value=0.0, format="%.3f")
+            new_w = st.number_input("Average Weight Today (kg)", value=0.0, format="%.3f")
+        with c_calc2:
+            total_f_7 = st.number_input("Total Feed used in last 7 days (kg)", value=0.0)
+        
+        calc_g = (new_w - old_w) / 7 if old_w > 0 else 0.0
+        calc_f = total_f_7 / 7 if total_f_7 > 0 else 0.0
+        
+        if old_w > 0 or total_f_7 > 0:
+            st.success(f"Calculated Avg Gain: {calc_g:.3f} kg | Calculated Avg Feed: {calc_f:.1f} kg")
+            if st.button("🔄 Sync with Trend Inputs"):
+                st.session_state['synced_feed'] = calc_f
+                st.session_state['synced_gain'] = calc_g
+                st.rerun()
 
     st.markdown("---")
 
@@ -282,7 +292,6 @@ else:
 
         st.subheader("📊 Batch Performance & Profit Outlook")
         r1_c1, r1_c2, r1_c3, r1_c4 = st.columns(4)
-        
         weight_diff_pct = (adjusted_perf - 1.0) * 100
 
         with r1_c1:
@@ -316,11 +325,9 @@ else:
             fig = px.line(x=days, y=profits, title="Profit Trend by Day (RM)", labels={'x':'Day', 'y':'Profit (RM)'}, markers=True)
             st.plotly_chart(fig, use_container_width=True)
 
-        # --- DOWNLOAD SECTION (LANGUAGE TOGGLE MOVED HERE) ---
+        # --- DOWNLOAD SECTION (LANGUAGE TOGGLE AT BOTTOM) ---
         st.markdown("---")
-        st.markdown("### 📩 Generate Report")
-        
-        # This part is now directly above the download button
+        st.markdown("### 📩 Generate Official Report")
         report_lang = st.radio("Laporan Bahasa / Report Language:", ["English", "Bahasa Melayu"], horizontal=True)
         
         pdf_data = {
@@ -331,7 +338,6 @@ else:
             'total_cost': total_cost, 'harvest_fcr': harvest_fcr, 'roi': roi
         }
         pdf_bytes = create_pdf(pdf_data, lang=report_lang, breed=selected_breed)
-
         st.download_button(label=f"Download {report_lang} PDF Report", data=pdf_bytes, file_name=f"iPoultry_Day{day_number}.pdf", use_container_width=True)
 
 st.divider()
