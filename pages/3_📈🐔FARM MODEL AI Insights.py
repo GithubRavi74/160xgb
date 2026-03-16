@@ -210,32 +210,30 @@ else:
     heat_index = temp + (0.33 * rh) - 0.7
     feed_per_bird = feed_today / birds_alive if birds_alive > 0 else 0
     
-    # --- 4.5 BATCH PERFORMANCE SECTION (SEQUENTIAL ORDER) ---
+    # --- 4.5 BATCH PERFORMANCE SECTION (REORDERED: BROODING -> TREND -> HELPER) ---
     st.markdown("---")
     st.subheader("🐥 Enter Batch Performance Details")
     
     is_early = day_number < 7
 
-    # 1. BROODING & TREND INPUTS FIRST
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("##### 🏁 Enter Brooding Stage Info")
-        brood_label = "Target Weight on Day 7 (kg)" if is_early else "Average Weight(kg) on Brooding Day7"
-        d7_weight = st.number_input(brood_label, value=current_standards.get(7, 0.200), format="%.3f")
-    
-    with col_b:
-        trend_title = "##### 📈 Early Growth Expectations" if is_early else "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
-        feed_label = "Est. Daily Feed (kg)" if is_early else "Last 7-Day Avg Feed (kg)"
-        gain_label = "Est. Daily Gain (kg)" if is_early else "Last 7-Day Avg Gain (kg)"
-        st.markdown(trend_title)
-        
-        a_inner1, a_inner2 = st.columns(2)
-        with a_inner1:
-            roll_feed = st.number_input(feed_label, value=st.session_state.get('synced_feed', 450.0), key="roll_feed_input")
-        with a_inner2:
-            roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
+    # Step 1: Brooding Stage (Top)
+    st.markdown("##### 🏁 Enter Brooding Stage Info")
+    brood_label = "Target Weight on Day 7 (kg)" if is_early else "Average Weight(kg) on Brooding Day7"
+    d7_weight = st.number_input(brood_label, value=current_standards.get(7, 0.200), format="%.3f")
 
-    # 2. TREND HELPER CALCULATOR LAST
+    # Step 2: Current Trend (Below Brooding)
+    trend_title = "##### 📈 Early Growth Expectations" if is_early else "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
+    feed_label = "Est. Daily Feed (kg)" if is_early else "Last 7-Day Avg Feed (kg)"
+    gain_label = "Est. Daily Gain (kg)" if is_early else "Last 7-Day Avg Gain (kg)"
+    
+    st.markdown(trend_title)
+    col_trend1, col_trend2 = st.columns(2)
+    with col_trend1:
+        roll_feed = st.number_input(feed_label, value=st.session_state.get('synced_feed', 450.0), key="roll_feed_input")
+    with col_trend2:
+        roll_gain = st.number_input(gain_label, value=st.session_state.get('synced_gain', 0.050), format="%.3f", key="roll_gain_input")
+
+    # Step 3: Trend Helper Calculator (Bottom Expander)
     with st.expander("🧮 Need help calculating averages? (Trend Helper)"):
         st.write("Enter weights from 7 days ago and today to calculate your recent trend.")
         c_calc1, c_calc2 = st.columns(2)
