@@ -216,8 +216,14 @@ else:
     
     is_early = day_number < 7
     st.markdown("##### 🏁 Enter Brooding Stage Info")
-    brood_label = "Target Weight on Day 7 (kg)" if is_early else "Average Weight(kg) on Brooding Day7"
-    d7_weight = st.number_input(brood_label, value=current_standards.get(7, 0.200), format="%.3f")
+    # UPDATED LABEL LOGIC FOR CLARITY
+    brood_label = "Expected Weight on Day 7 (kg)" if is_early else "Actual Weight on Day 7 (kg)"
+    d7_weight = st.number_input(
+        brood_label, 
+        value=current_standards.get(7, 0.200), 
+        format="%.3f",
+        help="Day 7 weight is a critical indicator of early-stage health and final growth potential."
+    )
 
     st.markdown("---")
     trend_title = "##### 📈 Early Growth Expectations" if is_early else "##### 📈 Enter The Current Trend (Recent 7 Days Info)"
@@ -313,7 +319,7 @@ else:
         # ROW 2: EFFICIENCY & FINANCIALS
         st.markdown("#### 💰 FCR & Profit Insights")
         
-        # Split into two lines for better visual grouping
+        # Split into two lines for cleaner vertical separation
         e1, e2 = st.columns(2)
         with e1:
             st.metric("Current FCR", f"{current_fcr:.2f}")
